@@ -167,5 +167,4 @@ bin/
 *.class
 simgui.json
 simgui-ds.json
-.vscode/settings.json
 *.wpilog
