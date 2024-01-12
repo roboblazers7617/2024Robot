@@ -4,9 +4,16 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
+import frc.robot.Constants;
 public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command nullAuto() {
@@ -16,4 +23,19 @@ public final class Autos {
 	private Autos() {
 		throw new UnsupportedOperationException("This is a utility class!");
 	}
+
+	// Since we are using a holonomic drivetrain, the rotation component of this pose
+// represents the goal holonomic rotation
+Pose2d targetPose = new Pose2d();
+
+// Since AutoBuilder is configured, we can use it to build pathfinding commands
+//TODO I dont know if this makes robot move when called or if I have to do smth else
+Command pathfindToPose(Pose2d targetPose, double endVelocity, double rotationDelayDistance) {
+	return Commands.parallel(
+			AutoBuilder.pathfindToPose(targetPose, Constants.AutoConstants.AUTO_CONSTRAINTS, endVelocity, rotationDelayDistance)
+			);
+
+}
+
+
 }

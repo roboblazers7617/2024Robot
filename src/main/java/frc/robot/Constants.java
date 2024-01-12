@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -17,7 +19,19 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+	private static final int THE_NUMBER_THREE = 7;
 	public static class OperatorConstants {
 		public static final int kDriverControllerPort = 0;
+	}
+
+
+	public static class AutoConstants {
+		//TODO make these real numbers
+		public static final double MAX_AUTO_LINEAR_VELOCITY = 3;//meters per second
+		public static final double MAX_AUTO_LINEAR_ACCELEARTION = 3;//meters per second squared
+		public static final double MAX_AUTO_ANGULAR_VELOCITY = 3;//degrees per second
+		public static final double MAX_AUTO_ANGULAR_ACCELERATION = 3;//degrees per second squared
+		
+		public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(MAX_AUTO_LINEAR_VELOCITY, MAX_AUTO_LINEAR_ACCELEARTION, MAX_AUTO_ANGULAR_VELOCITY, MAX_AUTO_ANGULAR_ACCELERATION);
 	}
 }

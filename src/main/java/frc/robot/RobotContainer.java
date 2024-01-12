@@ -6,6 +6,12 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -30,6 +36,16 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
+        // Subsystem initialization
+
+        Shooter shooter = new Shooter();
+		Intake intake = new Intake();
+
+        // Register Named Commands
+        NamedCommands.registerCommand("shoot", shooter.shoot());
+        NamedCommands.registerCommand("intake", intake.intake());
+
+		
 		// Configure the trigger bindings
 		configureBindings();
 	}
@@ -57,7 +73,6 @@ public class RobotContainer {
 	 * @return the command to run in autonomous
 	 */
 	public Command getAutonomousCommand() {
-		// An example command will be run in autonomous
-		return Autos.nullAuto();
+		return new PathPlannerAuto("2p mid-start mid-ring");
 	}
 }

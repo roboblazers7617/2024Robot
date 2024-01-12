@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -14,5 +15,10 @@ public class Shooter extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
+	}
+
+	public static Command shoot() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'shoot'");
 	}
 }
