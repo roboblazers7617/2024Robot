@@ -22,7 +22,6 @@ public class SwerveTab extends ShuffleboardTabBase {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
         NetworkTable networkTable = inst.getTable("logging/swerveDrive");
-		// NetworkTable oisjdf = inst.getTable("Shuffleboard/pleeeease don't exist"); oisjdf.getIntegerTopic("bad").publish().set(5);
 
         // odometryXPub = networkTable.getDoubleTopic("X Odometry").publish();
 
@@ -49,7 +48,12 @@ public class SwerveTab extends ShuffleboardTabBase {
 
 		ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("swerveDrive");
 
-        shuffleboardTab.add(this.swerveDrive);
+        //shuffleboardTab.add(this.swerveDrive);
+	}
+
+	@Override
+	public String getNetworkTable() {
+		return "swerveDrive";
 	}
     
 }

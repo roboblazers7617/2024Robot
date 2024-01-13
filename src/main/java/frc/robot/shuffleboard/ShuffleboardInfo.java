@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShuffleboardInfo extends SubsystemBase {
@@ -34,6 +36,16 @@ public class ShuffleboardInfo extends SubsystemBase {
 		copyTables = new String[tabs.size() - 1]; // subtract one because driverstation doesn't need to be copied
 	}
 
+	public void activateTabs() {
+		System.out.println("function being called");
+		for (int i = 1; i < tabs.size(); i++) {
+			if (tabs.get(i) != null) {
+				tabs.get(i).activateShuffleboard();
+				copyTables[i - 1] = tabs.get(i).toString();
+			}
+		}
+	}
+
 	@Override
 	public void periodic() {
 
@@ -47,8 +59,6 @@ public class ShuffleboardInfo extends SubsystemBase {
 
 		// copy over values from the logging network table to shuffleboard
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		// copyTables = new String[tabs.size()];
-		copyTables[0] = "swerveDrive";
 		for (String tab : copyTables) {
 			if (tab != null) {
 

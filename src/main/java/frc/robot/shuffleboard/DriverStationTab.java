@@ -8,6 +8,7 @@ package frc.robot.shuffleboard;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 
 /** Add your docs here. */
@@ -33,7 +34,14 @@ public class DriverStationTab extends ShuffleboardTabBase {
 
 	@Override
 	public void activateShuffleboard(){
-		
 		//this should be called immediately
+		Shuffleboard.getTab("Driver Station").add("activate tabs", new ActivateTabs());
+
+		
+	}
+
+	@Override
+	public String getNetworkTable() {
+		return null;
 	}
 }
