@@ -4,15 +4,23 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
+	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
+	private final DigitalInput isNoteAcquired = new DigitalInput(IntakeConstants.SENSOR_DIO);
 
 	/** Creates a new Intake. */
 	public Intake() {
+		intakeMotor.setIdleMode(IdleMode.kBrake);
 	}
 
 	@Override
@@ -31,9 +39,10 @@ public class Intake extends SubsystemBase {
 	}
 
 	public boolean isNoteAcquired() {
-		return false;
+		return isNoteAcquired.get();
 	}
 
 	private void setIntakeSpeed(double intakeSpeed) {
+		intakeMotor.set(intakeSpeed);
 	}
 }

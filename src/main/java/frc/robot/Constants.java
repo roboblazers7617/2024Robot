@@ -31,13 +31,14 @@ public final class Constants {
 
 	public static class IntakeConstants {
 
+		public static final int MOTOR_CAN_ID = 20;
+		public static final int SENSOR_DIO = 1;
 		public static final double INTAKE_SPEED = 1;
 		public static final double OUTAKE_SPEED = -1;
-
 	}
 
 	public static class PivotConstants {
-public enum PivotPosition {
+		public enum PivotPosition {
 			STOWED(0);
 
 			PivotPosition(double angle) {
@@ -46,7 +47,7 @@ public enum PivotPosition {
 
 			private final double angle;
 
-			public double angle(){
+			public double angle() {
 				return angle;
 			}
 		}
@@ -62,7 +63,7 @@ public enum PivotPosition {
 
 			private final int rpm;
 
-			public int rpm(){
+			public int rpm() {
 				return rpm;
 			}
 		}
