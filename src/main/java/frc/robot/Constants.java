@@ -34,4 +34,52 @@ public final class Constants {
 		
 		public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(MAX_AUTO_LINEAR_VELOCITY, MAX_AUTO_LINEAR_ACCELEARTION, MAX_AUTO_ANGULAR_VELOCITY, MAX_AUTO_ANGULAR_ACCELERATION);
 	}
+
+
+	public static class SwerveConstants {
+
+	}
+
+	public static class IntakeConstants {
+
+		public static final int MOTOR_CAN_ID = 20;
+		public static final int SENSOR_DIO = 1;
+		public static final double INTAKE_SPEED = 1;
+		public static final double OUTAKE_SPEED = -1;
+	}
+
+	public static class PivotConstants {
+		public enum PivotPosition {
+			STOWED(0);
+
+			PivotPosition(double angle) {
+				this.angle = angle;
+			}
+
+			private final double angle;
+
+			public double angle() {
+				return angle;
+			}
+		}
+	}
+
+	public static class ShooterConstants {
+		public enum ShootingPosition {
+			SUBWOOFER(0);
+
+			ShootingPosition(int rpm) {
+				this.rpm = rpm;
+			}
+
+			private final int rpm;
+
+			public int rpm() {
+				return rpm;
+			}
+		}
+
+		public static final int IDLE_SPEED = 0;
+
+	}
 }
