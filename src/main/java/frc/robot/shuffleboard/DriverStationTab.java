@@ -4,40 +4,36 @@
 
 package frc.robot.shuffleboard;
 
-
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-
 
 /** Add your docs here. */
 public class DriverStationTab extends ShuffleboardTabBase {
 	private int number = 0;
 	private final IntegerPublisher numPublisher;
 
-    public DriverStationTab() {
+	public DriverStationTab() {
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-        NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
+		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
 
 		numPublisher = networkTable.getIntegerTopic("number").publish();
-    }
-
-    @Override
-    public void update() {
-		number += 1;
-		numPublisher.set(number);
-		
-		
-    }
+	}
 
 	@Override
-	public void activateShuffleboard(){
-		//this should be called immediately
+	public void update() {
+		number += 1;
+		numPublisher.set(number);
+
+	}
+
+	@Override
+	public void activateShuffleboard() {
+		// this should be called immediately
 		Shuffleboard.getTab("Driver Station").add("activate tabs", new ActivateTabs());
 
-		
 	}
 
 	@Override
