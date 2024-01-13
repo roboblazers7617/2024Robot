@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShuffleboardInfo extends SubsystemBase {
@@ -41,7 +39,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 		for (int i = 1; i < tabs.size(); i++) {
 			if (tabs.get(i) != null) {
 				tabs.get(i).activateShuffleboard();
-				copyTables[i - 1] = tabs.get(i).toString();
+				copyTables[i - 1] = tabs.get(i).getNetworkTable();
 			}
 		}
 	}
@@ -61,11 +59,11 @@ public class ShuffleboardInfo extends SubsystemBase {
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		for (String tab : copyTables) {
 			if (tab != null) {
-
 				for (String key : inst.getTable("logging/" + tab).getKeys()) {
 					NetworkTableEntry sourceEntry = inst.getTable("logging/" + tab).getEntry(key);
 					NetworkTableEntry destinationEntry = inst.getTable("Shuffleboard/" + tab).getEntry(key);
 					destinationEntry.setValue(sourceEntry.getValue());
+
 				}
 			}
 		}

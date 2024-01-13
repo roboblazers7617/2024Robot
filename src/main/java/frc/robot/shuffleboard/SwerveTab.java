@@ -3,8 +3,6 @@ package frc.robot.shuffleboard;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.Drivetrain;
 
 public class SwerveTab extends ShuffleboardTabBase {
@@ -44,8 +42,6 @@ public class SwerveTab extends ShuffleboardTabBase {
 
 	@Override
 	public void activateShuffleboard() {
-
-		ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("swerveDrive");
 
 		// shuffleboardTab.add(this.swerveDrive);
 	}
