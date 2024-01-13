@@ -11,11 +11,12 @@ import frc.Animations.RaceAnimation;
 import frc.Animations.BlinkAnimation;
 
 public class LED extends SubsystemBase {
-  /** Creates a new LED. */
-  public LED() {}
+	/** Creates a new LED. */
+	public LED() {
+	}
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+	@Override
+	public void periodic() {
+		// This method will be called once per scheduler run
+	}
 }
