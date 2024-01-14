@@ -40,4 +40,9 @@ public class Shooter extends SubsystemBase {
 	private void setShooterSpeed(int rpm) {
 
 	}
+
+	public Command shoot() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'shoot'");
+	}
 }

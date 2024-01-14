@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
 	/** Creates a new Drivetrain. */
@@ -25,8 +26,8 @@ public class Drivetrain extends SubsystemBase {
 				this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
 				new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
 													// Constants class
-						new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-						new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+						new PIDConstants(Constants.AutoConstants.LINEAR_AUTO_KP, Constants.AutoConstants.LINEAR_AUTO_KI, Constants.AutoConstants.LINEAR_AUTO_KD), // Translation PID constants
+						new PIDConstants(Constants.AutoConstants.ROTATIONAL_AUTO_KP, Constants.AutoConstants.ROTATION_AUTO_KI, Constants.AutoConstants.ROTATION_AUTO_KD), // Rotation PID constants
 						4.5, // Max module speed, in m/s
 						0.4, // Drive base radius in meters. Distance from robot center to furthest module.
 						new ReplanningConfig() // Default path replanning config. See the API for the options here

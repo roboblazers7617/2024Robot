@@ -20,21 +20,29 @@ import com.pathplanner.lib.path.PathConstraints;
  */
 public final class Constants {
 	private static final int THE_NUMBER_THREE = 7;
+
 	public static class OperatorConstants {
 		public static final int kDriverControllerPort = 0;
 	}
 
-
 	public static class AutoConstants {
-		//TODO make these real numbers
-		public static final double MAX_AUTO_LINEAR_VELOCITY = 3;//meters per second
-		public static final double MAX_AUTO_LINEAR_ACCELEARTION = 3;//meters per second squared
-		public static final double MAX_AUTO_ANGULAR_VELOCITY = 3;//degrees per second
-		public static final double MAX_AUTO_ANGULAR_ACCELERATION = 3;//degrees per second squared
-		
-		public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(MAX_AUTO_LINEAR_VELOCITY, MAX_AUTO_LINEAR_ACCELEARTION, MAX_AUTO_ANGULAR_VELOCITY, MAX_AUTO_ANGULAR_ACCELERATION);
-	}
+		// TODO make these real numbers
+		public static final double MAX_AUTO_LINEAR_VELOCITY = 3;// meters per second
+		public static final double MAX_AUTO_LINEAR_ACCELEARTION = 3;// meters per second squared
+		public static final double MAX_AUTO_ANGULAR_VELOCITY = 3;// degrees per second
+		public static final double MAX_AUTO_ANGULAR_ACCELERATION = 3;// degrees per second squared
 
+		public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(MAX_AUTO_LINEAR_VELOCITY,
+				MAX_AUTO_LINEAR_ACCELEARTION, MAX_AUTO_ANGULAR_VELOCITY, MAX_AUTO_ANGULAR_ACCELERATION);
+
+		public static final double LINEAR_AUTO_KP = 0;
+		public static final double LINEAR_AUTO_KI = 0;
+		public static final double LINEAR_AUTO_KD = 0;
+
+		public static final double ROTATIONAL_AUTO_KP = 0;
+		public static final double ROTATION_AUTO_KI = 0;
+		public static final double ROTATION_AUTO_KD = 0;
+	}
 
 	public static class SwerveConstants {
 

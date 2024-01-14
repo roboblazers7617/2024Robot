@@ -29,12 +29,13 @@ public final class Autos {
 Pose2d targetPose = new Pose2d();
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
+
 //TODO I dont know if this makes robot move when called or if I have to do smth else
 Command pathfindToPose(Pose2d targetPose, double endVelocity, double rotationDelayDistance) {
-	return Commands.parallel(
-			AutoBuilder.pathfindToPose(targetPose, Constants.AutoConstants.AUTO_CONSTRAINTS, endVelocity, rotationDelayDistance)
-			);
-
+	return AutoBuilder.pathfindToPose(targetPose, Constants.AutoConstants.AUTO_CONSTRAINTS, endVelocity, rotationDelayDistance);
+}
+Command pathfindToPathAndFollow(PathPlannerPath path, double rotationDelayDistance) {
+	return AutoBuilder.pathfindThenFollowPath(path, Constants.AutoConstants.AUTO_CONSTRAINTS, rotationDelayDistance);
 }
 
 
