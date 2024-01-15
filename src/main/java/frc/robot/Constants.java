@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -69,6 +72,13 @@ public final class Constants {
 		}
 
 		public static final int IDLE_SPEED = 0;
+
+	}
+
+	public static class VisionConstants{
+
+		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
+		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
 	}
 }
