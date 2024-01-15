@@ -6,7 +6,14 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.drivetrain.AbsoluteDriveState;
+import frc.robot.commands.drivetrain.FieldCentricDriveState;
+import frc.robot.commands.drivetrain.LockWheelsState;
+import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -23,8 +30,28 @@ public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
-	private final CommandXboxController m_driverController = new CommandXboxController(
-			OperatorConstants.kDriverControllerPort);
+	private final CommandXboxController driverController = new CommandXboxController(
+			OperatorConstants.DRIVER_CONTROLLER_PORT);
+	private final Drivetrain drivetrain = new Drivetrain();
+
+	private final FieldCentricDriveState fieldCentricDriveState = new FieldCentricDriveState(drivetrain,
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			driverController.y(),
+			driverController.a(),
+			driverController.x(),
+			driverController.b());
+
+	private final AbsoluteDriveState absoluteDriveState = (new AbsoluteDriveState(drivetrain,
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND)),
+			driverController.y(),
+			driverController.a(),
+			driverController.x(),
+			driverController.b()));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -49,7 +76,26 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
+		drivetrain.setDefaultCommand(fieldCentricDriveState);
+
+		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+
+		driverController.povLeft().onTrue(
+				Commands.either(
+						Commands.parallel(Commands.runOnce(() -> drivetrain.setDefaultCommand(absoluteDriveState))
+								.andThen(new ScheduleCommand(absoluteDriveState)),
+								Commands.print(drivetrain.getDefaultCommand().getName())),
+						Commands.parallel(
+								Commands.runOnce(() -> drivetrain.setDefaultCommand(fieldCentricDriveState),
+										drivetrain)
+										.andThen(new ScheduleCommand(fieldCentricDriveState)),
+								Commands.print(drivetrain.getDefaultCommand().getName())),
+						this::isFieldCentric));
 	}
+
+	public boolean isFieldCentric(){
+		return drivetrain.getDefaultCommand() instanceof FieldCentricDriveState;
+	  }
 
 	/**
 	 * Use this to pass the autonomous command to the main {@link Robot} class.
