@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.LLColor;
 import frc.LedStrip;
@@ -16,14 +17,18 @@ import frc.Animations.SolidColorPattern;
 public class LED extends SubsystemBase {
 	private final LedStrip strip = new LedStrip(1, 60);
 
-	/** Creates a new LED. */
-	public LED() {
-		strip.setAnimation(new RaceAnimation(strip, PredefinedColors.kSeaGreen, PredefinedColors.kCyan, 5, 10));
-	}
-
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
+		if (DriverStation.isEStopped()) {
+			setDisabledColor();
+		} else if (DriverStation.isDisabled()) {
+			setIdleAnimation();
+		} else if (DriverStation.isAutonomous()) {
+			setAutoColor();
+		} else if (DriverStation.isTeleop()) {
+			setTeleopColor();
+		}
 	}
 
 	public void setIdleAnimation() {
@@ -31,6 +36,14 @@ public class LED extends SubsystemBase {
 	}
 
 	public void setDisabledColor() {
-		strip.setAnimation(new SolidColorPattern(strip, PredefinedColors.kRed));
+		strip.setAnimation(new BounceAnimation(strip, PredefinedColors.kRed, PredefinedColors.kOrange, 10));
+	}
+
+	public void setAutoColor() {
+		strip.setAnimation(new SolidColorPattern(strip, strip.getAllianceColor()));
+	}
+
+	public void setTeleopColor() {
+		strip.setAnimation(new SolidColorPattern(strip, PredefinedColors.kYellow));
 	}
 }
