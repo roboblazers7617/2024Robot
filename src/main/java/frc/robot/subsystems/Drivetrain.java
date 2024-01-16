@@ -45,10 +45,10 @@ public class Drivetrain extends SubsystemBase {
 	public Drivetrain() {
 
 		AutoBuilder.configureHolonomic(
-				this::getPose2d, // Robot pose supplier
-				this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-				this::getRobotSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-				this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+				this::getPose, // Robot pose supplier
+				this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+				this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+				this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
 				new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
 													// Constants class
 						new PIDConstants(Constants.AutoConstants.LINEAR_AUTO_KP, Constants.AutoConstants.LINEAR_AUTO_KI, Constants.AutoConstants.LINEAR_AUTO_KD), // Translation PID constants
