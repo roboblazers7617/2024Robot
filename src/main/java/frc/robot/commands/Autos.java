@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -16,8 +17,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 public final class Autos {
 	/** Example static factory for an autonomous command. */
-	public static Command nullAuto() {
-		return Commands.none();
+	public static Command getAuto() {
+		return new PathPlannerAuto("2p mid-start mid-ring");
 	}
 
 	private Autos() {

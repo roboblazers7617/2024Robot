@@ -72,6 +72,6 @@ public class RobotContainer {
 	 * @return the command to run in autonomous
 	 */
 	public Command getAutonomousCommand() {
-		return new PathPlannerAuto("2p mid-start mid-ring");
+		return Autos.getAuto();
 	}
 }
