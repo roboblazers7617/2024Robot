@@ -4,10 +4,10 @@
 
 package frc.robot.commands.drivetrain;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 /**A state that locks the wheels of the swerve drive to force it to remain stationary */
-public class LockWheelsState extends CommandBase {
+public class LockWheelsState extends Command {
   /** Creates a new LockWheelsState. */
   private final Drivetrain swerveDrive;
   public LockWheelsState(Drivetrain swerveDrive) {

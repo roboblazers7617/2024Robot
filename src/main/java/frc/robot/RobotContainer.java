@@ -11,6 +11,7 @@ import frc.robot.commands.drivetrain.FieldCentricDriveState;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
@@ -59,6 +60,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Configure the trigger bindings
 		configureBindings();
+		driverController.getHID().setRumble(RumbleType.kBothRumble, 1);
 	}
 
 	/**
