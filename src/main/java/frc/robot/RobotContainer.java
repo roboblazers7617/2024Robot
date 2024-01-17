@@ -10,6 +10,7 @@ import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.ShuffleboardInfo;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
+import frc.robot.util.TunableNumber;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,7 @@ public class RobotContainer {
 		// Configure the trigger bindings
 		configureBindings();
 
+		new TunableNumber();
 		shuffleboard = ShuffleboardInfo.getInstance();
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
