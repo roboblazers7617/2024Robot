@@ -16,18 +16,23 @@ import frc.Animations.SolidColorPattern;
 
 public class LED extends SubsystemBase {
 	private final LedStrip strip = new LedStrip(1, 60);
+	private int currentMode = -1;
 
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (DriverStation.isEStopped()) {
+		if (DriverStation.isEStopped() && currentMode != 0) {
 			setDisabledColor();
-		} else if (DriverStation.isDisabled()) {
+			currentMode = 0;
+		} else if (DriverStation.isDisabled() && currentMode != 1) {
 			setIdleAnimation();
-		} else if (DriverStation.isAutonomous()) {
+			currentMode = 1;
+		} else if (DriverStation.isAutonomousEnabled() && currentMode != 2) {
 			setAutoColor();
-		} else if (DriverStation.isTeleop()) {
+			currentMode = 2;
+		} else if (DriverStation.isTeleopEnabled() && currentMode != 3) {
 			setTeleopColor();
+			currentMode = 3;
 		}
 	}
 
