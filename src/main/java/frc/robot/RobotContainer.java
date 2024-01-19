@@ -6,6 +6,14 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.shuffleboard.DriverStationTab;
+import frc.robot.shuffleboard.ShuffleboardInfo;
+import frc.robot.shuffleboard.ShuffleboardTabBase;
+import frc.robot.shuffleboard.SwerveTab;
+import frc.robot.util.TunableNumber;
+
+import java.util.ArrayList;
+
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -24,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
+	private final ShuffleboardInfo shuffleboard;
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController m_driverController = new CommandXboxController(
@@ -35,6 +44,18 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Configure the trigger bindings
 		configureBindings();
+
+		new TunableNumber();
+		shuffleboard = ShuffleboardInfo.getInstance();
+		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
+		// YOUR CODE HERE | | |
+		// \/ \/ \/
+
+		tabs.add(new DriverStationTab());
+
+		tabs.add(new SwerveTab(null));
+		// STOP HERE
+		shuffleboard.addTabs(tabs);
 	}
 
 	/**
