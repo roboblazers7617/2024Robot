@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -15,6 +16,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
@@ -23,9 +25,7 @@ public class Vision extends SubsystemBase {
 	private final PhotonCamera intakeCamera = new PhotonCamera("intake_camera");
 	private final PhotonCamera shooterCamera = new PhotonCamera("shooter_camera");
 	private PhotonPipelineResult intakeCamResult;
-	private Optional<PhotonTrackedTarget> intakeCamBestTag;
 	private PhotonPipelineResult shooterCamResult;
-	private Optional<PhotonTrackedTarget> shooterCamBestTag;
 	private AprilTagFieldLayout fieldLayout;
 	private PhotonPoseEstimator intakeEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.INTAKE_CAMERA_POSITION);
 	private PhotonPoseEstimator shooterEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.SHOOTER_CAMERA_POSITION);
@@ -44,9 +44,13 @@ public class Vision extends SubsystemBase {
 		// This method will be called once per scheduler run
 		intakeCamResult = intakeCamera.getLatestResult();
 		shooterCamResult = shooterCamera.getLatestResult();
-
-		intakeCamBestTag = Optional.ofNullable(intakeCamResult.getBestTarget());
-		shooterCamBestTag = Optional.ofNullable(shooterCamResult.getBestTarget());
 	}
+	
+	public Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>> updateOdometry (){
+		return new Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>>(intakeEstimator.update(intakeCamResult), shooterEstimator.update(shooterCamResult));
+	}
+
+	
+
 
 }
