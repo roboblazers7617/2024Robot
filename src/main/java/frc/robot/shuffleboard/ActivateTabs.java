@@ -35,4 +35,10 @@ public class ActivateTabs extends Command {
 	public boolean isFinished() {
 		return true;
 	}
+
+	
+	@Override
+	public boolean runsWhenDisabled(){
+		return true;
+	}
 }
