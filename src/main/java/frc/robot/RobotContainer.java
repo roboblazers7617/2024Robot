@@ -6,11 +6,22 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.drivetrain.AbsoluteDriveState;
-import frc.robot.commands.drivetrain.FieldCentricDriveState;
+import frc.robot.shuffleboard.DriverStationTab;
+import frc.robot.shuffleboard.ShuffleboardInfo;
+import frc.robot.shuffleboard.ShuffleboardTabBase;
+import frc.robot.shuffleboard.SwerveTab;
+import frc.robot.util.TunableNumber;
+
+import java.util.ArrayList;
+
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import frc.robot.commands.drivetrain.AbsoluteDrive;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
@@ -34,30 +45,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
+	private final ShuffleboardInfo shuffleboard;
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
 	private final Drivetrain drivetrain = new Drivetrain();
 
-	private final FieldCentricDriveState fieldCentricDriveState = new FieldCentricDriveState(drivetrain,
+	private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			driverController.y(),
-			driverController.a(),
-			driverController.x(),
-			driverController.b());
-
-	private final AbsoluteDriveState absoluteDriveState = (new AbsoluteDriveState(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			driverController.y(),
-			driverController.a(),
-			driverController.x(),
-			driverController.b()));
+			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -71,6 +70,18 @@ public class RobotContainer {
 		// Configure the trigger bindings
 		// end of path planner stuff
 		configureBindings();
+
+		new TunableNumber();
+		shuffleboard = ShuffleboardInfo.getInstance();
+		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
+		// YOUR CODE HERE | | |
+		// \/ \/ \/
+
+		tabs.add(new DriverStationTab());
+
+		tabs.add(new SwerveTab(null));
+		// STOP HERE
+		shuffleboard.addTabs(tabs);
 	}
 
 	/**
@@ -88,11 +99,11 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
-		drivetrain.setDefaultCommand(fieldCentricDriveState);
+		drivetrain.setDefaultCommand(absoluteDrive);
 
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
 
-		driverController.povLeft().onTrue(
+		/*driverController.povLeft().onTrue(
 				Commands.either(
 						Commands.parallel(Commands.runOnce(() -> drivetrain.setDefaultCommand(absoluteDriveState))
 								.andThen(new ScheduleCommand(absoluteDriveState)),
@@ -102,12 +113,8 @@ public class RobotContainer {
 										drivetrain)
 										.andThen(new ScheduleCommand(fieldCentricDriveState)),
 								Commands.print(drivetrain.getDefaultCommand().getName())),
-						this::isFieldCentric));
+						this::isFieldCentric));*/
 	}
-
-	public boolean isFieldCentric(){
-		return drivetrain.getDefaultCommand() instanceof FieldCentricDriveState;
-	  }
 
 	/**
 	 * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -115,6 +122,7 @@ public class RobotContainer {
 	 * @return the command to run in autonomous
 	 */
 	public Command getAutonomousCommand() {
-		return Autos.getAuto();
+		// An example command will be run in autonomous
+		return new PathPlannerAuto("New Path auto");
 	}
 }

@@ -25,6 +25,10 @@ import com.pathplanner.lib.path.PathConstraints;
 public final class Constants {
 	private static final int THE_NUMBER_THREE = 7;
 
+	public static class TestNumber{
+		public static int number = 5;
+	}
+	
 	public static class OperatorConstants {
 		public static final double JOYSTICK_DEADBAND = 0.1;
 		public static final int DRIVER_CONTROLLER_PORT = 0;
