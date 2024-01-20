@@ -63,16 +63,13 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
+		//PathPlanner stuff
 		// Subsystem initialization
 
-		Shooter shooter = new Shooter();
-		Intake intake = new Intake();
-
 		// Register Named Commands
-		NamedCommands.registerCommand("shoot", shooter.shoot());
-		NamedCommands.registerCommand("intake", intake.intake());
-
+		
 		// Configure the trigger bindings
+		// end of path planner stuff
 		configureBindings();
 	}
 

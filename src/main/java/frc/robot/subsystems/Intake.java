@@ -45,9 +45,4 @@ public class Intake extends SubsystemBase {
 	private void setIntakeSpeed(double intakeSpeed) {
 		intakeMotor.set(intakeSpeed);
 	}
-
-	public Command intake() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'intake'");
-	}
 }

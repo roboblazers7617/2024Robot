@@ -41,8 +41,4 @@ public class Shooter extends SubsystemBase {
 
 	}
 
-	public Command shoot() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'shoot'");
-	}
 }
