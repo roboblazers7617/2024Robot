@@ -21,6 +21,7 @@ import frc.robot.commands.drivetrain.AbsoluteDrive;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -123,6 +124,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("New Path auto");
-	}
+		return new PathPlannerAuto("test auto rotate");
+		// return drivetrain.getAutonomousCommand("test path rotate", true);
+}
 }

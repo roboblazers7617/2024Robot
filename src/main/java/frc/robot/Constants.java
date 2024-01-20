@@ -45,7 +45,7 @@ public final class Constants {
 		public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(MAX_AUTO_LINEAR_VELOCITY,
 				MAX_AUTO_LINEAR_ACCELEARTION, MAX_AUTO_ANGULAR_VELOCITY, MAX_AUTO_ANGULAR_ACCELERATION);
 
-		public static final double LINEAR_AUTO_KP = 0;
+		public static final double LINEAR_AUTO_KP = 5;
 		public static final double LINEAR_AUTO_KI = 0;
 		public static final double LINEAR_AUTO_KD = 0;
 
