@@ -1,9 +1,11 @@
 package frc.robot.util;
 
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.TestNumber;
 
 
@@ -21,6 +23,7 @@ public class TunableNumber extends SubsystemBase{
 	// 2. declare 
 
 	private final IntegerEntry number;
+	private final DoubleEntry maxClimberHeight;
 	public TunableNumber(){
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
@@ -29,6 +32,8 @@ public class TunableNumber extends SubsystemBase{
 		// \/ \/ \/
 		number = networkTable.getIntegerTopic("other number").getEntry(0);
 		number.set(TestNumber.number);
+		maxClimberHeight = networkTable.getDoubleTopic("max climber height").getEntry(0);
+		maxClimberHeight.set(ClimberConstants.MAX_HEIGHT);
 		// /\ /\ /\
 		//  |  |  |
 	}
@@ -36,5 +41,6 @@ public class TunableNumber extends SubsystemBase{
 	@Override
 	public void periodic() {
 		TestNumber.number = (int) number.get();
+		ClimberConstants.MAX_HEIGHT = maxClimberHeight.get();
 	}
 }

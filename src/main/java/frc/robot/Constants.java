@@ -17,10 +17,27 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-	public static class TestNumber{
+	public static class TestNumber {
 		public static int number = 5;
 	}
-	
+
+	public static class ClimberConstants {
+		public static final int LEFT_MOTOR_ID = 500;// TODO
+		public static final int RIGHT_MOTOR_ID = 499;// TODO
+
+		public static double MAX_HEIGHT = 100;
+		public static final double KS = 0;
+		public static final double KG = 0;
+		public static final double KV = 0;
+		public static final double KP = 0;
+		public static final double KI = 0;
+		public static final double KD = 0;
+		public static final double POSITION_CONVERSION_FACTOR = 0;
+		public static final double VELOCITY_CONVERSION_FACTOR = 0;
+		public static final double ABS_POSITION_CONVERSION_FACTOR = 0;
+		public static final double ABS_VELOCITY_CONVERSION_FACTOR = 0;
+	}
+
 	public static class OperatorConstants {
 		public static final int kDriverControllerPort = 0;
 	}
