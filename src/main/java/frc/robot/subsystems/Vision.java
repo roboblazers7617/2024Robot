@@ -17,9 +17,9 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
-
 
 public class Vision extends SubsystemBase {
 	private final PhotonCamera intakeCamera = new PhotonCamera("intake_camera");
@@ -27,8 +27,10 @@ public class Vision extends SubsystemBase {
 	private PhotonPipelineResult intakeCamResult;
 	private PhotonPipelineResult shooterCamResult;
 	private AprilTagFieldLayout fieldLayout;
-	private PhotonPoseEstimator intakeEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.INTAKE_CAMERA_POSITION);
-	private PhotonPoseEstimator shooterEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.SHOOTER_CAMERA_POSITION);
+	private PhotonPoseEstimator intakeEstimator = new PhotonPoseEstimator(fieldLayout,
+			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.INTAKE_CAMERA_POSITION);
+	private PhotonPoseEstimator shooterEstimator = new PhotonPoseEstimator(fieldLayout,
+			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.SHOOTER_CAMERA_POSITION);
 
 	/** Creates a new Vision. */
 	public Vision() {
@@ -45,12 +47,24 @@ public class Vision extends SubsystemBase {
 		intakeCamResult = intakeCamera.getLatestResult();
 		shooterCamResult = shooterCamera.getLatestResult();
 	}
-	
-	public Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>> updateOdometry (){
-		return new Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>>(intakeEstimator.update(intakeCamResult), shooterEstimator.update(shooterCamResult));
+
+	public Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>> updateOdometry() {
+		return new Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>>(
+				intakeEstimator.update(intakeCamResult), shooterEstimator.update(shooterCamResult));
 	}
 
-	
+	public Optional<Transform3d> findTag(int tagNumber) {
+		for (PhotonTrackedTarget target : intakeCamResult.getTargets()) {
+			if (target.getFiducialId() == tagNumber)
+				return Optional
+						.of(target.getBestCameraToTarget().plus(VisionConstants.INTAKE_CAMERA_POSITION.inverse()));
+		}
 
-
+		for (PhotonTrackedTarget target : shooterCamResult.getTargets()) {
+			if (target.getFiducialId() == tagNumber)
+				return Optional
+						.of(target.getBestCameraToTarget().plus(VisionConstants.SHOOTER_CAMERA_POSITION.inverse()));
+		}
+		return Optional.empty();
+	}
 }
