@@ -124,7 +124,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("test auto rotate");
+		return new PathPlannerAuto("test auto forwardback");
 		// return drivetrain.getAutonomousCommand("test path rotate", true);
 }
 }

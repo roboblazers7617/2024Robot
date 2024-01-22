@@ -41,6 +41,7 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
 
 public class Drivetrain extends SubsystemBase
 {
@@ -63,7 +64,7 @@ public class Drivetrain extends SubsystemBase
   public Drivetrain()
   {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
     try
     {
       swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(maximumSpeed);
@@ -102,14 +103,14 @@ public class Drivetrain extends SubsystemBase
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                                         new PIDConstants(5.0, 0.0, 0.0),
+                                         new PIDConstants(AutoConstants.LINEAR_AUTO_KP, AutoConstants.LINEAR_AUTO_KI, AutoConstants.LINEAR_AUTO_KD),
                                          // Translation PID constants
                                          new PIDConstants(
 														swerveDrive.swerveController.config.headingPIDF.p,
                                                         swerveDrive.swerveController.config.headingPIDF.i,
                                                         swerveDrive.swerveController.config.headingPIDF.d),
                                          // Rotation PID constants
-                                         0.1,
+                                         4.5,
                                          // Max module speed, in m/s
                                          swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
                                          // Drive base radius in meters. Distance from robot center to furthest module.
