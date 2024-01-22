@@ -15,7 +15,7 @@ import frc.Animations.BounceAnimation;
 import frc.Animations.SolidColorPattern;
 
 public class LED extends SubsystemBase {
-	private final LedStrip strip = new LedStrip(1, 60);
+	private final LedStrip strip = new LedStrip(1, 180);
 	private int currentMode = -1;
 
 	@Override
