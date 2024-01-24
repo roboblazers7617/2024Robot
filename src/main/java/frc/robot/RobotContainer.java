@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.LED;
 import frc.robot.shuffleboard.DriverStationTab;
+import frc.robot.shuffleboard.LEDTab;
 import frc.robot.shuffleboard.ShuffleboardInfo;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
@@ -70,6 +71,8 @@ public class RobotContainer {
 		tabs.add(new DriverStationTab());
 
 		tabs.add(new SwerveTab(null));
+
+		tabs.add(new LEDTab(led));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
