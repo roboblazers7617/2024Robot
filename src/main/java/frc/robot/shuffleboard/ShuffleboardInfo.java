@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShuffleboardInfo extends SubsystemBase {
@@ -15,6 +16,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 
 	private static ShuffleboardInfo instance;
 	private String[] copyTables;
+	private boolean isActivated = false;
 
 	public static ShuffleboardInfo getInstance() {
 		if (instance == null) {
@@ -35,18 +37,24 @@ public class ShuffleboardInfo extends SubsystemBase {
 	}
 
 	public void activateTabs() {
-		System.out.println("function being called");
-		for (int i = 1; i < tabs.size(); i++) {
-			if (tabs.get(i) != null) {
-				tabs.get(i).activateShuffleboard();
-				copyTables[i - 1] = tabs.get(i).getNetworkTable();
+		if (isActivated == false) {
+			isActivated = true;
+			System.out.println("function being called");
+			for (int i = 1; i < tabs.size(); i++) {
+				if (tabs.get(i) != null) {
+					tabs.get(i).activateShuffleboard();
+					copyTables[i - 1] = tabs.get(i).getNetworkTable();
+				}
 			}
 		}
 	}
 
 	@Override
 	public void periodic() {
-
+		// if robot is not connected to the field system, enable shuffleboard
+		if (!DriverStation.isFMSAttached()) {
+			activateTabs();
+		}
 		// This method will be called once per scheduler run
 		// it will update every tab
 		if (tabs != null) {
