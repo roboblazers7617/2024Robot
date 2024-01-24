@@ -21,21 +21,28 @@ public class LED extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (DriverStation.isEStopped() && currentMode != 0) {
-			setEStopAnimation();
+		if (!DriverStation.isDSAttached() && currentMode != 0) {
+			setDisconnectedAnimation();
 			currentMode = 0;
-		} else if (DriverStation.isDisabled() && currentMode != 1) {
-			setIdleAnimation();
+		} else if (DriverStation.isEStopped() && DriverStation.isDSAttached() && currentMode != 1) {
+			setEStopAnimation();
 			currentMode = 1;
-		} else if (DriverStation.isAutonomousEnabled() && currentMode != 2) {
-			setAutoColor();
+		} else if (DriverStation.isDisabled() && DriverStation.isDSAttached() && currentMode != 2) {
+			setIdleAnimation();
 			currentMode = 2;
-		} else if (DriverStation.isTeleopEnabled() && currentMode != 3) {
-			setTeleopColor();
+		} else if (DriverStation.isAutonomousEnabled() && DriverStation.isDSAttached() && currentMode != 3) {
+			setAutoColor();
 			currentMode = 3;
+		} else if (DriverStation.isTeleopEnabled() && DriverStation.isDSAttached() && currentMode != 4) {
+			setTeleopColor();
+			currentMode = 4;
 		}
 	}
 
+	public void setDisconnectedAnimation() {
+		strip.setAnimation(new BlinkAnimation(strip, PredefinedColors.kBlack, PredefinedColors.kBlue));
+	}
+	
 	public void setEStopAnimation() {
 		strip.setAnimation(new BounceAnimation(strip, PredefinedColors.kRed, PredefinedColors.kOrange, 10));
 	}
