@@ -22,7 +22,7 @@ public class LED extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		if (DriverStation.isEStopped() && currentMode != 0) {
-			setDisabledColor();
+			setEStopAnimation();
 			currentMode = 0;
 		} else if (DriverStation.isDisabled() && currentMode != 1) {
 			setIdleAnimation();
@@ -36,12 +36,12 @@ public class LED extends SubsystemBase {
 		}
 	}
 
+	public void setEStopAnimation() {
+		strip.setAnimation(new BounceAnimation(strip, PredefinedColors.kRed, PredefinedColors.kOrange, 10));
+	}
+	
 	public void setIdleAnimation() {
 		strip.setAnimation(new BounceAnimation(strip, strip.getAllianceColor(), PredefinedColors.kWhite, 10));
-	}
-
-	public void setDisabledColor() {
-		strip.setAnimation(new BounceAnimation(strip, PredefinedColors.kRed, PredefinedColors.kOrange, 10));
 	}
 
 	public void setAutoColor() {
