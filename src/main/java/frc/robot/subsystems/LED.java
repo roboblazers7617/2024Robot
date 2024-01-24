@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.LLColor;
 import frc.LedStrip;
@@ -17,10 +18,11 @@ import frc.Animations.SolidColorPattern;
 public class LED extends SubsystemBase {
 	private final LedStrip strip = new LedStrip(1, 180);
 	private int currentMode = -1;
+	private String currentAlliance = DriverStation.getAlliance().toString();
 
 	@Override
 	public void periodic() {
-		// This method will be called once per scheduler run
+		// Set LED animations if robot mode has changed
 		if (!DriverStation.isDSAttached() && currentMode != 0) {
 			setDisconnectedAnimation();
 			currentMode = 0;
@@ -36,6 +38,12 @@ public class LED extends SubsystemBase {
 		} else if (DriverStation.isTeleopEnabled() && DriverStation.isDSAttached() && currentMode != 4) {
 			setTeleopColor();
 			currentMode = 4;
+		}
+
+		// Trigger animation change when alliance changes for animations that use the alliance color
+		if (!currentAlliance.equals(DriverStation.getAlliance().toString()) && (currentMode == 2 || currentMode == 3)) {
+			currentMode = -1;
+			currentAlliance = DriverStation.getAlliance().toString();
 		}
 	}
 
