@@ -4,6 +4,12 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.MutableMeasure.mutable;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -16,9 +22,18 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -30,11 +45,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
+import swervelib.motors.SwerveMotor;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -46,10 +64,11 @@ import frc.robot.Constants.AutoConstants;
 public class Drivetrain extends SubsystemBase
 {
 
+
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive swerveDrive;
+  private SwerveDrive swerveDrive;
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
@@ -453,5 +472,92 @@ public class Drivetrain extends SubsystemBase
   public void addFakeVisionReading()
   {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  }
+
+
+ // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
+ private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
+  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
+  private final MutableMeasure<Distance> m_distance = mutable(Meters.of(0));
+  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
+  private final MutableMeasure<Velocity<Distance>> m_velocity = mutable(MetersPerSecond.of(0));
+
+  // Create a new SysId routine for characterizing the drive.
+  private final SysIdRoutine m_sysIdRoutine =
+      new SysIdRoutine(
+
+          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+          new SysIdRoutine.Config(),
+          new SysIdRoutine.Mechanism(
+              // Tell SysId how to plumb the driving voltage to the motors.
+              (Measure<Voltage> volts) -> {
+                swerveDrive.getModules()[0].getDriveMotor().setVoltage(volts.in(Volts));
+                swerveDrive.getModules()[1].getDriveMotor().setVoltage(volts.in(Volts));
+				swerveDrive.getModules()[2].getDriveMotor().setVoltage(volts.in(Volts));
+				swerveDrive.getModules()[3].getDriveMotor().setVoltage(volts.in(Volts));
+              },
+              // Tell SysId how to record a frame of data for each motor on the mechanism being
+              // characterized.
+              log -> {
+                // Record a frame for the left motors.  Since these share an encoder, we consider
+                // the entire group to be one motor.
+                log.motor("drive-leftfront")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            swerveDrive.getModules()[0].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[0].getDriveMotor().getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(swerveDrive.getModules()[0].getDriveMotor().getVelocity(), MetersPerSecond));
+
+                log.motor("drive-rightfront")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                             swerveDrive.getModules()[1].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[1].getDriveMotor().getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(swerveDrive.getModules()[1].getDriveMotor().getVelocity(), MetersPerSecond));
+
+				log.motor("drive-leftback")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                             swerveDrive.getModules()[2].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[2].getDriveMotor().getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(swerveDrive.getModules()[2].getDriveMotor().getVelocity(), MetersPerSecond));
+
+                log.motor("drive-rightback")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            swerveDrive.getModules()[3].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[3].getDriveMotor().getPosition(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(swerveDrive.getModules()[3].getDriveMotor().getVelocity(), MetersPerSecond));		
+              },
+              // Tell SysId to make generated commands require this subsystem, suffix test state in
+              // WPILog with this subsystem's name ("drive")
+              this));
+
+  /** Creates a new Drive subsystem. */
+//   public SysIdDrive() {
+//     // Add the second motors on each side of the drivetrain
+//     m_leftMotor.addFollower(new PWMSparkMax(DriveConstants.kLeftMotor2Port));
+//     m_rightMotor.addFollower(new PWMSparkMax(DriveConstants.kRightMotor2Port));
+
+//     // We need to invert one side of the drivetrain so that positive voltages
+//     // result in both sides moving forward. Depending on how your robot's
+//     // gearbox is constructed, you might have to invert the left side instead.
+//     m_rightMotor.setInverted(true);
+
+//     // Sets the distance per pulse for the encoders
+//     m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+//     m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+//   }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
   }
 }
