@@ -1,5 +1,5 @@
 {
     "editor.insertSpaces": false,
 	"editor.detectIndentation": false,
-	"java.configuration.updateBuildConfiguration": "automatic"
+	"java.configuration.updateBuildConfiguration": "interactive"
 }

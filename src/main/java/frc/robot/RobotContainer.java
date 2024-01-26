@@ -6,7 +6,25 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.shuffleboard.DriverStationTab;
+import frc.robot.shuffleboard.ShuffleboardInfo;
+import frc.robot.shuffleboard.ShuffleboardTabBase;
+import frc.robot.shuffleboard.SwerveTab;
+import frc.robot.util.TunableNumber;
+
+import java.util.ArrayList;
+
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import frc.robot.commands.drivetrain.AbsoluteDrive;
+import frc.robot.commands.drivetrain.LockWheelsState;
+import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -21,10 +39,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
+	private final ShuffleboardInfo shuffleboard;
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
-	private final CommandXboxController m_driverController = new CommandXboxController(
-			OperatorConstants.kDriverControllerPort);
+	private final CommandXboxController driverController = new CommandXboxController(
+			OperatorConstants.DRIVER_CONTROLLER_PORT);
+	private final Drivetrain drivetrain = new Drivetrain();
+
+	private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -32,6 +58,18 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Configure the trigger bindings
 		configureBindings();
+
+		new TunableNumber();
+		shuffleboard = ShuffleboardInfo.getInstance();
+		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
+		// YOUR CODE HERE | | |
+		// \/ \/ \/
+
+		tabs.add(new DriverStationTab());
+
+		tabs.add(new SwerveTab(null));
+		// STOP HERE
+		shuffleboard.addTabs(tabs);
 	}
 
 	/**
@@ -49,6 +87,21 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
+		drivetrain.setDefaultCommand(absoluteDrive);
+
+		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+
+		/*driverController.povLeft().onTrue(
+				Commands.either(
+						Commands.parallel(Commands.runOnce(() -> drivetrain.setDefaultCommand(absoluteDriveState))
+								.andThen(new ScheduleCommand(absoluteDriveState)),
+								Commands.print(drivetrain.getDefaultCommand().getName())),
+						Commands.parallel(
+								Commands.runOnce(() -> drivetrain.setDefaultCommand(fieldCentricDriveState),
+										drivetrain)
+										.andThen(new ScheduleCommand(fieldCentricDriveState)),
+								Commands.print(drivetrain.getDefaultCommand().getName())),
+						this::isFieldCentric));*/
 	}
 
 	/**
@@ -58,6 +111,6 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return Autos.nullAuto();
+		return new PathPlannerAuto("New Path auto");
 	}
 }
