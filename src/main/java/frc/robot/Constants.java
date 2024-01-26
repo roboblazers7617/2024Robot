@@ -38,7 +38,7 @@ public final class Constants {
 	public static class AutoConstants {
 		// TODO make these real numbers
 
-		public static double LINEAR_AUTO_KP = 2;
+		public static final double LINEAR_AUTO_KP = 5;
 		public static final double LINEAR_AUTO_KI = 0;
 		public static final double LINEAR_AUTO_KD = 0;
 
