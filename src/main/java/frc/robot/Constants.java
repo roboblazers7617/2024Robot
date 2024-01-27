@@ -43,7 +43,7 @@ public final class Constants {
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = (360*GEAR_RATIO) / 60; // what is this
 
 		public static final int SLOT_ID = 0;
-		public static final double MAX_VELOCITY = 0.2;
+		public static final double MAX_VELOCITY = 0.1;
 		public static final double MAX_ACCELERATION = 1;
 		public static final double MAX_ERROR = 0.02;
 	}
