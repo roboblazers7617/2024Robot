@@ -46,13 +46,13 @@ public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
-	private final Drivetrain drivetrain = new Drivetrain();
+	// private final Drivetrain drivetrain = new Drivetrain();
 
-	private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
+	// private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
+	// 		() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
+	// 		() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
+	// 		() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
+	// 		() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -90,9 +90,9 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
-		drivetrain.setDefaultCommand(absoluteDrive);
+		// drivetrain.setDefaultCommand(absoluteDrive);
 
-		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+		// driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
 
 		/*driverController.povLeft().onTrue(
 				Commands.either(

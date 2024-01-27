@@ -31,20 +31,21 @@ public final class Constants {
 
 		public static double MAX_HEIGHT = 0.15;
 		public static final double KS = 0;
-		public static final double KG = 0;
+		public static final double KG = 0.1;
 		public static final double KV = 0;
-		public static final double KP = 0;
+		public static final double KP = 0.004;
 		public static final double KI = 0;
 		public static final double KD = 0;
-		public static final double POSITION_CONVERSION_FACTOR = 0;
-		public static final double VELOCITY_CONVERSION_FACTOR = 0;
-		public static final double ABS_POSITION_CONVERSION_FACTOR = 0;
-		public static final double ABS_VELOCITY_CONVERSION_FACTOR = 0;
+		// public static final double POSITION_CONVERSION_FACTOR = 16;
+		// public static final double VELOCITY_CONVERSION_FACTOR = 0;
+		public static final double GEAR_RATIO = 1.0/16.0;
+		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
+		public static final double ABS_VELOCITY_CONVERSION_FACTOR = (360*GEAR_RATIO) / 60; // what is this
 
 		public static final int SLOT_ID = 0;
-		public static final double MAX_VELOCITY = 0;
-		public static final double MAX_ACCELERATION = 0;
-		public static final double MAX_ERROR = 0;
+		public static final double MAX_VELOCITY = 0.2;
+		public static final double MAX_ACCELERATION = 1;
+		public static final double MAX_ERROR = 0.02;
 	}
 
 	public static class OperatorConstants {

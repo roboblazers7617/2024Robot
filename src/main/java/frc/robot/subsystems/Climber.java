@@ -36,36 +36,40 @@ public class Climber extends SubsystemBase {
 	/** Creates a new Climber. */
 	public Climber() {
 		rightMotor.restoreFactoryDefaults();
-		rightMotor.setIdleMode(IdleMode.kCoast);
+		rightMotor.setIdleMode(IdleMode.kBrake);
+		rightMotor.setSmartCurrentLimit(20);
 
 		leftMotor.restoreFactoryDefaults();
-		leftMotor.setIdleMode(IdleMode.kCoast);
+		leftMotor.setIdleMode(IdleMode.kBrake);
+		leftMotor.setSmartCurrentLimit(20);
 
 		rightPIDController.setP(ClimberConstants.KP);
 		rightPIDController.setI(ClimberConstants.KI);
 		rightPIDController.setD(ClimberConstants.KD);
-		rightPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
-		rightPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
-		rightPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
-		rightPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
+		rightPIDController.setFeedbackDevice(rightAbsoluteEncoder);
+		// rightPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
 
 		leftPIDController.setP(ClimberConstants.KP);
 		leftPIDController.setI(ClimberConstants.KI);
 		leftPIDController.setD(ClimberConstants.KD);
-		leftPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
-		leftPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
-		leftPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
-		leftPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
+		leftPIDController.setFeedbackDevice(leftAbsoluteEncoder);
+		// leftPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
+		// leftPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
+		// leftPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
+		// leftPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
 
 		rightAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
 		rightAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
 		// rightAbsoluteEncoder.setZeroOffset(ClimberConstants.OFFSET);
-		rightAbsoluteEncoder.setInverted(true);
+		rightAbsoluteEncoder.setInverted(false);
 
 		leftAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
 		leftAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
 		// leftAbsoluteEncoder.setZeroOffset(ClimberConstants.OFFSET);
-		leftAbsoluteEncoder.setInverted(true);
+		leftAbsoluteEncoder.setInverted(false);
 
 		// TODO make one inverted
 	}
