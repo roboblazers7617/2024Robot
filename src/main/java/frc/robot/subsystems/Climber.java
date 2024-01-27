@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -20,20 +19,19 @@ import frc.robot.Constants.ClimberConstants;
 public class Climber extends SubsystemBase {
 	// Right motor and encoder
 	private final CANSparkMax rightMotor = new CANSparkMax(ClimberConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-	private final RelativeEncoder rightEncoder = rightMotor.getEncoder();
 	private final AbsoluteEncoder rightAbsoluteEncoder = rightMotor
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 	private final SparkPIDController rightPIDController = rightMotor.getPIDController();
 
 	// Left motor and encoder
 	private final CANSparkMax leftMotor = new CANSparkMax(ClimberConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-	private final RelativeEncoder leftEncoder = leftMotor.getEncoder();
 	private final AbsoluteEncoder leftAbsoluteEncoder = leftMotor
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 	private final SparkPIDController leftPIDController = leftMotor.getPIDController();
 
-	// private final ArmFeedforward feedFoward = new ArmFeedforward(ClimberConstants.KS, ClimberConstants.KG,
-			// ClimberConstants.KV);
+	// private final ArmFeedforward feedFoward = new
+	// ArmFeedforward(ClimberConstants.KS, ClimberConstants.KG,
+	// ClimberConstants.KV);
 
 	/** Creates a new Climber. */
 	public Climber() {
@@ -43,16 +41,21 @@ public class Climber extends SubsystemBase {
 		leftMotor.restoreFactoryDefaults();
 		leftMotor.setIdleMode(IdleMode.kCoast);
 
-		rightEncoder.setPositionConversionFactor(ClimberConstants.POSITION_CONVERSION_FACTOR);
-		leftEncoder.setPositionConversionFactor(ClimberConstants.VELOCITY_CONVERSION_FACTOR);
-
 		rightPIDController.setP(ClimberConstants.KP);
 		rightPIDController.setI(ClimberConstants.KI);
 		rightPIDController.setD(ClimberConstants.KD);
+		rightPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
+		rightPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
+		rightPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
+		rightPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
 
 		leftPIDController.setP(ClimberConstants.KP);
 		leftPIDController.setI(ClimberConstants.KI);
 		leftPIDController.setD(ClimberConstants.KD);
+		leftPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
+		leftPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
+		leftPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
+		leftPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
 
 		rightAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
 		rightAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
@@ -75,16 +78,13 @@ public class Climber extends SubsystemBase {
 	public void lowerClimber() {
 		setTarget(0);
 	}
+
 	private void setTarget(double target) {
 		rightPIDController.setReference(target, CANSparkBase.ControlType.kPosition);
 		leftPIDController.setReference(target, CANSparkBase.ControlType.kPosition);
-		// leftPIDController.setReference(target, CANSparkMax.ControlType.kPosition,0,2, feedFoward.calculate(target*(Math.PI/80)));
-		
-	}
+		// leftPIDController.setReference(target, CANSparkMax.ControlType.kPosition,0,2,
+		// feedFoward.calculate(target*(Math.PI/80)));
 
-	public void syncEncoders(){
-		rightEncoder.setPosition(rightAbsoluteEncoder.getPosition());
-		leftEncoder.setPosition(leftAbsoluteEncoder.getPosition());
 	}
 
 	@Override
@@ -93,14 +93,6 @@ public class Climber extends SubsystemBase {
 	}
 
 	// get info functions
-	public double getRightEncoderPosition() {
-		return rightEncoder.getPosition();
-	}
-
-	public double getLeftEncoderPosition() {
-		return leftEncoder.getPosition();
-	}
-
 	public double getRightAbsoluteEncoderPosition() {
 		return rightAbsoluteEncoder.getPosition();
 	}
@@ -110,3 +102,4 @@ public class Climber extends SubsystemBase {
 	}
 
 }
+

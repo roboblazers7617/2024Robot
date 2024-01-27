@@ -26,10 +26,10 @@ public final class Constants {
 	}
 
 	public static class ClimberConstants {
-		public static final int LEFT_MOTOR_ID = 500;// TODO
+		public static final int LEFT_MOTOR_ID = 5; // for test arm
 		public static final int RIGHT_MOTOR_ID = 499;// TODO
 
-		public static double MAX_HEIGHT = 100;
+		public static double MAX_HEIGHT = 0.15;
 		public static final double KS = 0;
 		public static final double KG = 0;
 		public static final double KV = 0;
@@ -40,6 +40,11 @@ public final class Constants {
 		public static final double VELOCITY_CONVERSION_FACTOR = 0;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 0;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = 0;
+
+		public static final int SLOT_ID = 0;
+		public static final double MAX_VELOCITY = 0;
+		public static final double MAX_ACCELERATION = 0;
+		public static final double MAX_ERROR = 0;
 	}
 
 	public static class OperatorConstants {
