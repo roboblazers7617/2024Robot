@@ -11,6 +11,7 @@ import frc.robot.shuffleboard.ShuffleboardInfo;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
 import frc.robot.util.TunableNumber;
+import swervelib.SwerveDrive;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ import frc.robot.commands.drivetrain.AbsoluteDrive;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.subsystems.Intake;
@@ -31,9 +33,11 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -103,6 +107,13 @@ public class RobotContainer {
 		drivetrain.setDefaultCommand(absoluteDrive);
 
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+
+		 driverController.a().whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    	 driverController.b().whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    	 driverController.x().whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    	 driverController.y().whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+		 driverController.povUp().onTrue(new InstantCommand(()->drivetrain.setWheelsForward()));
+		
 
 		/*driverController.povLeft().onTrue(
 				Commands.either(

@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.BaseUnits;
@@ -83,7 +84,7 @@ public class Drivetrain extends SubsystemBase
   public Drivetrain()
   {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
       swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(maximumSpeed);
@@ -97,6 +98,7 @@ public class Drivetrain extends SubsystemBase
 
     setupPathPlanner();
 
+	
     
   }
 
@@ -366,6 +368,14 @@ public class Drivetrain extends SubsystemBase
     return swerveDrive.getYaw();
   }
 
+  public void setWheelsForward()
+  {
+	swerveDrive.getModules()[0].setDesiredState(new SwerveModuleState(0, new Rotation2d(0)), false, true);
+	swerveDrive.getModules()[1].setDesiredState(new SwerveModuleState(0, new Rotation2d(0)), false, true);
+	swerveDrive.getModules()[2].setDesiredState(new SwerveModuleState(0, new Rotation2d(0)), false, true);
+	swerveDrive.getModules()[3].setDesiredState(new SwerveModuleState(0, new Rotation2d(0)), false, true);
+  }
+
   /**
    * Get the chassis speeds based on controller input of 2 joysticks. One for speeds in which direction. The other for
    * the angle of the robot.
@@ -495,6 +505,7 @@ public class Drivetrain extends SubsystemBase
                 swerveDrive.getModules()[1].getDriveMotor().setVoltage(volts.in(Volts));
 				swerveDrive.getModules()[2].getDriveMotor().setVoltage(volts.in(Volts));
 				swerveDrive.getModules()[3].getDriveMotor().setVoltage(volts.in(Volts));
+				//TODO: angle motors to 0
               },
               // Tell SysId how to record a frame of data for each motor on the mechanism being
               // characterized.
