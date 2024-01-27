@@ -23,7 +23,7 @@ import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase {
 	private final PhotonCamera intakeCamera = new PhotonCamera("intake_camera");
-	private final PhotonCamera shooterCamera = new PhotonCamera("shooter_camera");
+	//private final PhotonCamera shooterCamera = new PhotonCamera("shooter_camera");
 	private PhotonPipelineResult intakeCamResult;
 	private PhotonPipelineResult shooterCamResult;
 	private AprilTagFieldLayout fieldLayout;
@@ -45,7 +45,7 @@ public class Vision extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		intakeCamResult = intakeCamera.getLatestResult();
-		shooterCamResult = shooterCamera.getLatestResult();
+		shooterCamResult = new PhotonPipelineResult();//shooterCamera.getLatestResult();
 	}
 
 	public Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>> updateOdometry() {

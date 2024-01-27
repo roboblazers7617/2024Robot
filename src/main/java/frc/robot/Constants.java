@@ -107,7 +107,7 @@ public final class Constants {
 
 	public static class VisionConstants{
 
-		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
+		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(26 + 5/8), Units.inchesToMeters(1/8), Units.inchesToMeters(7), new Rotation3d(0, 0, 0));
 		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
 	}
