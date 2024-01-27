@@ -56,7 +56,8 @@ public final class Constants {
 				ROBOT_MASS);
 		/** Time to brake the chassis for after the robot is disabled, in seconds */
 		public static final double BRAKE_TIMER_DURATION = 10;
-		public static final double MAX_SPEED = 4.7;
+		public static final double MAX_SPEED =0.4;
+		public static final double ROTATION_MULTIPLIER = 0.4; 
 
 	}
 
