@@ -124,7 +124,7 @@ public class Drivetrain extends SubsystemBase
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                                         new PIDConstants(AutoConstants.LINEAR_AUTO_KP, AutoConstants.LINEAR_AUTO_KI, AutoConstants.LINEAR_AUTO_KD),
+                                         new PIDConstants(5, 0, 0),
                                          // Translation PID constants
                                          new PIDConstants(
 														swerveDrive.swerveController.config.headingPIDF.p,

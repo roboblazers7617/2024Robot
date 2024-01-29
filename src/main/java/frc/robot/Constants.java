@@ -38,13 +38,18 @@ public final class Constants {
 	public static class AutoConstants {
 		// TODO make these real numbers
 
-		public static final double LINEAR_AUTO_KP = 5;
-		public static final double LINEAR_AUTO_KI = 0;
-		public static final double LINEAR_AUTO_KD = 0;
-
-		public static final double ROTATIONAL_AUTO_KP = 0;
-		public static final double ROTATION_AUTO_KI = 0;
-		public static final double ROTATION_AUTO_KD = 0;
+		public static final double FRONT_LEFT_KP = 0;
+		public static final double FRONT_LEFT_KI = 0;
+		public static final double FRONT_LEFT_KD = 0;
+		public static final double FRONT_RIGHT_KP = 0;
+		public static final double FRONT_RIGHT_KI = 0;
+		public static final double FRONT_RIGHT_KD = 0;
+		public static final double BACK_LEFT_KP = 0;
+		public static final double BACK_LEFT_KI = 0;
+		public static final double BACK_LEFT_KD = 0;
+		public static final double BACK_RIGHT_KP = 0;
+		public static final double BACK_RIGHT_KI = 0;
+		public static final double BACK_RIGHT_KD = 0;
 	}
 
 	public static class SwerveConstants {
