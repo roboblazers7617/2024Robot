@@ -65,10 +65,12 @@ public class Robot extends TimedRobot {
 	/** This function is called once each time the robot enters Disabled mode. */
 	@Override
 	public void disabledInit() {
+			//TODO: Add logic to set brake mode to idle after timeout. Look at YAGSL example code
 	}
 
 	@Override
 	public void disabledPeriodic() {
+		//TODO: Add logic to set brake mode to idle after timeout. Look at YAGSL example code
 	}
 
 	/**
@@ -83,6 +85,10 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
 		}
+		//TODO: Do we need to set the brake mode for the drivetrain? Is that defaulted anywhere?
+		// See YAGSL Example code
+
+
 	}
 
 	/** This function is called periodically during autonomous. */
@@ -99,6 +105,10 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+
+		//TODO: Do we need to set the brake mode for the drivetrain? Is that defaulted anywhere?
+		// See YAGSL Example code
+
 	}
 
 	/** This function is called periodically during operator control. */

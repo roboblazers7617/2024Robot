@@ -52,10 +52,23 @@ public class RobotContainer {
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
+	//TODO: We don't need this command. There is a command already in Drivetrain that does this
+	// HOWEVER that command does not limit velocity based on mass of the robot. So perhaps keep?
 	private final VelocityRotationDrive rotationDrive = (new VelocityRotationDrive(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
+
+	//TODO: Use this instead
+	   // Applies deadbands and inverts controls because joysticks
+    // are back-right positive while robot
+    // controls are front-left positive
+    // left stick controls translation
+    // right stick controls the angular velocity of the robot
+    // Command driveFieldOrientedAnglularVelocity = drivetrain.driveCommand(
+			// () -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
+			// () -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			// () -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.

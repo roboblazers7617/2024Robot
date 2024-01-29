@@ -44,6 +44,8 @@ public class Drivetrain extends SubsystemBase
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
+
+   //TODO: This needs to be in the constants file
   public        double      maximumSpeed = Units.feetToMeters(14.5);
   private double maxDrivetrainTestSpeed = 0.3;
 
@@ -67,6 +69,7 @@ public class Drivetrain extends SubsystemBase
     }
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
 
+	//TODO: See above. Are we setting headingcorrection to true for velocity control?
     setupPathPlanner();
 
     
@@ -159,6 +162,7 @@ public class Drivetrain extends SubsystemBase
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
                                                                       headingX.getAsDouble(),
                                                                       headingY.getAsDouble(),
+	//TODO: YAGSL example code now uses swerveDrive.getOdometryHeading().getRadians() instead of getYaw
                                                                       swerveDrive.getYaw().getRadians(),
                                                                       swerveDrive.getMaximumVelocity()));
     });
@@ -180,6 +184,7 @@ public class Drivetrain extends SubsystemBase
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
                                                                       translationY.getAsDouble(),
                                                                       rotation.getAsDouble() * Math.PI,
+		//TODO: YAGSL example code now uses swerveDrive.getOdometryHeading().getRadians() instead of getYaw
                                                                       swerveDrive.getYaw().getRadians(),
                                                                       swerveDrive.getMaximumVelocity()));
     });
@@ -221,6 +226,8 @@ public class Drivetrain extends SubsystemBase
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection)
   {
+	//TODO: Add logic to remember what the headingcorrection setting was and at the end of this function
+	// set it back to that rather than default to false
 	swerveDrive.setHeadingCorrection(headingCorrection);
     swerveDrive.drive(translation,
                       rotation,
@@ -334,6 +341,7 @@ public class Drivetrain extends SubsystemBase
    *
    * @return The yaw angle
    */
+  //TODO: YAGSL example now changes this to use the pose estimator rather than the reading from IMU. 
   public Rotation2d getHeading()
   {
     return swerveDrive.getYaw();
@@ -361,6 +369,8 @@ public class Drivetrain extends SubsystemBase
                                                         maximumSpeed);
   }
 
+  //TODO: This is not consistent between the various getTargetSpeed functions. This one sets our Max, but I think this needs
+  // to move somewhere else or could cause issues down the line? And inconsistent behavior between the different functions
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
 	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED;
 	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED;
