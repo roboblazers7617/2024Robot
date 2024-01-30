@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.SwerveConstants;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -217,12 +219,14 @@ public class Drivetrain extends SubsystemBase
    *                      relativity.
    * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
    */
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative)
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection)
   {
+	swerveDrive.setHeadingCorrection(headingCorrection);
     swerveDrive.drive(translation,
                       rotation,
                       fieldRelative,
-                      false); // Open loop is disabled since it shouldn't be used most of the time.
+                      isOpenLoop); // Open loop is disabled since it shouldn't be used most of the time.
+	swerveDrive.setHeadingCorrection(false);
   }
 
   /**
@@ -356,6 +360,15 @@ public class Drivetrain extends SubsystemBase
                                                         getHeading().getRadians(),
                                                         maximumSpeed);
   }
+
+  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
+	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED;
+	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED;
+	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity * SwerveConstants.ROTATION_MULTIPLIER;
+
+	return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, thetaInput);
+
+}
 
   /**
    * Get the chassis speeds based on controller input of 1 joystick and one angle. Control the robot at an offset of
