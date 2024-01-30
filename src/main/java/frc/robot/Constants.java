@@ -103,4 +103,6 @@ public final class Constants {
 		public static final int IDLE_SPEED = 0;
 
 	}
+
+	public static final double BATTERY_WARNING_VOLTAGE = 11;
 }
