@@ -52,8 +52,6 @@ public class RobotContainer {
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
-	//TODO: We don't need this command. There is a command already in Drivetrain that does this
-	// HOWEVER that command does not limit velocity based on mass of the robot. So perhaps keep?
 	private final VelocityRotationDrive rotationDrive = (new VelocityRotationDrive(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
@@ -80,9 +78,8 @@ public class RobotContainer {
 		new TunableNumber();
 		shuffleboard = ShuffleboardInfo.getInstance();
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
-		// YOUR CODE HERE | | |
-		// \/ \/ \/
-
+		// YOUR CODE HERE |  |  |
+		// 				 \/ \/ \/
 		tabs.add(new DriverStationTab());
 
 		tabs.add(new SwerveTab(null));
@@ -108,6 +105,7 @@ public class RobotContainer {
 		drivetrain.setDefaultCommand(rotationDrive);
 
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+		driverController.leftBumper().onTrue(new ScheduleCommand(rotationDrive)).onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
 
 		/*
 		 * driverController.povLeft().onTrue(
