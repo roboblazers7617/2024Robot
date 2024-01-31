@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.vision;
+package frc.robot.commands.drivetrain;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -13,6 +13,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -51,11 +52,7 @@ public class TurnToTag extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		drivetrain.driveFieldOriented(drivetrain.getSwerveController().getTargetSpeeds(0, 0,
-					-(tagPose.getX() - drivetrain.getPose().getX()),
-					-(tagPose.getY() - drivetrain.getPose().getY()),
-					drivetrain.getHeading().getRadians(),
-					drivetrain.getMaximumVelocity()));
+		drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
 
 	}
 
