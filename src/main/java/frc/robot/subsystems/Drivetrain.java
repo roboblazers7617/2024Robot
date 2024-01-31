@@ -46,19 +46,20 @@ public class Drivetrain extends SubsystemBase {
 	 * Swerve drive object.
 	 */
 	private final SwerveDrive swerveDrive;
+	private final Vision vision;
 	/**
 	 * Maximum speed of the robot in meters per second, used to limit acceleration.
 	 */
 	public double maximumSpeed = Units.feetToMeters(14.5);
 	private double maxDrivetrainTestSpeed = 0.3;
-	private Supplier<Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>>> visionSupplier;
+	private Supplier<EstimatedRobotPose> visionSupplier;
 
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
 	 * @param directory Directory of swerve drive config files.
 	 */
-	public Drivetrain(Supplier<Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>>> visionSupplier) {
+	public Drivetrain(Vision vision) {
 		this.visionSupplier = visionSupplier;
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
@@ -77,17 +78,7 @@ public class Drivetrain extends SubsystemBase {
 													// via angle.
 
 		setupPathPlanner();
-
-	}
-
-	/**
-	 * Construct the swerve drive.
-	 *
-	 * @param driveCfg      SwerveDriveConfiguration for the swerve.
-	 * @param controllerCfg Swerve Controller.
-	 */
-	public Drivetrain(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
-		swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
+		this.vision = vision;
 	}
 
 	/**
@@ -304,12 +295,9 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	private void processVision(){
-		if (visionSupplier.get().getFirst().isPresent()){
-			swerveDrive.addVisionMeasurement(visionSupplier.get().getFirst().get().estimatedPose.toPose2d(),  visionSupplier.get().getFirst().get().timestampSeconds);
-		}
-
-		if (visionSupplier.get().getSecond().isPresent()){
-			swerveDrive.addVisionMeasurement(visionSupplier.get().getSecond().get().estimatedPose.toPose2d(),  visionSupplier.get().getSecond().get().timestampSeconds);
+		Optional<EstimatedRobotPose> visionMeasurement = vision.updateOdometry();
+		if (visionMeasurement.isPresent()){
+			swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(),  visionMeasurement.get().timestampSeconds);
 		}
 	}
 
@@ -465,6 +453,10 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public SwerveController getSwerveController() {
 		return swerveDrive.swerveController;
+	}
+
+	public double getMaximumVelocity(){
+		return swerveDrive.getMaximumVelocity();
 	}
 
 	/**

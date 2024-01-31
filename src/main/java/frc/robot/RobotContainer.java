@@ -19,6 +19,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.VelocityRotationDrive;
+import frc.robot.commands.vision.TurnToTag;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.MathUtil;
@@ -46,7 +47,7 @@ public class RobotContainer {
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
 	private final Vision vision = new Vision();
-	private final Drivetrain drivetrain = new Drivetrain(vision::updateOdometry);
+	private final Drivetrain drivetrain = new Drivetrain(vision);
 
 	private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
@@ -95,7 +96,7 @@ public class RobotContainer {
 	 */
 	private void configureBindings() {
 		drivetrain.setDefaultCommand(rotationDrive);
-
+		driverController.povLeft().whileTrue(new TurnToTag(drivetrain, 10));
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
 
 		/*

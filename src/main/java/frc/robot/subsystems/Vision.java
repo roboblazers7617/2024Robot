@@ -27,10 +27,11 @@ public class Vision extends SubsystemBase {
 	private PhotonPipelineResult intakeCamResult;
 	private PhotonPipelineResult shooterCamResult;
 	private AprilTagFieldLayout fieldLayout;
-	private PhotonPoseEstimator intakeEstimator = new PhotonPoseEstimator(fieldLayout,
-			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.INTAKE_CAMERA_POSITION);
-	private PhotonPoseEstimator shooterEstimator = new PhotonPoseEstimator(fieldLayout,
-			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.SHOOTER_CAMERA_POSITION);
+	private PhotonPoseEstimator intakeEstimator;
+	private PhotonPoseEstimator shooterEstimator;
+	private PhotonTrackedTarget intakeBestTag;
+	//private Optional<PhotonTrackedTarget> intakeBestTag;
+	//private Optional<PhotonTrackedTarget> shooterBestTag;
 
 	/** Creates a new Vision. */
 	public Vision() {
@@ -39,6 +40,10 @@ public class Vision extends SubsystemBase {
 		} catch (IOException e) {
 			fieldLayout = null;
 		}
+		 intakeEstimator  = new PhotonPoseEstimator(fieldLayout,
+			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, intakeCamera, VisionConstants.INTAKE_CAMERA_POSITION);
+		//shooterEstimator =  = new PhotonPoseEstimator(fieldLayout,
+		//	PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, shooterCamera, VisionConstants.SHOOTER_CAMERA_POSITION);
 	}
 
 	@Override
@@ -48,9 +53,24 @@ public class Vision extends SubsystemBase {
 		shooterCamResult = new PhotonPipelineResult();//shooterCamera.getLatestResult();
 	}
 
-	public Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>> updateOdometry() {
-		return new Pair<Optional<EstimatedRobotPose>, Optional<EstimatedRobotPose>>(
-				intakeEstimator.update(intakeCamResult), shooterEstimator.update(shooterCamResult));
+	// public Optional<EstimatedRobotPose> updateOdometry() {
+	// 	intakeBestTag = Optional.ofNullable(intakeCamResult.getBestTarget());
+	// 	if(intakeBestTag.isPresent()){
+	// 		return intakeEstimator.update();
+	// 	}
+	// 	else{
+	// 		return Optional.empty();
+	// 	}
+	// }
+	
+	public Optional<EstimatedRobotPose> updateOdometry() {
+		intakeBestTag = intakeCamResult.getBestTarget();
+		if(intakeBestTag != null){
+			return intakeEstimator.update();
+		}
+		else{
+			return Optional.empty();
+		}
 	}
 
 	public Optional<Transform3d> findTag(int tagNumber) {

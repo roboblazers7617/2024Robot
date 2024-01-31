@@ -4,11 +4,15 @@
 
 package frc.robot.commands.vision;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,38 +21,41 @@ import frc.robot.subsystems.Vision;
 
 public class TurnToTag extends Command {
 	/** Creates a new TurnToTag. */
-	private Supplier<Optional<Transform3d>> tagPoseSupplier;
-	private Transform3d tagPose;
-	private final Vision vision;
+	private Pose2d tagPose;
 	private final Drivetrain drivetrain;
 	private final int tagID;
-	private boolean noInitialTagDetection;
 	private final PIDController controller;
+	private AprilTagFieldLayout fieldLayout;
 
-	public TurnToTag(Vision vision, Drivetrain drivetrain, int tagID) {
+	public TurnToTag(Drivetrain drivetrain, int tagID) {
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(drivetrain);
-		this.vision = vision;
 		this.tagID = tagID;
 		this.drivetrain = drivetrain;
 		this.controller = new PIDController(drivetrain.getSwerveController().config.headingPIDF.p, drivetrain.getSwerveController().config.headingPIDF.i, drivetrain.getSwerveController().config.headingPIDF.d);
 		controller.setSetpoint(0);
+
+				try {
+			fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+		} catch (IOException e) {
+			fieldLayout = null;
+		}
+		tagPose = fieldLayout.getTagPose(tagID).get().toPose2d();
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		tagPoseSupplier = () -> vision.findTag(tagID);
-		noInitialTagDetection = tagPoseSupplier.get().isEmpty();
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		if(tagPoseSupplier.get().isPresent()){
-			tagPose = tagPoseSupplier.get().get();	
-		}
-		drivetrain.drive(new Translation2d(), controller.calculate(tagPose.getTranslation().toTranslation2d().getAngle().getDegrees()), true);
+		drivetrain.driveFieldOriented(drivetrain.getSwerveController().getTargetSpeeds(0, 0,
+					-(tagPose.getX() - drivetrain.getPose().getX()),
+					-(tagPose.getY() - drivetrain.getPose().getY()),
+					drivetrain.getHeading().getRadians(),
+					drivetrain.getMaximumVelocity()));
 
 	}
 
@@ -61,6 +68,6 @@ public class TurnToTag extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return noInitialTagDetection;
+		return false;
 	}
 }
