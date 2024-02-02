@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 
 import java.io.File;
@@ -47,26 +48,19 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	private final SwerveDrive swerveDrive;
 	private final Vision vision;
-	/**
-	 * Maximum speed of the robot in meters per second, used to limit acceleration.
-	 */
-	public double maximumSpeed = Units.feetToMeters(14.5);
-	private double maxDrivetrainTestSpeed = 0.3;
-	private Supplier<EstimatedRobotPose> visionSupplier;
-
+	private double driverlimitingFactor = OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR;
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
 	 * @param directory Directory of swerve drive config files.
 	 */
 	public Drivetrain(Vision vision) {
-		this.visionSupplier = visionSupplier;
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
 		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
-					.createSwerveDrive(maximumSpeed);
+					.createSwerveDrive(SwerveConstants.MAX_SPEED);
 			// Alternative method if you don't want to supply the conversion factor via JSON
 			// files.
 			// swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
@@ -149,21 +143,6 @@ public class Drivetrain extends SubsystemBase {
 	 * @param headingY     Heading Y to calculate angle of the joystick.
 	 * @return Drive command.
 	 */
-	public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
-			DoubleSupplier headingY) {
-		// swerveDrive.setHeadingCorrection(true); // Normally you would want heading
-		// correction for this kind of control.
-		return run(() -> {
-			double xInput = maxDrivetrainTestSpeed * Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-			double yInput = maxDrivetrainTestSpeed * Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
-			// Make the robot move
-			driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
-					headingX.getAsDouble(),
-					headingY.getAsDouble(),
-					swerveDrive.getYaw().getRadians(),
-					swerveDrive.getMaximumVelocity()));
-		});
-	}
 
 	/**
 	 * Command to drive the robot using translative values and heading as a
@@ -187,62 +166,51 @@ public class Drivetrain extends SubsystemBase {
 		});
 	}
 
-	/**
-	 * Command to drive the robot using translative values and heading as angular
-	 * velocity.
-	 *
-	 * @param translationX     Translation in the X direction. Cubed for smoother
-	 *                         controls.
-	 * @param translationY     Translation in the Y direction. Cubed for smoother
-	 *                         controls.
-	 * @param angularRotationX Angular velocity of the robot to set. Cubed for
-	 *                         smoother controls.
-	 * @return Drive command.
-	 */
-	public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
-			DoubleSupplier angularRotationX) {
-		return run(() -> {
-			// Make the robot move
-			swerveDrive.drive(new Translation2d(
-					maxDrivetrainTestSpeed * Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-					maxDrivetrainTestSpeed * Math.pow(translationY.getAsDouble(), 3)
-							* swerveDrive.getMaximumVelocity()),
-					maxDrivetrainTestSpeed * Math.pow(angularRotationX.getAsDouble(), 3)
-							* swerveDrive.getMaximumAngularVelocity(),
-					true,
-					false);
-		});
-	}
+  /**
+   * Command to drive the robot using translative values and heading as a setpoint.
+   *
+   * @param translationX Translation in the X direction. Cubed for smoother controls.
+   * @param translationY Translation in the Y direction. Cubed for smoother controls.
+   * @param headingX     Heading X to calculate angle of the joystick.
+   * @param headingY     Heading Y to calculate angle of the joystick.
+   * @return Drive command.
+   */
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
+                              DoubleSupplier headingY)
+  {
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
+    return run(() -> {
+      double xInput = driverlimitingFactor* Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
+      double yInput = driverlimitingFactor* Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+      // Make the robot move
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
+                                                                      headingX.getAsDouble(),
+                                                                      headingY.getAsDouble(),
+	//TODO: YAGSL example code now uses swerveDrive.getOdometryHeading().getRadians() instead of getYaw
+                                                                      swerveDrive.getYaw().getRadians(),
+                                                                      swerveDrive.getMaximumVelocity()));
+    });
+  }
 
-	/**
-	 * The primary method for controlling the drivebase. Takes a
-	 * {@link Translation2d} and a rotation rate, and
-	 * calculates and commands module states accordingly. Can use either open-loop
-	 * or closed-loop velocity control for
-	 * the wheel velocities. Also has field- and robot-relative modes, which affect
-	 * how the translation vector is used.
-	 *
-	 * @param translation   {@link Translation2d} that is the commanded linear
-	 *                      velocity of the robot, in meters per
-	 *                      second. In robot-relative mode, positive x is torwards
-	 *                      the bow (front) and positive y is
-	 *                      torwards port (left). In field-relative mode, positive x
-	 *                      is away from the alliance wall
-	 *                      (field North) and positive y is torwards the left wall
-	 *                      when looking through the driver station
-	 *                      glass (field West).
-	 * @param rotation      Robot angular rate, in radians per second. CCW positive.
-	 *                      Unaffected by field/robot
-	 *                      relativity.
-	 * @param fieldRelative Drive mode. True for field-relative, false for
-	 *                      robot-relative.
-	 */
-	public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
-		swerveDrive.drive(translation,
-				rotation,
-				fieldRelative,
-				false); // Open loop is disabled since it shouldn't be used most of the time.
-	}
+  /**
+   * Command to drive the robot using translative values and heading as angular velocity.
+   *
+   * @param translationX     Translation in the X direction. Cubed for smoother controls.
+   * @param translationY     Translation in the Y direction. Cubed for smoother controls.
+   * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
+   * @return Drive command.
+   */
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  {
+    return run(() -> {
+      // Make the robot move
+      swerveDrive.drive(new Translation2d(driverlimitingFactor* Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
+                                          driverlimitingFactor* Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+                        driverlimitingFactor* Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
+                        true,
+                        false);
+    });
+  }
 
   /**
    * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
@@ -260,6 +228,8 @@ public class Drivetrain extends SubsystemBase {
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection)
   {
+	//TODO: Add logic to remember what the headingcorrection setting was and at the end of this function
+	// set it back to that rather than default to false
 	swerveDrive.setHeadingCorrection(headingCorrection);
     swerveDrive.drive(translation,
                       rotation,
@@ -360,14 +330,27 @@ public class Drivetrain extends SubsystemBase {
 		swerveDrive.zeroGyro();
 	}
 
-	/**
-	 * Sets the drive motors to brake/coast mode.
-	 *
-	 * @param brake True to set motors to brake mode, false for coast.
-	 */
-	public void setMotorBrake(boolean brake) {
-		swerveDrive.setMotorIdleMode(brake);
-	}
+  /**
+   * Get the chassis speeds based on controller input of 2 joysticks. One for speeds in which direction. The other for
+   * the angle of the robot.
+   *
+   * @param xInput   X joystick input for the robot to move in the X direction.
+   * @param yInput   Y joystick input for the robot to move in the Y direction.
+   * @param headingX X joystick which controls the angle of the robot.
+   * @param headingY Y joystick which controls the angle of the robot.
+   * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
+   */
+  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
+  {
+    xInput = Math.pow(xInput, 3) * driverlimitingFactor;
+    yInput = Math.pow(yInput, 3) * driverlimitingFactor;
+    return swerveDrive.swerveController.getTargetSpeeds(xInput,
+                                                        yInput,
+                                                        headingX,
+                                                        headingY,
+                                                        getHeading().getRadians(),
+                                                        SwerveConstants.MAX_SPEED);
+  }
 
 	/**
 	 * Gets the current yaw angle of the robot, as reported by the imu. CCW
@@ -379,55 +362,38 @@ public class Drivetrain extends SubsystemBase {
 		return swerveDrive.getYaw();
 	}
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
-	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED;
-	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED;
-	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity * SwerveConstants.ROTATION_MULTIPLIER;
+	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED * driverlimitingFactor;
+	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED * driverlimitingFactor;
+	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity;
 
 	return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, thetaInput);
 
 }
 
-	/**
-	 * Get the chassis speeds based on controller input of 2 joysticks. One for
-	 * speeds in which direction. The other for
-	 * the angle of the robot.
-	 *
-	 * @param xInput   X joystick input for the robot to move in the X direction.
-	 * @param yInput   Y joystick input for the robot to move in the Y direction.
-	 * @param headingX X joystick which controls the angle of the robot.
-	 * @param headingY Y joystick which controls the angle of the robot.
-	 * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
-	 */
-	public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY) {
-		xInput = Math.pow(xInput, 3);
-		yInput = Math.pow(yInput, 3);
-		return swerveDrive.swerveController.getTargetSpeeds(xInput,
-				yInput,
-				headingX,
-				headingY,
-				getHeading().getRadians(),
-				maximumSpeed);
-	}
+  /**
+   * Get the chassis speeds based on controller input of 1 joystick and one angle. Control the robot at an offset of
+   * 90deg.
+   *
+   * @param xInput X joystick input for the robot to move in the X direction.
+   * @param yInput Y joystick input for the robot to move in the Y direction.
+   * @param angle  The angle in as a {@link Rotation2d}.
+   * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
+   */
+   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
+  {
+    xInput = Math.pow(xInput, 3);
+    yInput = Math.pow(yInput, 3);
+    return swerveDrive.swerveController.getTargetSpeeds(xInput,
+                                                        yInput,
+                                                        angle.getRadians(),
+                                                        getHeading().getRadians(),
+                                                        SwerveConstants.MAX_SPEED);
+  }
 
-	/**
-	 * Get the chassis speeds based on controller input of 1 joystick and one angle.
-	 * Control the robot at an offset of
-	 * 90deg.
-	 *
-	 * @param xInput X joystick input for the robot to move in the X direction.
-	 * @param yInput Y joystick input for the robot to move in the Y direction.
-	 * @param angle  The angle in as a {@link Rotation2d}.
-	 * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
-	 */
-	public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle) {
-		xInput = Math.pow(xInput, 3);
-		yInput = Math.pow(yInput, 3);
-		return swerveDrive.swerveController.getTargetSpeeds(xInput,
-				yInput,
-				angle.getRadians(),
-				getHeading().getRadians(),
-				maximumSpeed);
-	}
+  public void setDriverlimitingFactor(double driverlimitingFactor) {
+	this.driverlimitingFactor = driverlimitingFactor;
+  }
+
 
 	/**
 	 * Gets the current field-relative velocity (x, y and omega) of the robot
