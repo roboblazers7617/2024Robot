@@ -41,13 +41,8 @@ public class Drivetrain extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
-  /**
-   * Maximum speed of the robot in meters per second, used to limit acceleration.
-   */
 
-   //TODO: This needs to be in the constants file
-  public        double      maximumSpeed = Units.feetToMeters(14.5);
-  private double maxDrivetrainTestSpeed = 0.3;
+  private double driverlimitingFactor = 0.6;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -60,7 +55,7 @@ public class Drivetrain extends SubsystemBase
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
-      swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(maximumSpeed);
+      swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(SwerveConstants.MAX_SPEED);
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
@@ -83,7 +78,7 @@ public class Drivetrain extends SubsystemBase
    */
   public Drivetrain(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
-    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
+    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED);
   }
 
   /**
@@ -156,8 +151,8 @@ public class Drivetrain extends SubsystemBase
   {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
-      double xInput = maxDrivetrainTestSpeed* Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-      double yInput = maxDrivetrainTestSpeed* Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+      double xInput = driverlimitingFactor* Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
+      double yInput = driverlimitingFactor* Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
                                                                       headingX.getAsDouble(),
@@ -202,9 +197,9 @@ public class Drivetrain extends SubsystemBase
   {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(new Translation2d(maxDrivetrainTestSpeed* Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-                                          maxDrivetrainTestSpeed* Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
-                        maxDrivetrainTestSpeed* Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
+      swerveDrive.drive(new Translation2d(driverlimitingFactor* Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
+                                          driverlimitingFactor* Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+                        driverlimitingFactor* Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false);
     });
@@ -359,22 +354,20 @@ public class Drivetrain extends SubsystemBase
    */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
   {
-    xInput = Math.pow(xInput, 3);
-    yInput = Math.pow(yInput, 3);
+    xInput = Math.pow(xInput, 3) * driverlimitingFactor;
+    yInput = Math.pow(yInput, 3) * driverlimitingFactor;
     return swerveDrive.swerveController.getTargetSpeeds(xInput,
                                                         yInput,
                                                         headingX,
                                                         headingY,
                                                         getHeading().getRadians(),
-                                                        maximumSpeed);
+                                                        SwerveConstants.MAX_SPEED);
   }
 
-  //TODO: This is not consistent between the various getTargetSpeed functions. This one sets our Max, but I think this needs
-  // to move somewhere else or could cause issues down the line? And inconsistent behavior between the different functions
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
-	xInput = Math.pow(xInput, 3); //* SwerveConstants.MAX_SPEED;
-	yInput = Math.pow(yInput, 3); //* SwerveConstants.MAX_SPEED;
-	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity * SwerveConstants.ROTATION_MULTIPLIER;
+	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED * driverlimitingFactor;
+	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED * driverlimitingFactor;
+	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity;
 
 	return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, thetaInput);
 
@@ -389,7 +382,7 @@ public class Drivetrain extends SubsystemBase
    * @param angle  The angle in as a {@link Rotation2d}.
    * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
    */
-  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
+   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
   {
     xInput = Math.pow(xInput, 3);
     yInput = Math.pow(yInput, 3);
@@ -397,7 +390,11 @@ public class Drivetrain extends SubsystemBase
                                                         yInput,
                                                         angle.getRadians(),
                                                         getHeading().getRadians(),
-                                                        maximumSpeed);
+                                                        SwerveConstants.MAX_SPEED);
+  }
+
+  public void setDriverlimitingFactor(double driverlimitingFactor) {
+	this.driverlimitingFactor = driverlimitingFactor;
   }
 
   /**

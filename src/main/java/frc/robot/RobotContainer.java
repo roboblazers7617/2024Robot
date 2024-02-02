@@ -57,16 +57,19 @@ public class RobotContainer {
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
 
-	//TODO: Use this instead
-	   // Applies deadbands and inverts controls because joysticks
-    // are back-right positive while robot
-    // controls are front-left positive
-    // left stick controls translation
-    // right stick controls the angular velocity of the robot
-    // Command driveFieldOrientedAnglularVelocity = drivetrain.driveCommand(
-			// () -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			// () -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			// () -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
+	// TODO: Use this instead
+	// Applies deadbands and inverts controls because joysticks
+	// are back-right positive while robot
+	// controls are front-left positive
+	// left stick controls translation
+	// right stick controls the angular velocity of the robot
+	// Command driveFieldOrientedAnglularVelocity = drivetrain.driveCommand(
+	// () -> (-MathUtil.applyDeadband(driverController.getLeftY(),
+	// OperatorConstants.JOYSTICK_DEADBAND)),
+	// () -> (-MathUtil.applyDeadband(driverController.getLeftX(),
+	// OperatorConstants.JOYSTICK_DEADBAND)),
+	// () -> (-MathUtil.applyDeadband(driverController.getRightX(),
+	// OperatorConstants.JOYSTICK_DEADBAND))));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -78,8 +81,8 @@ public class RobotContainer {
 		new TunableNumber();
 		shuffleboard = ShuffleboardInfo.getInstance();
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
-		// YOUR CODE HERE |  |  |
-		// 				 \/ \/ \/
+		// YOUR CODE HERE | | |
+		// \/ \/ \/
 		tabs.add(new DriverStationTab());
 
 		tabs.add(new SwerveTab(null));
@@ -105,7 +108,13 @@ public class RobotContainer {
 		drivetrain.setDefaultCommand(absoluteDrive);
 
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
-		driverController.leftBumper().onTrue(new ScheduleCommand(rotationDrive)).onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
+		driverController.leftBumper().onTrue(new ScheduleCommand(rotationDrive))
+				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
+		driverController.rightBumper()
+				.onTrue(Commands.runOnce(
+						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.FAST_DRIVER_LIMITING_FACTOR)))
+				.onFalse(Commands.runOnce(
+						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR)));
 
 		/*
 		 * driverController.povLeft().onTrue(
