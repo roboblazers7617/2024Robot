@@ -105,5 +105,5 @@ public final class Constants {
 	}
 
 	public static final double BATTERY_WARNING_VOLTAGE = 11;
-	public static final int NUMBER_OF_MOTORS = 4;
+	public static final int NUMBER_OF_MOTORS = 10;
 }

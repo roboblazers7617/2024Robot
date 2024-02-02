@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.shuffleboard.DriverStationTab;
+import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.ShuffleboardInfo;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
@@ -73,6 +74,8 @@ public class RobotContainer {
 		tabs.add(new DriverStationTab());
 
 		tabs.add(new SwerveTab(null));
+
+		tabs.add(MotorTab.getInstance());
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}

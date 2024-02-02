@@ -55,9 +55,9 @@ public class MotorTab extends ShuffleboardTabBase{
 		NetworkTable networkTable = inst.getTable("logging/MotorTab");
 		for(int i = 0; i < newMotors.length; i++){
 			motors[i + numberOfMotors] = newMotors[i];
-			busVoltagePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + i + " Bus Voltage").publish();
-			optionCurrentPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + i + " Total Current").publish();
-			stickyFaultPublisher[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + i + " Sticky Faults").publish();
+			busVoltagePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Bus Voltage").publish();
+			optionCurrentPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Total Current").publish();
+			stickyFaultPublisher[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Sticky Faults").publish();
 		}
 		numberOfMotors += newMotors.length;
 
@@ -65,6 +65,7 @@ public class MotorTab extends ShuffleboardTabBase{
 	@Override
 	public void update() {
 		for (int i = 0; i < numberOfMotors; i++) {
+			System.out.println("outputting values: " + i);
 			busVoltagePublishers[i].set(motors[i].getBusVoltage());
 			optionCurrentPublishers[i].set(motors[i].getOutputCurrent());
 			stickyFaultPublisher[i].set(motors[i].getStickyFaults());
