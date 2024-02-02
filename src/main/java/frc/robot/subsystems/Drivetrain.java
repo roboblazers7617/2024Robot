@@ -372,8 +372,8 @@ public class Drivetrain extends SubsystemBase
   //TODO: This is not consistent between the various getTargetSpeed functions. This one sets our Max, but I think this needs
   // to move somewhere else or could cause issues down the line? And inconsistent behavior between the different functions
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
-	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED;
-	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED;
+	xInput = Math.pow(xInput, 3); //* SwerveConstants.MAX_SPEED;
+	yInput = Math.pow(yInput, 3); //* SwerveConstants.MAX_SPEED;
 	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity * SwerveConstants.ROTATION_MULTIPLIER;
 
 	return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, thetaInput);

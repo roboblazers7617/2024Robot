@@ -102,7 +102,7 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
-		drivetrain.setDefaultCommand(rotationDrive);
+		drivetrain.setDefaultCommand(absoluteDrive);
 
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
 		driverController.leftBumper().onTrue(new ScheduleCommand(rotationDrive)).onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
