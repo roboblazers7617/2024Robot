@@ -9,6 +9,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.shuffleboard.MotorTab;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
@@ -69,7 +72,10 @@ public class Drivetrain extends SubsystemBase
 
     setupPathPlanner();
 
-    
+	for (int i = 0; i < 4; i++){
+		MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
+		MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
+	}
   }
 
   /**
