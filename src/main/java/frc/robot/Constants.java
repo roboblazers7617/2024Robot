@@ -25,7 +25,7 @@ public final class Constants {
 		public static int number = 5;
 	}
 
-	public static class ClimberConstants {
+	public static class ArmConstants {
 		public static final int LEFT_MOTOR_ID = 6; // for test arm
 		public static final int RIGHT_MOTOR_ID = 499;// TODO
 

@@ -6,10 +6,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Arm;
 
-public class ClimberTab extends ShuffleboardTabBase {
-	private final Climber climber;
+public class ArmTab extends ShuffleboardTabBase {
+	private final Arm arm;
 
 	private final DoublePublisher rightAbsoluteEncoderPub;
 	private final DoublePublisher leftAbsoluteEncoderPub;
@@ -18,12 +18,12 @@ public class ClimberTab extends ShuffleboardTabBase {
 	// private final DoublePublisher odometryXPub;
 	// private final DoublePublisher odometryAnglePub;
 
-	public ClimberTab(Climber climber) {
-		this.climber = climber;
+	public ArmTab(Arm arm) {
+		this.arm = arm;
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-		NetworkTable networkTable = inst.getTable("logging/climber");
+		NetworkTable networkTable = inst.getTable("logging/arm");
 
 		rightAbsoluteEncoderPub = networkTable.getDoubleTopic("Right Absolute Encoder").publish();
 		leftAbsoluteEncoderPub = networkTable.getDoubleTopic("Left Absolute Encoder").publish();
@@ -34,22 +34,22 @@ public class ClimberTab extends ShuffleboardTabBase {
 
 	@Override
 	public void update() {
-		rightAbsoluteEncoderPub.set(climber.getRightAbsoluteEncoderPosition());
-		leftAbsoluteEncoderPub.set(climber.getLeftAbsoluteEncoderPosition());
+		rightAbsoluteEncoderPub.set(arm.getRightAbsoluteEncoderPosition());
+		leftAbsoluteEncoderPub.set(arm.getLeftAbsoluteEncoderPosition());
 
-		leftAppliedOutputPub.set(climber.getLeftAppliedOutput());
+		leftAppliedOutputPub.set(arm.getLeftAppliedOutput());
 	}
 
 	@Override
 	public void activateShuffleboard() {
-		ShuffleboardTab tab = Shuffleboard.getTab("climber");
-		tab.add("raise climber", new InstantCommand(() -> climber.raiseClimber()));
-		tab.add("lower climber", new InstantCommand(() -> climber.lowerClimber()));
+		ShuffleboardTab tab = Shuffleboard.getTab("arm");
+		tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()));
+		tab.add("lower arm", new InstantCommand(() -> arm.lowerArm()));
 	}
 
 	@Override
 	public String getNetworkTable() {
-		return "climber";
+		return "arm";
 	}
 
 }
