@@ -18,10 +18,10 @@ import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
 	// Right motor and encoder
-	private final CANSparkMax rightMotor = new CANSparkMax(ClimberConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-	private final AbsoluteEncoder rightAbsoluteEncoder = rightMotor
-			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-	private final SparkPIDController rightPIDController = rightMotor.getPIDController();
+	// private final CANSparkMax rightMotor = new CANSparkMax(ClimberConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+	// private final AbsoluteEncoder rightAbsoluteEncoder = rightMotor
+	// 		.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+	// private final SparkPIDController rightPIDController = rightMotor.getPIDController();
 
 	// Left motor and encoder
 	private final CANSparkMax leftMotor = new CANSparkMax(ClimberConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
@@ -35,36 +35,42 @@ public class Climber extends SubsystemBase {
 
 	/** Creates a new Climber. */
 	public Climber() {
-		rightMotor.restoreFactoryDefaults();
-		rightMotor.setIdleMode(IdleMode.kBrake);
-		rightMotor.setSmartCurrentLimit(20);
+		// rightMotor.restoreFactoryDefaults();
+		// rightMotor.setIdleMode(IdleMode.kBrake);
+		// rightMotor.setSmartCurrentLimit(20);
 
 		leftMotor.restoreFactoryDefaults();
 		leftMotor.setIdleMode(IdleMode.kBrake);
 		leftMotor.setSmartCurrentLimit(20);
 
-		rightPIDController.setP(ClimberConstants.KP);
-		rightPIDController.setI(ClimberConstants.KI);
-		rightPIDController.setD(ClimberConstants.KD);
-		rightPIDController.setFeedbackDevice(rightAbsoluteEncoder);
-		rightPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
-		rightPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
-		rightPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
-		rightPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
+		// rightPIDController.setP(ClimberConstants.KP);
+		// rightPIDController.setI(ClimberConstants.KI);
+		// rightPIDController.setD(ClimberConstants.KD);
+		// rightPIDController.setIZone(ClimberConstants.kIz);
+		// rightPIDController.setOutputRange(ClimberConstants.kMinOutput, ClimberConstants.kMaxOutput);
+		// rightPIDController.setFeedbackDevice(rightAbsoluteEncoder);
+		// rightPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMinOutputVelocity(ClimberConstants.minVel, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
 
 		leftPIDController.setP(ClimberConstants.KP);
 		leftPIDController.setI(ClimberConstants.KI);
 		leftPIDController.setD(ClimberConstants.KD);
+		leftPIDController.setIZone(ClimberConstants.kIz);
+		leftPIDController.setOutputRange(ClimberConstants.kMinOutput, ClimberConstants.kMaxOutput);
 		leftPIDController.setFeedbackDevice(leftAbsoluteEncoder);
 		leftPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
+		leftPIDController.setSmartMotionMinOutputVelocity(ClimberConstants.minVel, ClimberConstants.SLOT_ID);
 		leftPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
 		leftPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
 		leftPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
 
-		rightAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
-		rightAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
-		// rightAbsoluteEncoder.setZeroOffset(ClimberConstants.OFFSET);
-		rightAbsoluteEncoder.setInverted(false);
+		// rightAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
+		// rightAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
+		// // rightAbsoluteEncoder.setZeroOffset(ClimberConstants.OFFSET);
+		// rightAbsoluteEncoder.setInverted(false);
 
 		leftAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
 		leftAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
@@ -84,8 +90,8 @@ public class Climber extends SubsystemBase {
 	}
 
 	private void setTarget(double target) {
-		rightPIDController.setReference(target, CANSparkBase.ControlType.kPosition);
-		leftPIDController.setReference(target, CANSparkBase.ControlType.kPosition);
+		// rightPIDController.setReference(target, CANSparkBase.ControlType.kSmartMotion);
+		leftPIDController.setReference(target, CANSparkBase.ControlType.kSmartMotion);
 		// leftPIDController.setReference(target, CANSparkMax.ControlType.kPosition,0,2,
 		// feedFoward.calculate(target*(Math.PI/80)));
 
@@ -98,11 +104,16 @@ public class Climber extends SubsystemBase {
 
 	// get info functions
 	public double getRightAbsoluteEncoderPosition() {
-		return rightAbsoluteEncoder.getPosition();
+		// return rightAbsoluteEncoder.getPosition();
+		return -1;
 	}
 
 	public double getLeftAbsoluteEncoderPosition() {
 		return leftAbsoluteEncoder.getPosition();
+	}
+
+	public double getLeftAppliedOutput() {
+		return leftMotor.getAppliedOutput();
 	}
 
 }

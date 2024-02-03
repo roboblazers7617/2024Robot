@@ -26,25 +26,29 @@ public final class Constants {
 	}
 
 	public static class ClimberConstants {
-		public static final int LEFT_MOTOR_ID = 5; // for test arm
+		public static final int LEFT_MOTOR_ID = 6; // for test arm
 		public static final int RIGHT_MOTOR_ID = 499;// TODO
 
-		public static double MAX_HEIGHT = 0.15;
+		public static double MAX_HEIGHT = 0;
 		public static final double KS = 0;
 		public static final double KG = 0.1;
 		public static final double KV = 0;
 		public static final double KP = 0.004;
 		public static final double KI = 0;
 		public static final double KD = 0;
+		public static final double kIz = 0; //izone
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
+		public static final double minVel = 0;
 		// public static final double POSITION_CONVERSION_FACTOR = 16;
 		// public static final double VELOCITY_CONVERSION_FACTOR = 0;
 		public static final double GEAR_RATIO = 1.0/16.0;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
-		public static final double ABS_VELOCITY_CONVERSION_FACTOR = (360*GEAR_RATIO) / 60; // what is this
+		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60; // what is this
 
 		public static final int SLOT_ID = 0;
-		public static final double MAX_VELOCITY = 0.1;
-		public static final double MAX_ACCELERATION = 1;
+		public static final double MAX_VELOCITY = 10;
+		public static final double MAX_ACCELERATION = 5.0;
 		public static final double MAX_ERROR = 0.02;
 	}
 

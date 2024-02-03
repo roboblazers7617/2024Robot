@@ -13,6 +13,7 @@ public class ClimberTab extends ShuffleboardTabBase {
 
 	private final DoublePublisher rightAbsoluteEncoderPub;
 	private final DoublePublisher leftAbsoluteEncoderPub;
+	private final DoublePublisher leftAppliedOutputPub;
 	// private final DoublePublisher odometryYPub;
 	// private final DoublePublisher odometryXPub;
 	// private final DoublePublisher odometryAnglePub;
@@ -27,12 +28,16 @@ public class ClimberTab extends ShuffleboardTabBase {
 		rightAbsoluteEncoderPub = networkTable.getDoubleTopic("Right Absolute Encoder").publish();
 		leftAbsoluteEncoderPub = networkTable.getDoubleTopic("Left Absolute Encoder").publish();
 
+		leftAppliedOutputPub = networkTable.getDoubleTopic("Left Applied Output").publish();
+
 	}
 
 	@Override
 	public void update() {
 		rightAbsoluteEncoderPub.set(climber.getRightAbsoluteEncoderPosition());
 		leftAbsoluteEncoderPub.set(climber.getLeftAbsoluteEncoderPosition());
+
+		leftAppliedOutputPub.set(climber.getLeftAppliedOutput());
 	}
 
 	@Override
