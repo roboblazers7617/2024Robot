@@ -104,6 +104,11 @@ public final class Constants {
 
 	}
 
+	public static class ClimberConstants {
+		public static final int LEFT_CLIMBER_PORT = 0;
+		public static final int RIGHT_CLIMBER_PORT = 1;
+	}
+
 	public static final double BATTERY_WARNING_VOLTAGE = 11;
 	public static final int NUMBER_OF_MOTORS = 10;
 }
