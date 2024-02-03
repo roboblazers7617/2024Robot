@@ -43,11 +43,11 @@ public class LEDTab extends ShuffleboardTabBase {
 
 		holdingNote = new SendableChooser<>();
 		holdingNote.addOption("Holding Note", true);
-		holdingNote.addOption("Not Holding Note", false);
+		holdingNote.setDefaultOption("Not Holding Note", false);
 
 		readyToShoot = new SendableChooser<>();
 		readyToShoot.addOption("Ready To Shoot", true);
-		readyToShoot.addOption("Not Ready To Shoot", false);
+		readyToShoot.setDefaultOption("Not Ready To Shoot", false);
 
 		tab.add(holdingNote);
 		tab.add(readyToShoot);
