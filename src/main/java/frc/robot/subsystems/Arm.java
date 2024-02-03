@@ -12,11 +12,12 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 // import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import frc.robot.Constants.ArmConstants;
 
-public class Arm extends SubsystemBase {
+public class Arm extends TrapezoidProfileSubsystem {
 	// Right motor and encoder
 	// private final CANSparkMax rightMotor = new CANSparkMax(ClimberConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 	// private final AbsoluteEncoder rightAbsoluteEncoder = rightMotor
@@ -28,6 +29,8 @@ public class Arm extends SubsystemBase {
 	private final AbsoluteEncoder leftAbsoluteEncoder = leftMotor
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 	private final SparkPIDController leftPIDController = leftMotor.getPIDController();
+	private double currentTarget = -1;
+	private double maxCurrentTarget = 0;
 
 	// private final ArmFeedforward feedFoward = new
 	// ArmFeedforward(ClimberConstants.KS, ClimberConstants.KG,
@@ -35,6 +38,8 @@ public class Arm extends SubsystemBase {
 
 	/** Creates a new Climber. */
 	public Arm() {
+		super(new TrapezoidProfile.Constraints(ArmConstants.MAX_VELOCITY, ArmConstants.MAX_ACCELERATION),0);
+		disable();
 		// rightMotor.restoreFactoryDefaults();
 		// rightMotor.setIdleMode(IdleMode.kBrake);
 		// rightMotor.setSmartCurrentLimit(20);
@@ -61,11 +66,7 @@ public class Arm extends SubsystemBase {
 		leftPIDController.setIZone(ArmConstants.kIz);
 		leftPIDController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 		leftPIDController.setFeedbackDevice(leftAbsoluteEncoder);
-		leftPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ArmConstants.SLOT_ID);
-		leftPIDController.setSmartMotionMinOutputVelocity(ArmConstants.minVel, ArmConstants.SLOT_ID);
-		leftPIDController.setSmartMotionMaxVelocity(ArmConstants.MAX_VELOCITY, ArmConstants.SLOT_ID);
-		leftPIDController.setSmartMotionAllowedClosedLoopError(ArmConstants.MAX_ERROR, ArmConstants.SLOT_ID);
-		leftPIDController.setSmartMotionMaxAccel(ArmConstants.MAX_ACCELERATION, ArmConstants.SLOT_ID);
+
 
 		// rightAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
 		// rightAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
@@ -80,25 +81,46 @@ public class Arm extends SubsystemBase {
 		// TODO make one inverted
 	}
 
+	@Override
+	public void useState(TrapezoidProfile.State setpoint){
+		leftPIDController.setReference(setpoint.position, CANSparkBase.ControlType.kPosition);
+		currentTarget = setpoint.position;
+		if (setpoint.position > maxCurrentTarget){
+			maxCurrentTarget = setpoint.position;
+		}
+		// System.out.println(setpoint.position);
+	}
+
+
 	// do something functions
 	public void raiseArm() {
-		setTarget(ArmConstants.MAX_HEIGHT);
+		enable();
+		setTarget(0);
 	}
 
 	public void lowerArm() {
-		setTarget(0);
+		enable();
+		setTarget(45);
+	}
+
+	public void stopArm(){
+		disable();
 	}
 
 	private void setTarget(double target) {
 		// rightPIDController.setReference(target, CANSparkBase.ControlType.kSmartMotion);
-		leftPIDController.setReference(target, CANSparkBase.ControlType.kSmartMotion);
+		// leftPIDController.setReference(target, CANSparkBase.ControlType.kSmartMotion);
 		// leftPIDController.setReference(target, CANSparkMax.ControlType.kPosition,0,2,
 		// feedFoward.calculate(target*(Math.PI/80)));
 
+		setGoal(target);
+		
+		// setGoal(new TrapezoidProfile.State(target, 0));
 	}
 
 	@Override
 	public void periodic() {
+		super.periodic();
 		// This method will be called once per scheduler run
 	}
 
@@ -112,9 +134,10 @@ public class Arm extends SubsystemBase {
 		return leftAbsoluteEncoder.getPosition();
 	}
 
-	public double getLeftAppliedOutput() {
-		return leftMotor.getAppliedOutput();
+	public double getCurrentTarget(){
+		return currentTarget;
 	}
+
 
 }
 

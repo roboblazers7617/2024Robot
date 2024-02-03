@@ -40,8 +40,8 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		// this should be called immediately
 		ShuffleboardTab tab = Shuffleboard.getTab("Driver Station");
 		tab.add("activate tabs", new ActivateTabs());
-		tab.add("start alert", new InstantCommand(() -> alert.set(true)));
-		tab.add("end alert", new InstantCommand(() -> alert.set(false)));
+		tab.add("start alert", new InstantCommand(() -> alert.set(true)).ignoringDisable(true));
+		tab.add("end alert", new InstantCommand(() -> alert.set(false)).ignoringDisable(true));
 
 	}
 

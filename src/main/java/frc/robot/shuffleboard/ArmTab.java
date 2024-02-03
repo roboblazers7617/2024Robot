@@ -13,7 +13,7 @@ public class ArmTab extends ShuffleboardTabBase {
 
 	private final DoublePublisher rightAbsoluteEncoderPub;
 	private final DoublePublisher leftAbsoluteEncoderPub;
-	private final DoublePublisher leftAppliedOutputPub;
+	private final DoublePublisher currentTarget;
 	// private final DoublePublisher odometryYPub;
 	// private final DoublePublisher odometryXPub;
 	// private final DoublePublisher odometryAnglePub;
@@ -27,8 +27,8 @@ public class ArmTab extends ShuffleboardTabBase {
 
 		rightAbsoluteEncoderPub = networkTable.getDoubleTopic("Right Absolute Encoder").publish();
 		leftAbsoluteEncoderPub = networkTable.getDoubleTopic("Left Absolute Encoder").publish();
+		currentTarget = networkTable.getDoubleTopic("Current Target").publish();
 
-		leftAppliedOutputPub = networkTable.getDoubleTopic("Left Applied Output").publish();
 
 	}
 
@@ -36,15 +36,16 @@ public class ArmTab extends ShuffleboardTabBase {
 	public void update() {
 		rightAbsoluteEncoderPub.set(arm.getRightAbsoluteEncoderPosition());
 		leftAbsoluteEncoderPub.set(arm.getLeftAbsoluteEncoderPosition());
+		currentTarget.set(arm.getCurrentTarget());
 
-		leftAppliedOutputPub.set(arm.getLeftAppliedOutput());
 	}
 
 	@Override
 	public void activateShuffleboard() {
 		ShuffleboardTab tab = Shuffleboard.getTab("arm");
-		tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()));
-		tab.add("lower arm", new InstantCommand(() -> arm.lowerArm()));
+		tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()).ignoringDisable(true));
+		tab.add("lower arm", new InstantCommand(() -> arm.lowerArm()).ignoringDisable(true));
+		tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
 	}
 
 	@Override

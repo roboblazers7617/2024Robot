@@ -33,7 +33,7 @@ public final class Constants {
 		public static final double KS = 0;
 		public static final double KG = 0.1;
 		public static final double KV = 0;
-		public static final double KP = 0.004;
+		public static final double KP = 0.0004;
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kIz = 0; //izone
@@ -47,8 +47,8 @@ public final class Constants {
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60; // what is this
 
 		public static final int SLOT_ID = 0;
-		public static final double MAX_VELOCITY = 10;
-		public static final double MAX_ACCELERATION = 5.0;
+		public static final double MAX_VELOCITY = 0.01;//was 1
+		public static final double MAX_ACCELERATION = 1;
 		public static final double MAX_ERROR = 0.02;
 	}
 
