@@ -8,19 +8,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.LLColor;
-import frc.LedStrip;
-import frc.PredefinedColors;
-import frc.Animations.RaceAnimation;
-import frc.Animations.BlinkAnimation;
-import frc.Animations.BounceAnimation;
-import frc.Animations.SolidColorPattern;
 
 public class LED extends SubsystemBase {
-	private final LedStrip strip = new LedStrip(1, 180);
-	private int currentMode = -1;
-	private String currentAlliance = DriverStation.getAlliance().toString();
-
 	private final SerialPort serial;
 
 	public LED(SerialPort.Port port) {
@@ -31,52 +20,43 @@ public class LED extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		// Set LED animations if robot mode has changed
-		if (!DriverStation.isDSAttached() && currentMode != 0) {
+		// Set LED animations
+		if (!DriverStation.isDSAttached()) {
 			setDisconnectedAnimation();
-			currentMode = 0;
-		} else if (DriverStation.isEStopped() && DriverStation.isDSAttached() && currentMode != 1) {
+		} else if (DriverStation.isEStopped()) {
 			setEStopAnimation();
-			currentMode = 1;
-		} else if (DriverStation.isDisabled() && DriverStation.isDSAttached() && currentMode != 2) {
-			setIdleAnimation();
-			currentMode = 2;
-		} else if (DriverStation.isAutonomousEnabled() && DriverStation.isDSAttached() && currentMode != 3) {
-			setAutoColor();
-			currentMode = 3;
-		} else if (DriverStation.isTeleopEnabled() && DriverStation.isDSAttached() && currentMode != 4) {
-			setTeleopColor();
-			currentMode = 4;
-		}
-
-		// Trigger animation change when alliance changes for animations that use the alliance color
-		if (!currentAlliance.equals(DriverStation.getAlliance().toString()) && (currentMode == 2 || currentMode == 3)) {
-			currentMode = -1;
-			currentAlliance = DriverStation.getAlliance().toString();
+		} else if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
+			setAutoDisabledAnimation();
+		} else if (DriverStation.isAutonomous() && DriverStation.isEnabled()) {
+			setAutoEnabledAnimation();
+		} else if (DriverStation.isTeleop() && DriverStation.isDisabled()) {
+			setTeleopDisabledAnimation();
+		} else if (DriverStation.isTeleop() && DriverStation.isEnabled()) {
+			setTeleopEnabledAnimation();
 		}
 	}
 
 	public void setDisconnectedAnimation() {
 		serial.writeString("dp\n");
-		strip.setAnimation(new BlinkAnimation(strip, PredefinedColors.kBlack, PredefinedColors.kBlue));
 	}
 	
 	public void setEStopAnimation() {
 		serial.writeString("es\n");
-		strip.setAnimation(new BounceAnimation(strip, PredefinedColors.kRed, PredefinedColors.kOrange, 10));
 	}
 	
-	public void setIdleAnimation() {
-		strip.setAnimation(new BounceAnimation(strip, strip.getAllianceColor(), PredefinedColors.kWhite, 10));
+	public void setAutoDisabledAnimation() {
+		serial.writeString("ad\n");
 	}
 
-	public void setAutoColor() {
+	public void setAutoEnabledAnimation() {
 		serial.writeString("ae\n");
-		strip.setAnimation(new SolidColorPattern(strip, strip.getAllianceColor()));
 	}
 
-	public void setTeleopColor() {
+	public void setTeleopDisabledAnimation() {
+		serial.writeString("td\n");
+	}
+
+	public void setTeleopEnabledAnimation() {
 		serial.writeString("te\n");
-		strip.setAnimation(new SolidColorPattern(strip, PredefinedColors.kYellow));
 	}
 }
