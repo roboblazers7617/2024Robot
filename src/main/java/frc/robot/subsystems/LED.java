@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LED extends SubsystemBase {
 	private final SerialPort serial;
 
+	public boolean holdingNote;
+	public boolean readyToShoot;
+
 	public LED(SerialPort.Port port) {
 		serial = new SerialPort(9600, port);
 
@@ -23,6 +26,10 @@ public class LED extends SubsystemBase {
 		// Set LED animations
 		if (!DriverStation.isDSAttached()) {
 			setDisconnectedAnimation();
+		} else if (holdingNote) {
+			setHoldingNoteAnimation();
+		} else if (readyToShoot) {
+			setReadyToShootAnimation();
 		} else if (DriverStation.isEStopped()) {
 			setEStopAnimation();
 		} else if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
@@ -58,5 +65,13 @@ public class LED extends SubsystemBase {
 
 	public void setTeleopEnabledAnimation() {
 		serial.writeString("te\n");
+	}
+
+	public void setHoldingNoteAnimation() {
+		serial.writeString("hn\n");
+	}
+
+	public void setReadyToShootAnimation() {
+		serial.writeString("rs\n");
 	}
 }
