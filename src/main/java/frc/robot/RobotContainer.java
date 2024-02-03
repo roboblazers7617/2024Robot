@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.shuffleboard.ArmTab;
 import frc.robot.shuffleboard.DriverStationTab;
+import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.ShuffleboardInfo;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
@@ -20,6 +21,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.commands.drivetrain.AbsoluteDrive;
 import frc.robot.commands.drivetrain.LockWheelsState;
+import frc.robot.commands.drivetrain.VelocityRotationDrive;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -54,6 +56,11 @@ public class RobotContainer {
 	// 		() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
 	// 		() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
+	private final VelocityRotationDrive rotationDrive = (new VelocityRotationDrive(drivetrain,
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -70,6 +77,8 @@ public class RobotContainer {
 		tabs.add(new DriverStationTab());
 
 		tabs.add(new SwerveTab(null));
+
+		tabs.add(MotorTab.getInstance());
 		tabs.add(new ArmTab(arm));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
@@ -90,21 +99,24 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
-		// drivetrain.setDefaultCommand(absoluteDrive);
+		drivetrain.setDefaultCommand(rotationDrive);
 
 		// driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
 
-		/*driverController.povLeft().onTrue(
-				Commands.either(
-						Commands.parallel(Commands.runOnce(() -> drivetrain.setDefaultCommand(absoluteDriveState))
-								.andThen(new ScheduleCommand(absoluteDriveState)),
-								Commands.print(drivetrain.getDefaultCommand().getName())),
-						Commands.parallel(
-								Commands.runOnce(() -> drivetrain.setDefaultCommand(fieldCentricDriveState),
-										drivetrain)
-										.andThen(new ScheduleCommand(fieldCentricDriveState)),
-								Commands.print(drivetrain.getDefaultCommand().getName())),
-						this::isFieldCentric));*/
+		/*
+		 * driverController.povLeft().onTrue(
+		 * Commands.either(
+		 * Commands.parallel(Commands.runOnce(() ->
+		 * drivetrain.setDefaultCommand(absoluteDriveState))
+		 * .andThen(new ScheduleCommand(absoluteDriveState)),
+		 * Commands.print(drivetrain.getDefaultCommand().getName())),
+		 * Commands.parallel(
+		 * Commands.runOnce(() -> drivetrain.setDefaultCommand(fieldCentricDriveState),
+		 * drivetrain)
+		 * .andThen(new ScheduleCommand(fieldCentricDriveState)),
+		 * Commands.print(drivetrain.getDefaultCommand().getName())),
+		 * this::isFieldCentric));
+		 */
 	}
 
 	/**
