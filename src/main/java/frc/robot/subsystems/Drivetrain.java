@@ -52,6 +52,7 @@ import java.io.File;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.SwerveDriveTest;
 import swervelib.math.SwerveMath;
 import swervelib.motors.SwerveMotor;
 import swervelib.parser.SwerveControllerConfiguration;
@@ -501,6 +502,7 @@ public class Drivetrain extends SubsystemBase
           new SysIdRoutine.Mechanism(
               // Tell SysId how to plumb the driving voltage to the motors.
               (Measure<Voltage> volts) -> {
+				SwerveDriveTest.centerModules(swerveDrive);
                 swerveDrive.getModules()[0].getDriveMotor().setVoltage(volts.in(Volts));
                 swerveDrive.getModules()[1].getDriveMotor().setVoltage(volts.in(Volts));
 				swerveDrive.getModules()[2].getDriveMotor().setVoltage(volts.in(Volts));
@@ -516,7 +518,7 @@ public class Drivetrain extends SubsystemBase
                     .voltage(
                         m_appliedVoltage.mut_replace(
                             swerveDrive.getModules()[0].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[0].getDriveMotor().getPosition(), Meters))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[0].getPosition().distanceMeters, Meters))
                     .linearVelocity(
                         m_velocity.mut_replace(swerveDrive.getModules()[0].getDriveMotor().getVelocity(), MetersPerSecond));
 
@@ -524,7 +526,7 @@ public class Drivetrain extends SubsystemBase
                     .voltage(
                         m_appliedVoltage.mut_replace(
                              swerveDrive.getModules()[1].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[1].getDriveMotor().getPosition(), Meters))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[1].getPosition().distanceMeters, Meters))
                     .linearVelocity(
                         m_velocity.mut_replace(swerveDrive.getModules()[1].getDriveMotor().getVelocity(), MetersPerSecond));
 
@@ -532,7 +534,7 @@ public class Drivetrain extends SubsystemBase
                     .voltage(
                         m_appliedVoltage.mut_replace(
                              swerveDrive.getModules()[2].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[2].getDriveMotor().getPosition(), Meters))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[2].getPosition().distanceMeters, Meters))
                     .linearVelocity(
                         m_velocity.mut_replace(swerveDrive.getModules()[2].getDriveMotor().getVelocity(), MetersPerSecond));
 
@@ -540,7 +542,7 @@ public class Drivetrain extends SubsystemBase
                     .voltage(
                         m_appliedVoltage.mut_replace(
                             swerveDrive.getModules()[3].getDriveMotor().getVoltage() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[3].getDriveMotor().getPosition(), Meters))
+                    .linearPosition(m_distance.mut_replace(swerveDrive.getModules()[3].getPosition().distanceMeters, Meters))
                     .linearVelocity(
                         m_velocity.mut_replace(swerveDrive.getModules()[3].getDriveMotor().getVelocity(), MetersPerSecond));		
               },
