@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.LLColor;
@@ -19,6 +20,14 @@ public class LED extends SubsystemBase {
 	private final LedStrip strip = new LedStrip(1, 180);
 	private int currentMode = -1;
 	private String currentAlliance = DriverStation.getAlliance().toString();
+
+	private final SerialPort serial;
+
+	public LED(SerialPort.Port port) {
+		serial = new SerialPort(9600, port);
+
+		serial.setWriteBufferMode(SerialPort.WriteBufferMode.kFlushOnAccess);
+	}
 
 	@Override
 	public void periodic() {
@@ -48,10 +57,12 @@ public class LED extends SubsystemBase {
 	}
 
 	public void setDisconnectedAnimation() {
+		serial.writeString("dp\n");
 		strip.setAnimation(new BlinkAnimation(strip, PredefinedColors.kBlack, PredefinedColors.kBlue));
 	}
 	
 	public void setEStopAnimation() {
+		serial.writeString("es\n");
 		strip.setAnimation(new BounceAnimation(strip, PredefinedColors.kRed, PredefinedColors.kOrange, 10));
 	}
 	
@@ -60,10 +71,12 @@ public class LED extends SubsystemBase {
 	}
 
 	public void setAutoColor() {
+		serial.writeString("ae\n");
 		strip.setAnimation(new SolidColorPattern(strip, strip.getAllianceColor()));
 	}
 
 	public void setTeleopColor() {
+		serial.writeString("te\n");
 		strip.setAnimation(new SolidColorPattern(strip, PredefinedColors.kYellow));
 	}
 }

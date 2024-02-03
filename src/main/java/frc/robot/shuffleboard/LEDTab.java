@@ -30,11 +30,11 @@ public class LEDTab extends ShuffleboardTabBase {
 	@Override
 	public void activateShuffleboard() {
 		ShuffleboardTab tab = Shuffleboard.getTab("LED");
-		tab.add("Disconnected Animation", new InstantCommand(() -> led.setDisconnectedAnimation()));
-		tab.add("EStop Animation", new InstantCommand(() -> led.setEStopAnimation()));
-		tab.add("Idle Animation", new InstantCommand(() -> led.setIdleAnimation()));
-		tab.add("Auto Color", new InstantCommand(() -> led.setAutoColor()));
-		tab.add("Teleop Color", new InstantCommand(() -> led.setTeleopColor()));
+		tab.add("Disconnected Animation", new InstantCommand(() -> led.setDisconnectedAnimation()).ignoringDisable(true));
+		tab.add("EStop Animation", new InstantCommand(() -> led.setEStopAnimation()).ignoringDisable(true));
+		tab.add("Idle Animation", new InstantCommand(() -> led.setIdleAnimation()).ignoringDisable(true));
+		tab.add("Auto Color", new InstantCommand(() -> led.setAutoColor()).ignoringDisable(true));
+		tab.add("Teleop Color", new InstantCommand(() -> led.setTeleopColor()).ignoringDisable(true));
 	}
 
 	@Override
