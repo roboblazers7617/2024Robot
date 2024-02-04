@@ -26,12 +26,12 @@ public class LED extends SubsystemBase {
 		// Set LED animations
 		if (!DriverStation.isDSAttached()) {
 			setDisconnectedAnimation();
-		} else if (holdingNote) {
-			setHoldingNoteAnimation();
-		} else if (readyToShoot) {
-			setReadyToShootAnimation();
 		} else if (DriverStation.isEStopped()) {
 			setEStopAnimation();
+		} else if (readyToShoot) {
+			setReadyToShootAnimation();
+		} else if (holdingNote) {
+			setHoldingNoteAnimation();
 		} else if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
 			setAutoDisabledAnimation();
 		} else if (DriverStation.isAutonomous() && DriverStation.isEnabled()) {
