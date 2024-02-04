@@ -73,7 +73,7 @@ public class VelocityRotationDrive extends Command {
 				SwerveConstants.LOOP_TIME, SwerveConstants.ROBOT_MASS, List.of(SwerveConstants.DRIVEBASE),
 				swerve.getSwerveDriveConfiguration());
 		
-		swerve.drive(translation, speeds.omegaRadiansPerSecond, true, false, false);
+		swerve.drive(translation, speeds.omegaRadiansPerSecond, true);
 	}
 
 	// Called once the command ends or is interrupted.

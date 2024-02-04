@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -21,13 +22,13 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
-import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -41,8 +42,6 @@ public class Drivetrain extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
-
-  private double driverlimitingFactor = 0.6;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -64,7 +63,7 @@ public class Drivetrain extends SubsystemBase
     }
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
 
-	//TODO: See above. Are we setting headingcorrection to true for velocity control?
+
     setupPathPlanner();
 
     
@@ -137,6 +136,29 @@ public class Drivetrain extends SubsystemBase
     return AutoBuilder.followPath(path);
   }
 
+    /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   */
+  public Command driveToPose(Pose2d pose)
+  {
+// Create the constraints to use while pathfinding
+    PathConstraints constraints = new PathConstraints(
+        swerveDrive.getMaximumVelocity(), 4.0,
+        swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
+
+// Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+        pose,
+        constraints,
+        0.0, // Goal end velocity in meters/sec
+        0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+                                     );
+  }
+
+
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
    *
@@ -151,14 +173,13 @@ public class Drivetrain extends SubsystemBase
   {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
-      double xInput = driverlimitingFactor* Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-      double yInput = driverlimitingFactor* Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+      double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
+      double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
                                                                       headingX.getAsDouble(),
                                                                       headingY.getAsDouble(),
-	//TODO: YAGSL example code now uses swerveDrive.getOdometryHeading().getRadians() instead of getYaw
-                                                                      swerveDrive.getYaw().getRadians(),
+																	  swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumVelocity()));
     });
   }
@@ -179,8 +200,7 @@ public class Drivetrain extends SubsystemBase
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
                                                                       translationY.getAsDouble(),
                                                                       rotation.getAsDouble() * Math.PI,
-		//TODO: YAGSL example code now uses swerveDrive.getOdometryHeading().getRadians() instead of getYaw
-                                                                      swerveDrive.getYaw().getRadians(),
+																	  swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumVelocity()));
     });
   }
@@ -197,9 +217,9 @@ public class Drivetrain extends SubsystemBase
   {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(new Translation2d(driverlimitingFactor* Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-                                          driverlimitingFactor* Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
-                        driverlimitingFactor* Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
+      swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
+                                          Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+                        				  Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false);
     });
@@ -219,16 +239,14 @@ public class Drivetrain extends SubsystemBase
    *                      relativity.
    * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
    */
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection)
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative)
   {
-	//TODO: Add logic to remember what the headingcorrection setting was and at the end of this function
-	// set it back to that rather than default to false
-	swerveDrive.setHeadingCorrection(headingCorrection);
+	
     swerveDrive.drive(translation,
                       rotation,
                       fieldRelative,
-                      isOpenLoop); // Open loop is disabled since it shouldn't be used most of the time.
-	swerveDrive.setHeadingCorrection(false);
+                      false); // Open loop is disabled since it shouldn't be used most of the time.
+	
   }
 
   /**
@@ -336,10 +354,9 @@ public class Drivetrain extends SubsystemBase
    *
    * @return The yaw angle
    */
-  //TODO: YAGSL example now changes this to use the pose estimator rather than the reading from IMU. 
   public Rotation2d getHeading()
   {
-    return swerveDrive.getYaw();
+    return getPose().getRotation();
   }
 
   /**
@@ -354,20 +371,20 @@ public class Drivetrain extends SubsystemBase
    */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
   {
-    xInput = Math.pow(xInput, 3) * driverlimitingFactor;
-    yInput = Math.pow(yInput, 3) * driverlimitingFactor;
+    xInput = Math.pow(xInput, 3);
+    yInput = Math.pow(yInput, 3);
     return swerveDrive.swerveController.getTargetSpeeds(xInput,
                                                         yInput,
                                                         headingX,
                                                         headingY,
                                                         getHeading().getRadians(),
-                                                        SwerveConstants.MAX_SPEED);
+                                                        swerveDrive.getMaximumVelocity());
   }
 
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
-	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED * driverlimitingFactor;
-	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED * driverlimitingFactor;
-	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity;
+	xInput = Math.pow(xInput, 3) * swerveDrive.getMaximumVelocity();
+	yInput = Math.pow(yInput, 3) * swerveDrive.getMaximumVelocity();
+	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.getMaximumAngularVelocity();
 
 	return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, thetaInput);
 
@@ -390,11 +407,7 @@ public class Drivetrain extends SubsystemBase
                                                         yInput,
                                                         angle.getRadians(),
                                                         getHeading().getRadians(),
-                                                        SwerveConstants.MAX_SPEED);
-  }
-
-  public void setDriverlimitingFactor(double driverlimitingFactor) {
-	this.driverlimitingFactor = driverlimitingFactor;
+                                                        swerveDrive.getMaximumVelocity());
   }
 
   /**
@@ -461,5 +474,9 @@ public class Drivetrain extends SubsystemBase
   public void addFakeVisionReading()
   {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  }
+
+  public void setDrivetrainMaxSpeed(double speed){
+	swerveDrive.setMaximumSpeed(speed, true, Constants.MAX_BATTERY_VOLTAGE);
   }
 }
