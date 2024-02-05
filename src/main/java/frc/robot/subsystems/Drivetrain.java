@@ -476,7 +476,22 @@ public class Drivetrain extends SubsystemBase
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
+
+    /**
+   * Chagnes the maximum velocity the drivetrain will travel. 
+   *
+   * @param speed max velocity in m/s 
+   */
+
   public void setDrivetrainMaxSpeed(double speed){
-	swerveDrive.setMaximumSpeed(speed, true, Constants.MAX_BATTERY_VOLTAGE);
+	if (speed >= SwerveConstants.MAX_SPEED ){
+		swerveDrive.setMaximumSpeed(SwerveConstants.MAX_SPEED, true, Constants.MAX_BATTERY_VOLTAGE);
+	}
+	else if (speed < 0.0) {
+		swerveDrive.setMaximumSpeed(0.0, true, Constants.MAX_BATTERY_VOLTAGE);
+	}
+	else{
+		swerveDrive.setMaximumSpeed(speed, true, Constants.MAX_BATTERY_VOLTAGE);
+	}
   }
 }

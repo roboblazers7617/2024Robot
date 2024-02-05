@@ -25,7 +25,6 @@ public class SwerveTab extends ShuffleboardTabBase {
 
 		odometryAnglePub = networkTable.getDoubleTopic("Angle Odometry").publish();
 
-
 	}
 
 	@Override

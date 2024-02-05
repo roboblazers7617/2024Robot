@@ -20,7 +20,7 @@ import swervelib.math.SwerveMath;
 /**
  * An example command that uses an example subsystem.
  */
-public class VelocityRotationDrive extends Command {
+public class AbsoluteDriveAngularRotation extends Command {
 
 	private final Drivetrain swerve;
 	private final DoubleSupplier vX, vY, vTheta;
@@ -49,7 +49,7 @@ public class VelocityRotationDrive extends Command {
 	 *               looking through the driver station glass.
 	 * @param vTheta The rotation speed.
 	 */
-	public VelocityRotationDrive(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier vTheta) {
+	public AbsoluteDriveAngularRotation(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier vTheta) {
 		this.swerve = swerve;
 		this.vX = vX;
 		this.vY = vY;

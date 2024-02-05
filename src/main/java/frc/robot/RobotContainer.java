@@ -17,9 +17,9 @@ import java.util.ArrayList;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import frc.robot.commands.drivetrain.AbsoluteDrive;
+import frc.robot.commands.drivetrain.AbsoluteDriveDirectAngle;
 import frc.robot.commands.drivetrain.LockWheelsState;
-import frc.robot.commands.drivetrain.VelocityRotationDrive;
+import frc.robot.commands.drivetrain.AbsoluteDriveAngularRotation;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -47,30 +47,17 @@ public class RobotContainer {
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
 	private final Drivetrain drivetrain = new Drivetrain();
 
-	private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
+	private final AbsoluteDriveDirectAngle absoluteDrive = (new AbsoluteDriveDirectAngle(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
-	private final VelocityRotationDrive rotationDrive = (new VelocityRotationDrive(drivetrain,
+	private final AbsoluteDriveAngularRotation rotationDrive = (new AbsoluteDriveAngularRotation(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
 
-	// TODO: Use this instead
-	// Applies deadbands and inverts controls because joysticks
-	// are back-right positive while robot
-	// controls are front-left positive
-	// left stick controls translation
-	// right stick controls the angular velocity of the robot
-	// Command driveFieldOrientedAnglularVelocity = drivetrain.driveCommand(
-	// () -> (-MathUtil.applyDeadband(driverController.getLeftY(),
-	// OperatorConstants.JOYSTICK_DEADBAND)),
-	// () -> (-MathUtil.applyDeadband(driverController.getLeftX(),
-	// OperatorConstants.JOYSTICK_DEADBAND)),
-	// () -> (-MathUtil.applyDeadband(driverController.getRightX(),
-	// OperatorConstants.JOYSTICK_DEADBAND))));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -127,5 +114,9 @@ public class RobotContainer {
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
 		return new PathPlannerAuto("New Path auto");
+	}
+
+	public void setMotorBrake(boolean isBraked){
+		drivetrain.setMotorBrake(isBraked);
 	}
 }
