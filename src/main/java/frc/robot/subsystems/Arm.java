@@ -47,6 +47,7 @@ public class Arm extends TrapezoidProfileSubsystem {
 		leftMotor.restoreFactoryDefaults();
 		leftMotor.setIdleMode(IdleMode.kBrake);
 		leftMotor.setSmartCurrentLimit(20);
+		leftMotor.setInverted(true);
 
 		// rightPIDController.setP(ClimberConstants.KP);
 		// rightPIDController.setI(ClimberConstants.KI);
@@ -76,7 +77,7 @@ public class Arm extends TrapezoidProfileSubsystem {
 		leftAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
 		leftAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
 		// leftAbsoluteEncoder.setZeroOffset(ClimberConstants.OFFSET);
-		leftAbsoluteEncoder.setInverted(false);
+		leftAbsoluteEncoder.setInverted(true);
 
 		// TODO make one inverted
 	}
@@ -88,19 +89,20 @@ public class Arm extends TrapezoidProfileSubsystem {
 		if (setpoint.position > maxCurrentTarget){
 			maxCurrentTarget = setpoint.position;
 		}
-		// System.out.println(setpoint.position);
+		System.out.println(setpoint.position);
+
 	}
 
 
 	// do something functions
 	public void raiseArm() {
 		enable();
-		setTarget(0);
+		setTarget(45);
 	}
 
 	public void lowerArm() {
 		enable();
-		setTarget(45);
+		setTarget(0);
 	}
 
 	public void stopArm(){
@@ -118,11 +120,11 @@ public class Arm extends TrapezoidProfileSubsystem {
 		// setGoal(new TrapezoidProfile.State(target, 0));
 	}
 
-	@Override
-	public void periodic() {
-		super.periodic();
-		// This method will be called once per scheduler run
-	}
+	// @Override
+	// public void periodic() {
+	// 	super.periodic();
+	// 	// This method will be called once per scheduler run
+	// }
 
 	// get info functions
 	public double getRightAbsoluteEncoderPosition() {

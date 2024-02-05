@@ -60,10 +60,10 @@ public class RobotContainer {
 	// 		() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
 	// 		() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
-	private final VelocityRotationDrive rotationDrive = (new VelocityRotationDrive(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
+	// private final VelocityRotationDrive rotationDrive = (new VelocityRotationDrive(drivetrain,
+	// 		() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
+	// 		() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
+	// 		() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -105,7 +105,7 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
-		drivetrain.setDefaultCommand(rotationDrive);
+		// drivetrain.setDefaultCommand(rotationDrive);
 
 		// driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
 
