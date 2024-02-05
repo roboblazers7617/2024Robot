@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.LED;
 import frc.robot.shuffleboard.DriverStationTab;
@@ -19,9 +20,9 @@ import java.util.ArrayList;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import frc.robot.commands.drivetrain.AbsoluteDrive;
+import frc.robot.commands.drivetrain.AbsoluteDriveDirectAngle;
 import frc.robot.commands.drivetrain.LockWheelsState;
-import frc.robot.commands.drivetrain.VelocityRotationDrive;
+import frc.robot.commands.drivetrain.AbsoluteDriveAngularRotation;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -50,17 +51,19 @@ public class RobotContainer {
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
 	private final Drivetrain drivetrain = new Drivetrain();
+	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
 
-	private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
+	private final AbsoluteDriveDirectAngle absoluteDrive = (new AbsoluteDriveDirectAngle(drivetrain,
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
 
-	private final VelocityRotationDrive rotationDrive = (new VelocityRotationDrive(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
+	private final AbsoluteDriveAngularRotation rotationDrive = (new AbsoluteDriveAngularRotation(drivetrain,
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
+
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -74,14 +77,13 @@ public class RobotContainer {
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
-
 		tabs.add(new DriverStationTab());
 
-		tabs.add(new SwerveTab(null));
 
 		tabs.add(MotorTab.getInstance());
 
 		tabs.add(new LEDTab(led));
+		tabs.add(new SwerveTab(drivetrain));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
@@ -101,24 +103,23 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
-		drivetrain.setDefaultCommand(rotationDrive);
+		drivetrain.setDefaultCommand(absoluteDrive);
 
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+		driverController.leftBumper().onTrue(new ScheduleCommand(rotationDrive))
+				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
+		driverController.rightBumper()
+				.onTrue(Commands.runOnce(
+						() -> speedMultiplier = SwerveConstants.SLOW_SPEED))
+				.onFalse(Commands.runOnce(
+						() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
+		driverController.rightTrigger()
+				.onTrue(Commands.runOnce(
+						() -> speedMultiplier = SwerveConstants.FAST_SPEED))
+				.onFalse(Commands.runOnce(
+						() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
 
-		/*
-		 * driverController.povLeft().onTrue(
-		 * Commands.either(
-		 * Commands.parallel(Commands.runOnce(() ->
-		 * drivetrain.setDefaultCommand(absoluteDriveState))
-		 * .andThen(new ScheduleCommand(absoluteDriveState)),
-		 * Commands.print(drivetrain.getDefaultCommand().getName())),
-		 * Commands.parallel(
-		 * Commands.runOnce(() -> drivetrain.setDefaultCommand(fieldCentricDriveState),
-		 * drivetrain)
-		 * .andThen(new ScheduleCommand(fieldCentricDriveState)),
-		 * Commands.print(drivetrain.getDefaultCommand().getName())),
-		 * this::isFieldCentric));
-		 */
+
 	}
 
 	/**
@@ -129,5 +130,9 @@ public class RobotContainer {
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
 		return new PathPlannerAuto("New Path auto");
+	}
+
+	public void setMotorBrake(boolean isBraked){
+		drivetrain.setMotorBrake(isBraked);
 	}
 }

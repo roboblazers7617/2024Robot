@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.shuffleboard.MotorTab;
 
@@ -30,7 +32,6 @@ import java.io.File;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
-import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -44,11 +45,6 @@ public class Drivetrain extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
-  /**
-   * Maximum speed of the robot in meters per second, used to limit acceleration.
-   */
-  public        double      maximumSpeed = Units.feetToMeters(14.5);
-  private double maxDrivetrainTestSpeed = 0.3;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -61,7 +57,7 @@ public class Drivetrain extends SubsystemBase
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
-      swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(maximumSpeed);
+      swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
@@ -69,6 +65,7 @@ public class Drivetrain extends SubsystemBase
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
+
 
     setupPathPlanner();
 
@@ -86,7 +83,7 @@ public class Drivetrain extends SubsystemBase
    */
   public Drivetrain(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
-    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
+    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
   }
 
   /**
@@ -145,6 +142,29 @@ public class Drivetrain extends SubsystemBase
     return AutoBuilder.followPath(path);
   }
 
+    /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   */
+  public Command driveToPose(Pose2d pose)
+  {
+// Create the constraints to use while pathfinding
+    PathConstraints constraints = new PathConstraints(
+        swerveDrive.getMaximumVelocity(), 4.0,
+        swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
+
+// Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+        pose,
+        constraints,
+        0.0, // Goal end velocity in meters/sec
+        0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+                                     );
+  }
+
+
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
    *
@@ -159,13 +179,13 @@ public class Drivetrain extends SubsystemBase
   {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
-      double xInput = maxDrivetrainTestSpeed* Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-      double yInput = maxDrivetrainTestSpeed* Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+      double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
+      double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
                                                                       headingX.getAsDouble(),
                                                                       headingY.getAsDouble(),
-                                                                      swerveDrive.getYaw().getRadians(),
+																	  swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumVelocity()));
     });
   }
@@ -186,7 +206,7 @@ public class Drivetrain extends SubsystemBase
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
                                                                       translationY.getAsDouble(),
                                                                       rotation.getAsDouble() * Math.PI,
-                                                                      swerveDrive.getYaw().getRadians(),
+																	  swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumVelocity()));
     });
   }
@@ -203,9 +223,9 @@ public class Drivetrain extends SubsystemBase
   {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(new Translation2d(maxDrivetrainTestSpeed* Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-                                          maxDrivetrainTestSpeed* Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
-                        maxDrivetrainTestSpeed* Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
+      swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
+                                          Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+                        				  Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false);
     });
@@ -225,14 +245,14 @@ public class Drivetrain extends SubsystemBase
    *                      relativity.
    * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
    */
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection)
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative)
   {
-	swerveDrive.setHeadingCorrection(headingCorrection);
+	
     swerveDrive.drive(translation,
                       rotation,
                       fieldRelative,
-                      isOpenLoop); // Open loop is disabled since it shouldn't be used most of the time.
-	swerveDrive.setHeadingCorrection(false);
+                      false); // Open loop is disabled since it shouldn't be used most of the time.
+	
   }
 
   /**
@@ -342,7 +362,7 @@ public class Drivetrain extends SubsystemBase
    */
   public Rotation2d getHeading()
   {
-    return swerveDrive.getYaw();
+    return getPose().getRotation();
   }
 
   /**
@@ -364,13 +384,13 @@ public class Drivetrain extends SubsystemBase
                                                         headingX,
                                                         headingY,
                                                         getHeading().getRadians(),
-                                                        maximumSpeed);
+                                                        swerveDrive.getMaximumVelocity());
   }
 
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
-	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED;
-	yInput = Math.pow(yInput, 3) * SwerveConstants.MAX_SPEED;
-	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.swerveController.config.maxAngularVelocity * SwerveConstants.ROTATION_MULTIPLIER;
+	xInput = Math.pow(xInput, 3) * swerveDrive.getMaximumVelocity();
+	yInput = Math.pow(yInput, 3) * swerveDrive.getMaximumVelocity();
+	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.getMaximumAngularVelocity();
 
 	return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, thetaInput);
 
@@ -385,7 +405,7 @@ public class Drivetrain extends SubsystemBase
    * @param angle  The angle in as a {@link Rotation2d}.
    * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
    */
-  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
+   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
   {
     xInput = Math.pow(xInput, 3);
     yInput = Math.pow(yInput, 3);
@@ -393,7 +413,7 @@ public class Drivetrain extends SubsystemBase
                                                         yInput,
                                                         angle.getRadians(),
                                                         getHeading().getRadians(),
-                                                        maximumSpeed);
+                                                        swerveDrive.getMaximumVelocity());
   }
 
   /**
@@ -461,4 +481,28 @@ public class Drivetrain extends SubsystemBase
   {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
+
+
+    /**
+   * Chagnes the maximum velocity the drivetrain will travel. 
+   *
+   * @param speed max velocity in m/s 
+   */
+
+//   public void setDrivetrainMaxSpeed(double speed){
+
+// 	if (speed >= SwerveConstants.MAX_SPEED_METER_PER_SEC ){
+// 		swerveDrive.setMaximumSpeed(SwerveConstants.MAX_SPEED_METER_PER_SEC, true, Constants.MAX_BATTERY_VOLTAGE);
+// 		System.out.println("Over MAX Speed. Defaulting to max");
+// 	}
+// 	else if (speed < 0.0) {
+// 		swerveDrive.setMaximumSpeed(0.0, true, Constants.MAX_BATTERY_VOLTAGE);
+// 		System.out.println("Under 0.0. Setting to 0");
+// 	}
+// 	else{
+// 		swerveDrive.setMaximumSpeed(speed, true, Constants.MAX_BATTERY_VOLTAGE);
+// 		System.out.println("Setting to " + speed);
+// 	}
+// 	System.out.println("Current speed is " + swerveDrive.getMaximumVelocity());
+//   }
 }
