@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Shooter;
 import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.LEDTab;
 import frc.robot.shuffleboard.ShuffleboardInfo;
@@ -22,6 +23,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -43,7 +45,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final ShuffleboardInfo shuffleboard;
-	LED led = new LED(SerialPort.Port.kMXP);
+	Intake intake = new Intake();
+	Shooter shooter = new Shooter();
+	LED led = new LED(SerialPort.Port.kMXP, intake, shooter);
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(

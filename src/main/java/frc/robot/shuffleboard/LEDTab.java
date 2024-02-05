@@ -25,8 +25,8 @@ public class LEDTab extends ShuffleboardTabBase {
 	@Override
 	public void update() {
 		// these functions have not been defined
-		led.holdingNote = holdingNote.getSelected();
-		led.readyToShoot = readyToShoot.getSelected();
+		//led.holdingNote = holdingNote.getSelected();
+		//led.readyToShoot = readyToShoot.getSelected();
 	}
 
 	@Override
@@ -38,8 +38,6 @@ public class LEDTab extends ShuffleboardTabBase {
 		tab.add("Auto Enabled Animation", new InstantCommand(() -> led.setAutoEnabledAnimation()).ignoringDisable(true));
 		tab.add("Teleop Disabled Animation", new InstantCommand(() -> led.setTeleopDisabledAnimation()).ignoringDisable(true));
 		tab.add("Teleop Enabled Animation", new InstantCommand(() -> led.setTeleopEnabledAnimation()).ignoringDisable(true));
-		tab.add("Holding Note Animation", new InstantCommand(() -> {led.holdingNote = true;}).ignoringDisable(true));
-		tab.add("Ready To Shoot Animation", new InstantCommand(() -> {led.readyToShoot = true;}).ignoringDisable(true));
 
 		holdingNote = new SendableChooser<>();
 		holdingNote.addOption("Holding Note", true);
