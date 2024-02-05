@@ -67,7 +67,7 @@ public class Vision extends SubsystemBase {
 		intakeBestTag = intakeCamResult.getBestTarget();
 		if(intakeBestTag != null){
 			//assuming the get distance returns distance in meters
-			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 2)
+			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
 				return intakeEstimator.update();
 		}
 			return Optional.empty();

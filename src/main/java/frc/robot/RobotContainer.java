@@ -88,7 +88,7 @@ public class RobotContainer {
 		// \/ \/ \/
 		tabs.add(new DriverStationTab());
 
-		tabs.add(new SwerveTab(null));
+		tabs.add(new SwerveTab(drivetrain));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
@@ -124,7 +124,7 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(
 						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR)));
 		
-		driverController.a().whileTrue(new TurnToTag(drivetrain, 10));
+		driverController.a().whileTrue(new TurnToTag(drivetrain, 6));
 	}
 
 	/**

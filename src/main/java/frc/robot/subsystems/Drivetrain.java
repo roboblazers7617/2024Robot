@@ -359,7 +359,7 @@ public class Drivetrain extends SubsystemBase {
 	 * @return The yaw angle
 	 */
 	public Rotation2d getHeading() {
-		return swerveDrive.getYaw();
+		return swerveDrive.getOdometryHeading();
 	}
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
 	xInput = Math.pow(xInput, 3) * SwerveConstants.MAX_SPEED * driverlimitingFactor;
