@@ -53,6 +53,7 @@ public class TurnToTag extends Command {
 	@Override
 	public void execute() {
 		drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
+		System.out.println(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().getDegrees());
 
 	}
 

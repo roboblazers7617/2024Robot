@@ -118,21 +118,13 @@ public class RobotContainer {
 						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.FAST_DRIVER_LIMITING_FACTOR)))
 				.onFalse(Commands.runOnce(
 						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR)));
-
-		/*
-		 * driverController.povLeft().onTrue(
-		 * Commands.either(
-		 * Commands.parallel(Commands.runOnce(() ->
-		 * drivetrain.setDefaultCommand(absoluteDriveState))
-		 * .andThen(new ScheduleCommand(absoluteDriveState)),
-		 * Commands.print(drivetrain.getDefaultCommand().getName())),
-		 * Commands.parallel(
-		 * Commands.runOnce(() -> drivetrain.setDefaultCommand(fieldCentricDriveState),
-		 * drivetrain)
-		 * .andThen(new ScheduleCommand(fieldCentricDriveState)),
-		 * Commands.print(drivetrain.getDefaultCommand().getName())),
-		 * this::isFieldCentric));
-		 */
+		driverController.rightTrigger()
+				.onTrue(Commands.runOnce(
+						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.SLOW_DRIVER_LIMITING_FACTOR)))
+				.onFalse(Commands.runOnce(
+						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR)));
+		
+		driverController.a().whileTrue(new TurnToTag(drivetrain, 10));
 	}
 
 	/**

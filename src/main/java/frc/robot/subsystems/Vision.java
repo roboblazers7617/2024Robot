@@ -17,6 +17,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
@@ -65,11 +66,11 @@ public class Vision extends SubsystemBase {
 	public Optional<EstimatedRobotPose> updateOdometry() {
 		intakeBestTag = intakeCamResult.getBestTarget();
 		if(intakeBestTag != null){
-			return intakeEstimator.update();
+			//assuming the get distance returns distance in meters
+			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 2)
+				return intakeEstimator.update();
 		}
-		else{
 			return Optional.empty();
-		}
 	}
 
 	public Optional<Transform3d> findTag(int tagNumber) {
