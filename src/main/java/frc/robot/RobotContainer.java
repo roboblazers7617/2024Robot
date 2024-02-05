@@ -46,17 +46,18 @@ public class RobotContainer {
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
 	private final Drivetrain drivetrain = new Drivetrain();
+	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
 
 	private final AbsoluteDriveDirectAngle absoluteDrive = (new AbsoluteDriveDirectAngle(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
 
 	private final AbsoluteDriveAngularRotation rotationDrive = (new AbsoluteDriveAngularRotation(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND))));
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
 
 
 	/**
@@ -73,7 +74,7 @@ public class RobotContainer {
 		// \/ \/ \/
 		tabs.add(new DriverStationTab());
 
-		tabs.add(new SwerveTab(null));
+		tabs.add(new SwerveTab(drivetrain));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
@@ -100,9 +101,15 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
 		driverController.rightBumper()
 				.onTrue(Commands.runOnce(
-						() -> drivetrain.setDrivetrainMaxSpeed(SwerveConstants.SLOW_SPEED)))
+						() -> speedMultiplier = SwerveConstants.SLOW_SPEED))
 				.onFalse(Commands.runOnce(
-						() -> drivetrain.setDrivetrainMaxSpeed(SwerveConstants.REGULAR_SPEED)));
+						() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
+		driverController.rightTrigger()
+				.onTrue(Commands.runOnce(
+						() -> speedMultiplier = SwerveConstants.FAST_SPEED))
+				.onFalse(Commands.runOnce(
+						() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
+
 
 	}
 

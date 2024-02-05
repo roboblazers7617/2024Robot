@@ -54,7 +54,7 @@ public class Drivetrain extends SubsystemBase
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
-      swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(SwerveConstants.MAX_SPEED);
+      swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
@@ -77,7 +77,7 @@ public class Drivetrain extends SubsystemBase
    */
   public Drivetrain(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
-    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED);
+    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
   }
 
   /**
@@ -483,15 +483,20 @@ public class Drivetrain extends SubsystemBase
    * @param speed max velocity in m/s 
    */
 
-  public void setDrivetrainMaxSpeed(double speed){
-	if (speed >= SwerveConstants.MAX_SPEED ){
-		swerveDrive.setMaximumSpeed(SwerveConstants.MAX_SPEED, true, Constants.MAX_BATTERY_VOLTAGE);
-	}
-	else if (speed < 0.0) {
-		swerveDrive.setMaximumSpeed(0.0, true, Constants.MAX_BATTERY_VOLTAGE);
-	}
-	else{
-		swerveDrive.setMaximumSpeed(speed, true, Constants.MAX_BATTERY_VOLTAGE);
-	}
-  }
+//   public void setDrivetrainMaxSpeed(double speed){
+
+// 	if (speed >= SwerveConstants.MAX_SPEED_METER_PER_SEC ){
+// 		swerveDrive.setMaximumSpeed(SwerveConstants.MAX_SPEED_METER_PER_SEC, true, Constants.MAX_BATTERY_VOLTAGE);
+// 		System.out.println("Over MAX Speed. Defaulting to max");
+// 	}
+// 	else if (speed < 0.0) {
+// 		swerveDrive.setMaximumSpeed(0.0, true, Constants.MAX_BATTERY_VOLTAGE);
+// 		System.out.println("Under 0.0. Setting to 0");
+// 	}
+// 	else{
+// 		swerveDrive.setMaximumSpeed(speed, true, Constants.MAX_BATTERY_VOLTAGE);
+// 		System.out.println("Setting to " + speed);
+// 	}
+// 	System.out.println("Current speed is " + swerveDrive.getMaximumVelocity());
+//   }
 }

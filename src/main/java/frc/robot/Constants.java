@@ -60,10 +60,10 @@ public final class Constants {
 				ROBOT_MASS);
 		/** Time to brake the chassis for after the robot is disabled, in seconds */
 		public static final double BRAKE_TIMER_DURATION = 10;
-		public static final double MAX_SPEED = Units.feetToMeters(14.5);
-		public static final double SLOW_SPEED = 0.3 * MAX_SPEED;
-		public static final double REGULAR_SPEED = 0.65 * MAX_SPEED;
-		public static final double FAST_SPEED = 1.0 * MAX_SPEED;
+		public static final double MAX_VELOCITY_METER_PER_SEC = Units.feetToMeters(14.5);
+		public static final double SLOW_SPEED = 0.5;
+		public static final double REGULAR_SPEED = 0.80;
+		public static final double FAST_SPEED = 1.0;
 
 	}
 
