@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -24,6 +25,8 @@ public class Robot extends TimedRobot {
 
 	private RobotContainer m_robotContainer;
 
+	private Timer disabledTimer;
+
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any
@@ -38,6 +41,10 @@ public class Robot extends TimedRobot {
 
 		DriverStation.startDataLog(DataLogManager.getLog());
 		m_robotContainer = new RobotContainer();
+
+		// Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
+    	// immediately when disabled, but then also let it be pushed more 
+    	disabledTimer = new Timer();
 	}
 
 	/**
@@ -65,10 +72,18 @@ public class Robot extends TimedRobot {
 	/** This function is called once each time the robot enters Disabled mode. */
 	@Override
 	public void disabledInit() {
+		m_robotContainer.setMotorBrake(true);
+		disabledTimer.reset();
+		disabledTimer.start();
 	}
 
 	@Override
 	public void disabledPeriodic() {
+		if (disabledTimer.hasElapsed(Constants.SwerveConstants.BRAKE_TIMER_DURATION))
+		{
+		  m_robotContainer.setMotorBrake(false);
+		  disabledTimer.stop();
+		}
 	}
 
 	/**
@@ -83,6 +98,10 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
 		}
+		//TODO: Do we need to set the brake mode for the drivetrain? Is that defaulted anywhere?
+		// See YAGSL Example code
+
+
 	}
 
 	/** This function is called periodically during autonomous. */
@@ -99,6 +118,9 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+
+		m_robotContainer.setMotorBrake(true);
+
 	}
 
 	/** This function is called periodically during operator control. */

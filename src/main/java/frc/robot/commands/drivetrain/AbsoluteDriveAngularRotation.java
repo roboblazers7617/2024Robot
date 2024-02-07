@@ -20,7 +20,7 @@ import swervelib.math.SwerveMath;
 /**
  * An example command that uses an example subsystem.
  */
-public class VelocityRotationDrive extends Command {
+public class AbsoluteDriveAngularRotation extends Command {
 
 	private final Drivetrain swerve;
 	private final DoubleSupplier vX, vY, vTheta;
@@ -49,7 +49,7 @@ public class VelocityRotationDrive extends Command {
 	 *               looking through the driver station glass.
 	 * @param vTheta The rotation speed.
 	 */
-	public VelocityRotationDrive(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier vTheta) {
+	public AbsoluteDriveAngularRotation(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier vTheta) {
 		this.swerve = swerve;
 		this.vX = vX;
 		this.vY = vY;
@@ -73,7 +73,7 @@ public class VelocityRotationDrive extends Command {
 				SwerveConstants.LOOP_TIME, SwerveConstants.ROBOT_MASS, List.of(SwerveConstants.DRIVEBASE),
 				swerve.getSwerveDriveConfiguration());
 		
-		swerve.drive(translation, speeds.omegaRadiansPerSecond, true, false, false);
+		swerve.drive(translation, speeds.omegaRadiansPerSecond, true);
 	}
 
 	// Called once the command ends or is interrupted.
