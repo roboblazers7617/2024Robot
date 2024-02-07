@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
@@ -12,33 +13,36 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 // import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.shuffleboard.MotorTab;
 
 public class Arm extends TrapezoidProfileSubsystem {
 	// Right motor and encoder
-	// private final CANSparkMax rightMotor = new CANSparkMax(ClimberConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+	// private final CANSparkMax rightMotor = new
+	// CANSparkMax(ClimberConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 	// private final AbsoluteEncoder rightAbsoluteEncoder = rightMotor
-	// 		.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-	// private final SparkPIDController rightPIDController = rightMotor.getPIDController();
+	// .getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+	// private final SparkPIDController rightPIDController =
+	// rightMotor.getPIDController();
 
 	// Left motor and encoder
 	private final CANSparkMax leftMotor = new CANSparkMax(ArmConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-	private final AbsoluteEncoder leftAbsoluteEncoder = leftMotor
+	private final SparkAbsoluteEncoder leftAbsoluteEncoder = leftMotor
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 	private final SparkPIDController leftPIDController = leftMotor.getPIDController();
 	private double currentTarget = -1;
 	private double maxCurrentTarget = 0;
 
-	// private final ArmFeedforward feedFoward = new
-	// ArmFeedforward(ClimberConstants.KS, ClimberConstants.KG,
-	// ClimberConstants.KV);
+	private final ArmFeedforward feedFoward = new ArmFeedforward(ArmConstants.KS, ArmConstants.KG,
+			ArmConstants.KV);
 
 	/** Creates a new Climber. */
 	public Arm() {
-		super(new TrapezoidProfile.Constraints(ArmConstants.MAX_VELOCITY, ArmConstants.MAX_ACCELERATION),0);
+		super(new TrapezoidProfile.Constraints(ArmConstants.MAX_VELOCITY, ArmConstants.MAX_ACCELERATION), 0);
 		disable();
 		// rightMotor.restoreFactoryDefaults();
 		// rightMotor.setIdleMode(IdleMode.kBrake);
@@ -53,13 +57,19 @@ public class Arm extends TrapezoidProfileSubsystem {
 		// rightPIDController.setI(ClimberConstants.KI);
 		// rightPIDController.setD(ClimberConstants.KD);
 		// rightPIDController.setIZone(ClimberConstants.kIz);
-		// rightPIDController.setOutputRange(ClimberConstants.kMinOutput, ClimberConstants.kMaxOutput);
+		// rightPIDController.setOutputRange(ClimberConstants.kMinOutput,
+		// ClimberConstants.kMaxOutput);
 		// rightPIDController.setFeedbackDevice(rightAbsoluteEncoder);
-		// rightPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal, ClimberConstants.SLOT_ID);
-		// rightPIDController.setSmartMotionMinOutputVelocity(ClimberConstants.minVel, ClimberConstants.SLOT_ID);
-		// rightPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY, ClimberConstants.SLOT_ID);
-		// rightPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR, ClimberConstants.SLOT_ID);
-		// rightPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION, ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionAccelStrategy(SparkPIDController.AccelStrategy.kTrapezoidal,
+		// ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMinOutputVelocity(ClimberConstants.minVel,
+		// ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMaxVelocity(ClimberConstants.MAX_VELOCITY,
+		// ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionAllowedClosedLoopError(ClimberConstants.MAX_ERROR,
+		// ClimberConstants.SLOT_ID);
+		// rightPIDController.setSmartMotionMaxAccel(ClimberConstants.MAX_ACCELERATION,
+		// ClimberConstants.SLOT_ID);
 
 		leftPIDController.setP(ArmConstants.KP);
 		leftPIDController.setI(ArmConstants.KI);
@@ -67,7 +77,6 @@ public class Arm extends TrapezoidProfileSubsystem {
 		leftPIDController.setIZone(ArmConstants.kIz);
 		leftPIDController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 		leftPIDController.setFeedbackDevice(leftAbsoluteEncoder);
-
 
 		// rightAbsoluteEncoder.setPositionConversionFactor(ClimberConstants.ABS_POSITION_CONVERSION_FACTOR);
 		// rightAbsoluteEncoder.setVelocityConversionFactor(ClimberConstants.ABS_VELOCITY_CONVERSION_FACTOR);
@@ -79,20 +88,21 @@ public class Arm extends TrapezoidProfileSubsystem {
 		// leftAbsoluteEncoder.setZeroOffset(ClimberConstants.OFFSET);
 		leftAbsoluteEncoder.setInverted(true);
 
-		// TODO make one inverted
+		MotorTab.getInstance().addMotor(new CANSparkMax[] { leftMotor });
 	}
 
+	//NOT CURRENTLY USED
 	@Override
-	public void useState(TrapezoidProfile.State setpoint){
+	public void useState(TrapezoidProfile.State setpoint) {
 		leftPIDController.setReference(setpoint.position, CANSparkBase.ControlType.kPosition);
 		currentTarget = setpoint.position;
-		if (setpoint.position > maxCurrentTarget){
+		if (setpoint.position > maxCurrentTarget) {
 			maxCurrentTarget = setpoint.position;
 		}
-		System.out.println(setpoint.position);
+		// System.out.println(setpoint.position);
+		// System.out.println(setpoint.velocity);
 
 	}
-
 
 	// do something functions
 	public void raiseArm() {
@@ -105,25 +115,25 @@ public class Arm extends TrapezoidProfileSubsystem {
 		setTarget(0);
 	}
 
-	public void stopArm(){
+	public void stopArm() {
 		disable();
 	}
 
 	private void setTarget(double target) {
-		// rightPIDController.setReference(target, CANSparkBase.ControlType.kSmartMotion);
-		// leftPIDController.setReference(target, CANSparkBase.ControlType.kSmartMotion);
-		// leftPIDController.setReference(target, CANSparkMax.ControlType.kPosition,0,2,
-		// feedFoward.calculate(target*(Math.PI/80)));
+		// leftPIDController.setReference(target,
+		// CANSparkBase.ControlType.kSmartMotion);
+		leftPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0, 
+				feedFoward.calculate(target * (Math.PI / 80), 0), ArbFFUnits.kVoltage);
 
-		setGoal(target);
-		
+		// setGoal(target);
+
 		// setGoal(new TrapezoidProfile.State(target, 0));
 	}
 
 	// @Override
 	// public void periodic() {
-	// 	super.periodic();
-	// 	// This method will be called once per scheduler run
+	// super.periodic();
+	// // This method will be called once per scheduler run
 	// }
 
 	// get info functions
@@ -136,10 +146,8 @@ public class Arm extends TrapezoidProfileSubsystem {
 		return leftAbsoluteEncoder.getPosition();
 	}
 
-	public double getCurrentTarget(){
+	public double getCurrentTarget() {
 		return currentTarget;
 	}
 
-
 }
-

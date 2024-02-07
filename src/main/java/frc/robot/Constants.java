@@ -47,8 +47,8 @@ public final class Constants {
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60; // what is this
 
 		public static final int SLOT_ID = 0;
-		public static final double MAX_VELOCITY = 2500;//was 1
-		public static final double MAX_ACCELERATION = 2500;
+		public static final double MAX_VELOCITY = 15;//was 1
+		public static final double MAX_ACCELERATION = 15;
 		public static final double MAX_ERROR = 0.02;
 	}
 
