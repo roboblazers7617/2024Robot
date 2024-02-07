@@ -23,15 +23,14 @@ import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase {
 	private final PhotonCamera intakeCamera = new PhotonCamera("intake_camera");
-	//private final PhotonCamera shooterCamera = new PhotonCamera("shooter_camera");
+	private final PhotonCamera shooterCamera = new PhotonCamera("shooter_camera");
 	private PhotonPipelineResult intakeCamResult;
 	private PhotonPipelineResult shooterCamResult;
 	private AprilTagFieldLayout fieldLayout;
 	private PhotonPoseEstimator intakeEstimator;
 	private PhotonPoseEstimator shooterEstimator;
 	private PhotonTrackedTarget intakeBestTag;
-	//private Optional<PhotonTrackedTarget> intakeBestTag;
-	//private Optional<PhotonTrackedTarget> shooterBestTag;
+	private PhotonTrackedTarget shooterBestTag;
 
 	/** Creates a new Vision. */
 	public Vision() {
@@ -42,8 +41,8 @@ public class Vision extends SubsystemBase {
 		}
 		 intakeEstimator  = new PhotonPoseEstimator(fieldLayout,
 			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, intakeCamera, VisionConstants.INTAKE_CAMERA_POSITION);
-		//shooterEstimator =  = new PhotonPoseEstimator(fieldLayout,
-		//	PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, shooterCamera, VisionConstants.SHOOTER_CAMERA_POSITION);
+		shooterEstimator = new PhotonPoseEstimator(fieldLayout,
+			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, shooterCamera, VisionConstants.SHOOTER_CAMERA_POSITION);
 	}
 
 	@Override
@@ -52,24 +51,32 @@ public class Vision extends SubsystemBase {
 		intakeCamResult = intakeCamera.getLatestResult();
 		shooterCamResult = new PhotonPipelineResult();//shooterCamera.getLatestResult();
 	}
-
-	// public Optional<EstimatedRobotPose> updateOdometry() {
-	// 	intakeBestTag = Optional.ofNullable(intakeCamResult.getBestTarget());
-	// 	if(intakeBestTag.isPresent()){
-	// 		return intakeEstimator.update();
-	// 	}
-	// 	else{
-	// 		return Optional.empty();
-	// 	}
-	// }
 	
 	public Optional<EstimatedRobotPose> updateOdometry() {
 		intakeBestTag = intakeCamResult.getBestTarget();
+		intakeBestTag = intakeCamResult.getBestTarget();
 		if(intakeBestTag != null){
-			//assuming the get distance returns distance in meters
+			if(shooterBestTag != null){
+				if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()){
+					if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+						return intakeEstimator.update();
+					else
+						return Optional.empty();
+				}
+				else{
+					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+						return shooterEstimator.update();
+					else
+						return Optional.empty();
+				}
+			}
 			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
 				return intakeEstimator.update();
 		}
+		else if(shooterBestTag != null){
+			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+				return shooterEstimator.update();
+			}
 			return Optional.empty();
 	}
 
