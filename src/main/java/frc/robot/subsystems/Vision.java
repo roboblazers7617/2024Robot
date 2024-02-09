@@ -79,19 +79,4 @@ public class Vision extends SubsystemBase {
 			}
 			return Optional.empty();
 	}
-
-	public Optional<Transform3d> findTag(int tagNumber) {
-		for (PhotonTrackedTarget target : intakeCamResult.getTargets()) {
-			if (target.getFiducialId() == tagNumber)
-				return Optional
-						.of(target.getBestCameraToTarget().plus(VisionConstants.INTAKE_CAMERA_POSITION.inverse()));
-		}
-
-		for (PhotonTrackedTarget target : shooterCamResult.getTargets()) {
-			if (target.getFiducialId() == tagNumber)
-				return Optional
-						.of(target.getBestCameraToTarget().plus(VisionConstants.SHOOTER_CAMERA_POSITION.inverse()));
-		}
-		return Optional.empty();
-	}
 }

@@ -124,7 +124,7 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(
 						() -> drivetrain.setDriverlimitingFactor(OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR)));
 		
-		driverController.a().whileTrue(new TurnToTag(drivetrain, 6));
+		driverController.a().whileTrue(new TurnToTag(drivetrain, 5));
 	}
 
 	/**
