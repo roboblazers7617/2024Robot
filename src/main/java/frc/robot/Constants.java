@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -23,28 +25,37 @@ import com.pathplanner.lib.path.PathConstraints;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+	public final static double MAX_BATTERY_VOLTAGE = 12.0;
 	private static final int THE_NUMBER_THREE = 7;
 
-	public static class TestNumber{
+	public static class TestNumber {
 		public static int number = 5;
 	}
-	
+
 	public static class OperatorConstants {
-		public static final double JOYSTICK_DEADBAND = 0.1;
+		public static final double JOYSTICK_DEADBAND = 0.01;
 		public static final int DRIVER_CONTROLLER_PORT = 0;
-		public static final double DEFUALT_DRIVER_SCALING_FACTOR = 0.5;
+		public static final double DEFAULT_DRIVER_LIMITNG_FACTOR = 0.6;
+		public static final double FAST_DRIVER_LIMITING_FACTOR = 0.9;
+		public static final double SLOW_DRIVER_LIMITING_FACTOR = .3;
 	}
 
 	public static class AutoConstants {
 		// TODO make these real numbers
 
-		public static final double LINEAR_AUTO_KP = 5;
-		public static final double LINEAR_AUTO_KI = 0;
-		public static final double LINEAR_AUTO_KD = 0;
-
-		public static final double ROTATIONAL_AUTO_KP = 0;
-		public static final double ROTATION_AUTO_KI = 0;
-		public static final double ROTATION_AUTO_KD = 0;
+		public static final double FRONT_LEFT_KP = 0;
+		public static final double FRONT_LEFT_KI = 0;
+		public static final double FRONT_LEFT_KD = 0;
+		public static final double FRONT_RIGHT_KP = 0;
+		public static final double FRONT_RIGHT_KI = 0;
+		public static final double FRONT_RIGHT_KD = 0;
+		public static final double BACK_LEFT_KP = 0;
+		public static final double BACK_LEFT_KI = 0;
+		public static final double BACK_LEFT_KD = 0;
+		public static final double BACK_RIGHT_KP = 0;
+		public static final double BACK_RIGHT_KI = 0;
+		public static final double BACK_RIGHT_KD = 0;
 	}
 
 	public static class SwerveConstants {
@@ -68,7 +79,10 @@ public final class Constants {
 				ROBOT_MASS);
 		/** Time to brake the chassis for after the robot is disabled, in seconds */
 		public static final double BRAKE_TIMER_DURATION = 10;
-		public static final double MAX_SPEED = 4.7;
+		public static final double MAX_VELOCITY_METER_PER_SEC = Units.feetToMeters(14.5);
+		public static final double SLOW_SPEED = 0.5;
+		public static final double REGULAR_SPEED = 0.80;
+		public static final double FAST_SPEED = 1.0;
 
 	}
 
@@ -112,6 +126,21 @@ public final class Constants {
 		}
 
 		public static final int IDLE_SPEED = 0;
+
+	}
+
+	public static final double BATTERY_WARNING_VOLTAGE = 11;
+	public static final int NUMBER_OF_MOTORS = 10;
+
+	public static class VisionConstants {
+
+		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(14.0 + 3.0 / 4.0),
+				Units.inchesToMeters(0.0), Units.inchesToMeters(6.0 + 7.0 / 16.0),
+				new Rotation3d(0, Units.degreesToRadians(-64.0), 0));
+		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(
+				-Units.inchesToMeters(14.0 + 3.0 / 4.0), Units.inchesToMeters(0.0),
+				Units.inchesToMeters(6.0 + 7.0 / 16.0),
+				new Rotation3d(0, Units.degreesToRadians(64.0), Units.degreesToRadians(180.0)));
 
 	}
 }
