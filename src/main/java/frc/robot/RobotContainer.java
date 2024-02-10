@@ -32,6 +32,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -59,6 +60,8 @@ public class RobotContainer {
 			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND))));
 
+	
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -83,6 +86,7 @@ public class RobotContainer {
 		tabs.add(new SwerveTab(null));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
+
 	}
 
 	/**

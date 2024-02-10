@@ -25,7 +25,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -64,7 +63,7 @@ public class Drivetrain extends SubsystemBase
   public Drivetrain()
   {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
       swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(),"swerve")).createSwerveDrive(maximumSpeed);
@@ -101,7 +100,7 @@ public class Drivetrain extends SubsystemBase
         this::getPose, // Robot pose supplier
         this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                                          new PIDConstants(AutoConstants.LINEAR_AUTO_KP, AutoConstants.LINEAR_AUTO_KI, AutoConstants.LINEAR_AUTO_KD),
                                          // Translation PID constants
@@ -286,6 +285,7 @@ public class Drivetrain extends SubsystemBase
    */
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
+	System.out.println("Resetting odometry set to " + initialHolonomicPose);
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
