@@ -30,16 +30,16 @@ public class LED extends SubsystemBase {
 			setDisconnectedAnimation();
 		} else if (DriverStation.isEStopped()) {
 			setEStopAnimation();
+		} else if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
+			setAutoDisabledAnimation();
+		} else if (DriverStation.isTeleop() && DriverStation.isDisabled()) {
+			setTeleopDisabledAnimation();
 		} else if (shooter.isAtSpeed()) {
 			setReadyToShootAnimation();
 		} else if (intake.isNoteAcquired()) {
 			setHoldingNoteAnimation();
-		} else if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
-			setAutoDisabledAnimation();
 		} else if (DriverStation.isAutonomous() && DriverStation.isEnabled()) {
 			setAutoEnabledAnimation();
-		} else if (DriverStation.isTeleop() && DriverStation.isDisabled()) {
-			setTeleopDisabledAnimation();
 		} else if (DriverStation.isTeleop() && DriverStation.isEnabled()) {
 			setTeleopEnabledAnimation();
 		}
