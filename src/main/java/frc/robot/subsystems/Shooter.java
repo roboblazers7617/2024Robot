@@ -47,6 +47,10 @@ public class Shooter extends SubsystemBase {
 		return false;
 	}
 
+	public boolean isReadyToShoot() {
+		return false;
+	}
+
 	public boolean isNoteInShooter() {
 		return isNoteInShooter.get();
 	}
