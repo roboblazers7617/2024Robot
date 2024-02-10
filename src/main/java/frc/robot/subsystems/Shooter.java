@@ -64,4 +64,5 @@ public class Shooter extends SubsystemBase {
 	private void setShooterSpeed(int rpm) {
 
 	}
+
 }

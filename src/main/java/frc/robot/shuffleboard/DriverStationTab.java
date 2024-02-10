@@ -4,12 +4,9 @@
 
 package frc.robot.shuffleboard;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,7 +17,6 @@ import frc.robot.util.Alert.AlertType;
 public class DriverStationTab extends ShuffleboardTabBase {
 	private int number = 0;
 	private final IntegerPublisher numPublisher;
-	private final DoublePublisher voltagePublisher;
 	private Alert alert = new Alert("something is wrong", AlertType.ERROR);
 
 	public DriverStationTab() {
@@ -29,8 +25,6 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
 
 		numPublisher = networkTable.getIntegerTopic("number").publish();
-
-		voltagePublisher = networkTable.getDoubleTopic("Battery Voltage").publish();
 	}
 
 	@Override
@@ -38,7 +32,6 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		number += 1;
 		numPublisher.set(number);
 
-		voltagePublisher.set(RobotController.getBatteryVoltage());
 
 	}
 
