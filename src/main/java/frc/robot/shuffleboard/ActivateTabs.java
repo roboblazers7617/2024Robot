@@ -36,9 +36,8 @@ public class ActivateTabs extends Command {
 		return true;
 	}
 
-	
 	@Override
-	public boolean runsWhenDisabled(){
+	public boolean runsWhenDisabled() {
 		return true;
 	}
 }

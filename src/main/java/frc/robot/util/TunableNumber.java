@@ -9,35 +9,37 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TestNumber;
 
-
 /**
  * How to add your constant
- * <p> 1. Make sure to remove final from variable declaration
- * <p> 2. Add {@code private final IntegerEntry yourVariable}
- * <p> 3. Add {@code yourVariable = networkTable.getIntegerTopic("variable name on shuffleboard").getEntry(0);
+ * <p>
+ * 1. Make sure to remove final from variable declaration
+ * <p>
+ * 2. Add {@code private final IntegerEntry yourVariable}
+ * <p>
+ * 3. Add
+ * {@code yourVariable = networkTable.getIntegerTopic("variable name on shuffleboard").getEntry(0);
 		yourVariableName.set(Constants.YOUR_CONSTANT);}
- * <p> 4. Add {@code Constants.YOUR_CONSTANT = (int) YourVariable.get();}
+ * <p>
+ * 4. Add {@code Constants.YOUR_CONSTANT = (int) YourVariable.get();}
  */
-public class TunableNumber extends SubsystemBase{
+public class TunableNumber extends SubsystemBase {
 	// How to add your constant
 	// 1. Make sure to remove final from variable declaration
-	// 2. declare 
-
+	// 2. declare
 
 	private final IntegerEntry number;
-	public TunableNumber(){
+
+	public TunableNumber() {
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
 
-
-
-		// |  |  |
+		// | | |
 		// \/ \/ \/
 		number = networkTable.getIntegerTopic("other number").getEntry(0);
 		number.set(TestNumber.number);
 
 		// /\ /\ /\
-		//  |  |  |
+		// | | |
 	}
 
 	@Override

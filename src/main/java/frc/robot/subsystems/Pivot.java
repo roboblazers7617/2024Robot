@@ -19,15 +19,16 @@ public class Pivot extends SubsystemBase {
 		// This method will be called once per scheduler run
 	}
 
-	public Command moveToPosition(PivotConstants.PivotPosition position){
-		return Commands.runOnce(() -> setPivotAngle(position.angle()), this).andThen(Commands.waitUntil(() -> isAtSetpoint()));
+	public Command moveToPosition(PivotConstants.PivotPosition position) {
+		return Commands.runOnce(() -> setPivotAngle(position.angle()), this)
+				.andThen(Commands.waitUntil(() -> isAtSetpoint()));
 	}
 
-	public boolean isAtSetpoint(){
+	public boolean isAtSetpoint() {
 		return false;
 	}
 
-	private void setPivotAngle(double angle){
+	private void setPivotAngle(double angle) {
 
 	}
 }
