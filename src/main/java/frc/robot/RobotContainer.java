@@ -24,6 +24,7 @@ import frc.robot.commands.drivetrain.AbsoluteDriveDirectAngle;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.AbsoluteDriveAngularRotation;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -50,8 +51,9 @@ public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
-	private final Drivetrain drivetrain = new Drivetrain();
 	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
+	private final Vision vision = new Vision();
+	private final Drivetrain drivetrain = new Drivetrain(vision);
 
 	private final AbsoluteDriveDirectAngle absoluteDrive = (new AbsoluteDriveDirectAngle(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
