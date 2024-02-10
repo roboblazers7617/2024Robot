@@ -95,6 +95,9 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
+		public static final int SHOOTER_MOTOR_ID = 25;
+		public static final int SENSOR_DIO = 2;
+
 		public enum ShootingPosition {
 			SUBWOOFER(0);
 
@@ -110,7 +113,6 @@ public final class Constants {
 		}
 
 		public static final int IDLE_SPEED = 0;
-
 	}
 
 	public static final double BATTERY_WARNING_VOLTAGE = 11;
