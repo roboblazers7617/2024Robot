@@ -15,7 +15,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
-
 public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command getAuto() {
@@ -26,14 +25,13 @@ public final class Autos {
 		throw new UnsupportedOperationException("This is a utility class!");
 	}
 
-	// Since we are using a holonomic drivetrain, the rotation component of this
-	// pose
-	// represents the goal holonomic rotation
-	Pose2d targetPose = new Pose2d();
+	// Since we are using a holonomic drivetrain, the rotation component of this pose
+// represents the goal holonomic rotation
+Pose2d targetPose = new Pose2d();
 
-	// Since AutoBuilder is configured, we can use it to build pathfinding commands
+// Since AutoBuilder is configured, we can use it to build pathfinding commands
 
-	// TODO I dont know if this makes robot move when called or if I have to do smth
-	// else
+//TODO I dont know if this makes robot move when called or if I have to do smth else
+
 
 }
