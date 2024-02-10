@@ -34,7 +34,7 @@ public class LED extends SubsystemBase {
 			setAutoDisabledAnimation();
 		} else if (DriverStation.isTeleop() && DriverStation.isDisabled()) {
 			setTeleopDisabledAnimation();
-		} else if (shooter.isAtSpeed()) {
+		} else if (shooter.isReadyToShoot()) {
 			setReadyToShootAnimation();
 		} else if (intake.isNoteAcquired()) {
 			setHoldingNoteAnimation();

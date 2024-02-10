@@ -85,7 +85,7 @@ public class RobotContainer {
 
 		tabs.add(MotorTab.getInstance());
 
-		tabs.add(new LEDTab(led));
+		tabs.add(new LEDTab(led, intake, shooter));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}

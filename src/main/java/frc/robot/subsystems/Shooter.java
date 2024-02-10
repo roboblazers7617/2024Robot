@@ -21,6 +21,8 @@ public class Shooter extends SubsystemBase {
 	private final SparkPIDController shooterController = shooterMotor.getPIDController();
 	private final DigitalInput isNoteInShooter = new DigitalInput(ShooterConstants.SENSOR_DIO);
 
+	boolean readyToShoot = false;
+
 
 	/** Creates a new Shooter. */
 	public Shooter() {
@@ -48,7 +50,11 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public boolean isReadyToShoot() {
-		return false;
+		return readyToShoot;
+	}
+
+	public void setIsReadyToShoot(boolean isReadyToShoot) {
+		readyToShoot = isReadyToShoot;
 	}
 
 	public boolean isNoteInShooter() {
