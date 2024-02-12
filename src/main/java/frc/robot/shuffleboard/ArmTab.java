@@ -5,7 +5,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.arm.RaiseArm;
 import frc.robot.subsystems.Arm;
 
 public class ArmTab extends ShuffleboardTabBase {
@@ -43,9 +43,12 @@ public class ArmTab extends ShuffleboardTabBase {
 	@Override
 	public void activateShuffleboard() {
 		ShuffleboardTab tab = Shuffleboard.getTab("arm");
-		tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()).ignoringDisable(true));
-		tab.add("lower arm", new InstantCommand(() -> arm.lowerArm()).ignoringDisable(true));
-		tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
+		// tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()).ignoringDisable(true));
+		tab.add("raise arm ", new RaiseArm(arm, true));
+		// tab.add("lower arm", new InstantCommand(() -> arm.lowerArm()).ignoringDisable(true));
+		// tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
+		// tab.add("foward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kForward));
+		// tab.add("backward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kReverse));
 	}
 
 	@Override

@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -86,7 +87,7 @@ public class RobotContainer {
 		tabs.add(new ArmTab(arm));
 
 		tabs.add(new LEDTab(led));
-		tabs.add(new SwerveTab(drivetrain));
+		// tabs.add(new SwerveTab(drivetrain));
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
@@ -109,6 +110,10 @@ public class RobotContainer {
 		// drivetrain.setDefaultCommand(rotationDrive);
 
 		// driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+		// driverController.a().whileTrue(arm.SysidQuasistatic(Direction.kForward));
+		// driverController.b().whileTrue(arm.SysidQuasistatic(Direction.kReverse));
+		// driverController.x().whileTrue(arm.SysidDynamic(Direction.kForward));
+		// driverController.y().whileTrue(arm.SysidDynamic(Direction.kReverse));
 
 
 	}
@@ -124,6 +129,6 @@ public class RobotContainer {
 	}
 
 	public void setMotorBrake(boolean isBraked){
-		drivetrain.setMotorBrake(isBraked);
+		// drivetrain.setMotorBrake(isBraked);
 	}
 }

@@ -24,6 +24,12 @@ public class TunableNumber extends SubsystemBase{
 
 	private final IntegerEntry number;
 	private final DoubleEntry maxClimberHeight;
+	// private final DoubleEntry armKS;
+	// private final DoubleEntry armKG;
+	// private final DoubleEntry armKV;
+	private final DoubleEntry armKP;
+	private final DoubleEntry armKI;
+	private final DoubleEntry armKD;
 	public TunableNumber(){
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
@@ -34,6 +40,18 @@ public class TunableNumber extends SubsystemBase{
 		number.set(TestNumber.number);
 		maxClimberHeight = networkTable.getDoubleTopic("max climber height").getEntry(0);
 		maxClimberHeight.set(ArmConstants.MAX_HEIGHT);
+		// armKS = networkTable.getDoubleTopic("arm KS").getEntry(0);
+		// armKS.set(ArmConstants.KP);
+		// armKG = networkTable.getDoubleTopic("arm KG").getEntry(0);
+		// armKG.set(ArmConstants.KP);
+		// armKV = networkTable.getDoubleTopic("arm KV").getEntry(0);
+		// armKV.set(ArmConstants.KP);
+		armKP = networkTable.getDoubleTopic("arm KP").getEntry(0);
+		armKP.set(ArmConstants.KP);
+		armKI = networkTable.getDoubleTopic("arm KI").getEntry(0);
+		armKI.set(ArmConstants.KI);
+		armKD = networkTable.getDoubleTopic("arm KD").getEntry(0);
+		armKD.set(ArmConstants.KD);
 		// /\ /\ /\
 		//  |  |  |
 	}
@@ -42,5 +60,12 @@ public class TunableNumber extends SubsystemBase{
 	public void periodic() {
 		TestNumber.number = (int) number.get();
 		ArmConstants.MAX_HEIGHT = maxClimberHeight.get();
+		// ArmConstants.KS = armKS.get();
+		// ArmConstants.KG = armKG.get();
+		// ArmConstants.KV = armKV.get();
+		ArmConstants.KP = armKP.get();
+		ArmConstants.KI = armKI.get();
+		ArmConstants.KD = armKD.get();
+
 	}
 }
