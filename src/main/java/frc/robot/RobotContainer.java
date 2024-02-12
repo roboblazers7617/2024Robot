@@ -55,12 +55,17 @@ public class RobotContainer {
 	private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(vision);
 
+	//TODO: (Lukas) When using this command, I believe it is causing the bugs where the
+	// robot will automatically rotate to an angle when the vision updates the robot at the
+	// boot time, when switching back from the angular rotation drive. Could also be the cause
+	// of robot moving strangely when within 4 meters of a tag. Either make changes to this 
+	// command or look at the way YAGSL Example sets the drive commands in RobotContainer
 	private final AbsoluteDriveDirectAngle absoluteDrive = (new AbsoluteDriveDirectAngle(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
-
+	//TODO: (Lukas) Do we want to use this command or just do it the way YAGSL Example code does it?
 	private final AbsoluteDriveAngularRotation rotationDrive = (new AbsoluteDriveAngularRotation(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
@@ -105,6 +110,9 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
+		//TODO: (Lukas) There seems to be a bug that if the robot is facing toward the driver station
+		// rather than away from it, even if the pose is updated to have the correct angle
+		// the joysticks do not correctly drive the robot forward. Everything is reversed. 
 		drivetrain.setDefaultCommand(absoluteDrive);
 
 		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
@@ -121,6 +129,8 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(
 						() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
 
+		//TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
+		// the source for pickup so they do not need to manually do this
 
 	}
 

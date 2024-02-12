@@ -170,6 +170,9 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
                               DoubleSupplier headingY)
   {
+	//TODO: (Lukas) Our drivers are saying that it is difficult to get the robot to drive diagonally, 
+	// and we are also noticing that it can't really drive in a circle - it makes a box. See
+	// this CD post as it sounds like the issue https://www.chiefdelphi.com/t/yagsl-wheels-do-not-rotate-60-at-same-time/454132/7
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
       double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
@@ -216,6 +219,9 @@ public class Drivetrain extends SubsystemBase {
   {
     return run(() -> {
       // Make the robot move
+	  	//TODO: (Lukas) Our drivers are saying that it is difficult to get the robot to drive diagonally, 
+	// and we are also noticing that it can't really drive in a circle - it makes a box. See
+	// this CD post as it sounds like the issue https://www.chiefdelphi.com/t/yagsl-wheels-do-not-rotate-60-at-same-time/454132/7
       swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
                                           Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
                         				  Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
