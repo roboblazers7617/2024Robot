@@ -36,7 +36,7 @@ public class ArmTab extends ShuffleboardTabBase {
 	public void update() {
 		rightAbsoluteEncoderPub.set(arm.getRightAbsoluteEncoderPosition());
 		leftAbsoluteEncoderPub.set(arm.getLeftAbsoluteEncoderPosition());
-		currentTarget.set(arm.getCurrentTarget());
+		currentTarget.set(arm.getArmCurrentTarget());
 
 	}
 

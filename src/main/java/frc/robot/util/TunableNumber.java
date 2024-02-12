@@ -39,7 +39,7 @@ public class TunableNumber extends SubsystemBase{
 		number = networkTable.getIntegerTopic("other number").getEntry(0);
 		number.set(TestNumber.number);
 		maxClimberHeight = networkTable.getDoubleTopic("max climber height").getEntry(0);
-		maxClimberHeight.set(ArmConstants.MAX_HEIGHT);
+		maxClimberHeight.set(ArmConstants.MAX_ANGLE);
 		// armKS = networkTable.getDoubleTopic("arm KS").getEntry(0);
 		// armKS.set(ArmConstants.KP);
 		// armKG = networkTable.getDoubleTopic("arm KG").getEntry(0);
@@ -59,7 +59,7 @@ public class TunableNumber extends SubsystemBase{
 	@Override
 	public void periodic() {
 		TestNumber.number = (int) number.get();
-		ArmConstants.MAX_HEIGHT = maxClimberHeight.get();
+		ArmConstants.MAX_ANGLE = maxClimberHeight.get();
 		// ArmConstants.KS = armKS.get();
 		// ArmConstants.KG = armKG.get();
 		// ArmConstants.KV = armKV.get();

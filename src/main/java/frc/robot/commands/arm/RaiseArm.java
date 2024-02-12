@@ -30,9 +30,9 @@ public class RaiseArm extends Command {
 	@Override
 	public void initialize() {
 		if (fast) {
-			arm.setTarget(45);
+			arm.setArmTarget(45);
 		} else {
-			arm.setTarget(5);
+			arm.setArmTarget(5);
 		}
 
 	}
@@ -45,7 +45,7 @@ public class RaiseArm extends Command {
 		} else {
 			target += 0.2;
 		}
-		arm.setTarget(target);
+		arm.setArmTarget(target);
 	}
 
 	// Called once the command ends or is interrupted.
