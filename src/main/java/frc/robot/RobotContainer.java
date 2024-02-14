@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Shooter;
 import frc.robot.shuffleboard.ArmTab;
 import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.MotorTab;
@@ -26,6 +27,8 @@ import frc.robot.commands.drivetrain.AbsoluteDriveDirectAngle;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.AbsoluteDriveAngularRotation;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -48,13 +51,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final ShuffleboardInfo shuffleboard;
-	LED led = new LED(SerialPort.Port.kMXP);
+	Intake intake = new Intake();
+	Shooter shooter = new Shooter();
+	LED led = new LED(SerialPort.Port.kMXP, intake, shooter);
 	private final Arm arm = new Arm();
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
-	// private final Drivetrain drivetrain = new Drivetrain();
+	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
+	private final Vision vision = new Vision();
+	private final Drivetrain drivetrain = new Drivetrain(vision);
 
 	// private final AbsoluteDrive absoluteDrive = (new AbsoluteDrive(drivetrain,
 	// 		() -> (-MathUtil.applyDeadband(driverController.getLeftY(), OperatorConstants.JOYSTICK_DEADBAND)),
@@ -88,8 +95,10 @@ public class RobotContainer {
 		tabs.add(MotorTab.getInstance());
 		tabs.add(new ArmTab(arm));
 
-		tabs.add(new LEDTab(led));
-		// tabs.add(new SwerveTab(drivetrain));
+		tabs.add(new SwerveTab(drivetrain));
+
+		tabs.add(new LEDTab(led, intake, shooter));
+
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}

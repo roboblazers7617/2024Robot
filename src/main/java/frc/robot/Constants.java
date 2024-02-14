@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -98,6 +100,7 @@ public final class Constants {
 		public static final int DRIVER_CONTROLLER_PORT = 0;
 		public static final double DEFAULT_DRIVER_LIMITNG_FACTOR = 0.6;
 		public static final double FAST_DRIVER_LIMITING_FACTOR = 0.9;
+		public static final double SLOW_DRIVER_LIMITING_FACTOR = .3;
 	}
 
 	public static class AutoConstants {
@@ -157,6 +160,9 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
+		public static final int SHOOTER_MOTOR_ID = 25;
+		public static final int SENSOR_DIO = 2;
+
 		public enum ShootingPosition {
 			SUBWOOFER(0);
 
@@ -172,9 +178,19 @@ public final class Constants {
 		}
 
 		public static final int IDLE_SPEED = 0;
-
 	}
 
 	public static final double BATTERY_WARNING_VOLTAGE = 11;
 	public static final int NUMBER_OF_MOTORS = 10;
+	public static class VisionConstants {
+
+		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(14.0 + 3.0 / 4.0),
+				Units.inchesToMeters(0.0), Units.inchesToMeters(6.0 + 7.0 / 16.0),
+				new Rotation3d(0, Units.degreesToRadians(-64.0), 0));
+		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(
+				-Units.inchesToMeters(14.0 + 3.0 / 4.0), Units.inchesToMeters(0.0),
+				Units.inchesToMeters(6.0 + 7.0 / 16.0),
+				new Rotation3d(0, Units.degreesToRadians(64.0), Units.degreesToRadians(180.0)));
+
+	}
 }
