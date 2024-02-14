@@ -1,12 +1,9 @@
 package frc.robot.util;
 
-import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TestNumber;
 
 
@@ -23,19 +20,15 @@ public class TunableNumber extends SubsystemBase{
 	// 1. Make sure to remove final from variable declaration
 	// 2. declare 
 
-
 	private final IntegerEntry number;
 	public TunableNumber(){
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
 
-
-
 		// |  |  |
 		// \/ \/ \/
 		number = networkTable.getIntegerTopic("other number").getEntry(0);
 		number.set(TestNumber.number);
-
 		// /\ /\ /\
 		//  |  |  |
 	}
@@ -43,6 +36,5 @@ public class TunableNumber extends SubsystemBase{
 	@Override
 	public void periodic() {
 		TestNumber.number = (int) number.get();
-
 	}
 }
