@@ -61,7 +61,7 @@ public class Drivetrain extends SubsystemBase {
 	public Drivetrain(Vision vision) {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
-		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
@@ -78,10 +78,11 @@ public class Drivetrain extends SubsystemBase {
   
 	setupPathPlanner();
 	this.vision = vision;
-	for (int i = 0; i < 4; i++){
-		MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
-		MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
-	}
+
+	//for (int i = 0; i < 4; i++){
+	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
+	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
+	//}
   }
 
 
@@ -142,21 +143,6 @@ public class Drivetrain extends SubsystemBase {
 		return AutoBuilder.followPath(path);
 	}
 
-	/**
-	 * Command to drive the robot using translative values and heading as a
-	 * setpoint.
-	 *
-	 * @param translationX Translation in the X direction. Cubed for smoother
-	 *                     controls.
-	 * @param translationY Translation in the Y direction. Cubed for smoother
-	 *                     controls.
-	 * @param headingX     Heading X to calculate angle of the joystick.
-	 * @param headingY     Heading Y to calculate angle of the joystick.
-	 * @return Drive command.
-	 */
-
-
-
 
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
@@ -170,13 +156,10 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
                               DoubleSupplier headingY)
   {
-	//TODO: (Lukas) Our drivers are saying that it is difficult to get the robot to drive diagonally, 
-	// and we are also noticing that it can't really drive in a circle - it makes a box. See
-	// this CD post as it sounds like the issue https://www.chiefdelphi.com/t/yagsl-wheels-do-not-rotate-60-at-same-time/454132/7
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
-      double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-      double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+      double xInput = translationX.getAsDouble();
+      double yInput = translationY.getAsDouble();
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
                                                                       headingX.getAsDouble(),
@@ -218,13 +201,9 @@ public class Drivetrain extends SubsystemBase {
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
   {
     return run(() -> {
-      // Make the robot move
-	  	//TODO: (Lukas) Our drivers are saying that it is difficult to get the robot to drive diagonally, 
-	// and we are also noticing that it can't really drive in a circle - it makes a box. See
-	// this CD post as it sounds like the issue https://www.chiefdelphi.com/t/yagsl-wheels-do-not-rotate-60-at-same-time/454132/7
-      swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-                                          Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
-                        				  Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
+      swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(),
+                                          translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
+                        				  angularRotationX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false);
     });
@@ -369,8 +348,6 @@ public class Drivetrain extends SubsystemBase {
    */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
   {
-    xInput = Math.pow(xInput, 3);
-    yInput = Math.pow(yInput, 3);
     return swerveDrive.swerveController.getTargetSpeeds(xInput,
                                                         yInput,
                                                         headingX,
@@ -389,8 +366,8 @@ public class Drivetrain extends SubsystemBase {
 		return swerveDrive.getOdometryHeading();
 	}
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput){
-	xInput = Math.pow(xInput, 3) * swerveDrive.getMaximumVelocity();
-	yInput = Math.pow(yInput, 3) * swerveDrive.getMaximumVelocity();
+	xInput = xInput * swerveDrive.getMaximumVelocity();
+	yInput = yInput * swerveDrive.getMaximumVelocity();
 	thetaInput = Math.pow(thetaInput, 3) * swerveDrive.getMaximumAngularVelocity();
 
 	return swerveDrive.swerveController.getRawTargetSpeeds(xInput, yInput, thetaInput);
@@ -408,8 +385,6 @@ public class Drivetrain extends SubsystemBase {
    */
    public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
   {
-    xInput = Math.pow(xInput, 3);
-    yInput = Math.pow(yInput, 3);
     return swerveDrive.swerveController.getTargetSpeeds(xInput,
                                                         yInput,
                                                         angle.getRadians(),
@@ -472,12 +447,5 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public Rotation2d getPitch() {
 		return swerveDrive.getPitch();
-	}
-
-	/**
-	 * Add a fake vision reading for testing purposes.
-	 */
-	public void addFakeVisionReading() {
-		swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
 	}
 }

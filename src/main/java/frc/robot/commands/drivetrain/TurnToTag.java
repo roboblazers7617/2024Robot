@@ -24,14 +24,12 @@ public class TurnToTag extends Command {
 	/** Creates a new TurnToTag. */
 	private Pose2d tagPose;
 	private final Drivetrain drivetrain;
-	private final int tagID;
 	private final PIDController controller;
 	private AprilTagFieldLayout fieldLayout;
 
 	public TurnToTag(Drivetrain drivetrain, int tagID) {
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(drivetrain);
-		this.tagID = tagID;
 		this.drivetrain = drivetrain;
 		this.controller = new PIDController(drivetrain.getSwerveController().config.headingPIDF.p, drivetrain.getSwerveController().config.headingPIDF.i, drivetrain.getSwerveController().config.headingPIDF.d);
 		controller.setSetpoint(0);

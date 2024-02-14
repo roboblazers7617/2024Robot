@@ -17,17 +17,17 @@ import frc.robot.shuffleboard.SwerveTab;
 import frc.robot.util.TunableNumber;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import frc.robot.commands.drivetrain.AbsoluteDriveDirectAngle;
 import frc.robot.commands.drivetrain.LockWheelsState;
-import frc.robot.commands.drivetrain.AbsoluteDriveAngularRotation;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
@@ -55,22 +55,15 @@ public class RobotContainer {
 	private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(vision);
 
-	//TODO: (Lukas) When using this command, I believe it is causing the bugs where the
-	// robot will automatically rotate to an angle when the vision updates the robot at the
-	// boot time, when switching back from the angular rotation drive. Could also be the cause
-	// of robot moving strangely when within 4 meters of a tag. Either make changes to this 
-	// command or look at the way YAGSL Example sets the drive commands in RobotContainer
-	private final AbsoluteDriveDirectAngle absoluteDrive = (new AbsoluteDriveDirectAngle(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+	private final Command absoluteDrive = drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
-	//TODO: (Lukas) Do we want to use this command or just do it the way YAGSL Example code does it?
-	private final AbsoluteDriveAngularRotation rotationDrive = (new AbsoluteDriveAngularRotation(drivetrain,
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
+			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND)));
 
+	private final Command rotationDrive = drivetrain.driveCommand(
+			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -130,8 +123,26 @@ public class RobotContainer {
 						() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
 
 		//TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
-		// the source for pickup so they do not need to manually do this
+		// the source for pickup so they do not need to manually do this 
+		driverController.povLeft().and(() -> checkAllianceColors(Alliance.Red)).onTrue(Commands.print("Red!"));
+				 /* .whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND))));*/
+		
+		/*driverController.povLeft().and(() -> allianceColor.equals(Alliance.Red))
+				.whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND)),
+			() -> (-MathUtil.applyDeadband(-1.0, OperatorConstants.JOYSTICK_DEADBAND))));*/
 
+	}
+
+	private boolean checkAllianceColors(Alliance checkAgainst){
+		if(DriverStation.getAlliance().isPresent()){
+			return DriverStation.getAlliance().get() == checkAgainst;
+		}
+		return false;
 	}
 
 	/**
@@ -147,4 +158,5 @@ public class RobotContainer {
 	public void setMotorBrake(boolean isBraked){
 		drivetrain.setMotorBrake(isBraked);
 	}
+
 }

@@ -31,7 +31,7 @@ public final class Constants {
 	}
 
 	public static class OperatorConstants {
-		public static final double JOYSTICK_DEADBAND = 0.01;
+		public static final double JOYSTICK_DEADBAND = 0.075;
 		public static final int DRIVER_CONTROLLER_PORT = 0;
 		public static final double DEFAULT_DRIVER_LIMITNG_FACTOR = 0.6;
 		public static final double FAST_DRIVER_LIMITING_FACTOR = 0.9;
@@ -64,9 +64,9 @@ public final class Constants {
 		/** Time to brake the chassis for after the robot is disabled, in seconds */
 		public static final double BRAKE_TIMER_DURATION = 10;
 		public static final double MAX_VELOCITY_METER_PER_SEC = Units.feetToMeters(14.5);
-		public static final double SLOW_SPEED = 0.5;
-		public static final double REGULAR_SPEED = 0.80;
-		public static final double FAST_SPEED = 1.0;
+		public static final double SLOW_SPEED = 0.3;//.5
+		public static final double REGULAR_SPEED = 0.60;//.8
+		public static final double FAST_SPEED = .80;//1.0
 
 	}
 
