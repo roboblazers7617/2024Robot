@@ -13,8 +13,6 @@ public class ArmTab extends ShuffleboardTabBase {
 
 	private final DoublePublisher rightAbsoluteEncoderPub;
 	//TODO: (Brandon) There will only be one absolute encoder
-	private final DoublePublisher leftAbsoluteEncoderPub;
-	private final DoublePublisher currentTarget;
 	// private final DoublePublisher odometryYPub;
 	// private final DoublePublisher odometryXPub;
 	// private final DoublePublisher odometryAnglePub;
@@ -27,8 +25,6 @@ public class ArmTab extends ShuffleboardTabBase {
 		NetworkTable networkTable = inst.getTable("logging/arm");
 
 		rightAbsoluteEncoderPub = networkTable.getDoubleTopic("Right Absolute Encoder").publish();
-		leftAbsoluteEncoderPub = networkTable.getDoubleTopic("Left Absolute Encoder").publish();
-		currentTarget = networkTable.getDoubleTopic("Current Target").publish();
 
 
 	}
@@ -36,8 +32,6 @@ public class ArmTab extends ShuffleboardTabBase {
 	@Override
 	public void update() {
 		rightAbsoluteEncoderPub.set(arm.getRightAbsoluteEncoderPosition());
-		leftAbsoluteEncoderPub.set(arm.getLeftAbsoluteEncoderPosition());
-		currentTarget.set(arm.getArmCurrentTarget());
 
 	}
 

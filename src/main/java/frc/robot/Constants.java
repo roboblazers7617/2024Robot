@@ -33,8 +33,9 @@ public final class Constants {
 		public static final int RIGHT_MOTOR_ID = 499;// TODO
 		public static final int RIGHT_ELEVATOR_MOTOR_ID = 498;
 		public static final int LEFT_ELEVATOR_MOTOR_ID = 497;
+		public static final int MAX_AMPERAGE = 40;
 
-		public static double MAX_ANGLE = 0;
+		public static double MAX_ANGLE = 90;
 		public static double MIN_ANGLE = 0;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static double MIN_ABOVE_PASS_ANGLE = 25;
@@ -63,6 +64,7 @@ public final class Constants {
 	public static class ElevatorConstants {
 		public static final int RIGHT_MOTOR_ID = 498;
 		public static final int LEFT_MOTOR_ID = 497;
+		public static final int MAX_AMPERAGE = 40;
 		public static final double KS = 0;
 		public static final double KG = 0.2;
 		public static final double KV = 0.389;

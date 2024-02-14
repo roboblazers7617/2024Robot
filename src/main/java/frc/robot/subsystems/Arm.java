@@ -20,186 +20,170 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.shuffleboard.MotorTab;
+import frc.robot.util.Alert;
+import frc.robot.util.Alert.AlertType;
 
 public class Arm extends SubsystemBase {
-	// Right motor and encoder
-	private final CANSparkMax rightArmMotor = new CANSparkMax(ArmConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-	private final SparkAbsoluteEncoder rightAbsoluteEncoder = rightArmMotor
-			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-	private final SparkPIDController rightArmPIDController = rightArmMotor.getPIDController();
+	// Arm
+	/** this is the right arm motor */
+	private final CANSparkMax leaderArmMotor = new CANSparkMax(ArmConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+	private final CANSparkMax followerArmMotor = new CANSparkMax(ArmConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
 
-	// Left motor and encoder
-	//TODO: (Brandon) One of the arm motors will be the leader and the other the follower.
-	// A suggestion (but not required) to make the code easier to read would be to name the motors "leader" and "follower" rather than
-	// right and left so a person doesn't need to remember which is the leader and which is the follower
-	private final CANSparkMax leftArmMotor = new CANSparkMax(ArmConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-	//TODO: (Brandon) There will only be one Absolute Encoder on the arm
-	private final SparkAbsoluteEncoder leftAbsoluteEncoder = leftArmMotor
+	private final SparkAbsoluteEncoder armAbsoluteEncoder = leaderArmMotor
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-	//TODO: (Brandon) I *think* we only need one PID controller per mechanism becuase the motors will be seutp as leader and follower. 
-	// You only need to have one PID controller running
-	private final SparkPIDController leftArmPIDController = leftArmMotor.getPIDController();
-	private double currentArmTarget = -1;
+
+	private final SparkPIDController armPIDController = leaderArmMotor.getPIDController();
 
 	private final ArmFeedforward armFeedFoward = new ArmFeedforward(ArmConstants.KS, ArmConstants.KG,
 			ArmConstants.KV);
 
-	//TODO: (Brandon) One of the arm motors will be the leader and the other the follower.
-	// A suggestion (but not required) to make the code easier to read would be to name the motors "leader" and "follower" rather than
-	// right and left so a person doesn't need to remember which is the leader and which is the follower
 
-	// elevator motors and encoders
-	// right motor
-	private final CANSparkMax rightElevatorMotor = new CANSparkMax(ArmConstants.RIGHT_ELEVATOR_MOTOR_ID,
+	// Elevator
+	/** the right motor */
+	private final CANSparkMax leaderElevatorMotor = new CANSparkMax(ArmConstants.RIGHT_ELEVATOR_MOTOR_ID,
 			MotorType.kBrushless);
-	private final AnalogInput rightElevatorInput = new AnalogInput(ElevatorConstants.RIGHT_POTIENTIOMETER_PORT);
-	private final AnalogPotentiometer rightElevatorPotentiometer = new AnalogPotentiometer(rightElevatorInput,
+	/** the left motor */
+	private final CANSparkMax followerElevatorMotor = new CANSparkMax(ArmConstants.LEFT_ELEVATOR_MOTOR_ID,
+			MotorType.kBrushless);
+	/** the anlog input for the string potentiometer in the elevator */
+	private final AnalogInput analogInput = new AnalogInput(ElevatorConstants.RIGHT_POTIENTIOMETER_PORT);
+	/** the potentiometer for the elevator */
+	private final AnalogPotentiometer potentiometer = new AnalogPotentiometer(analogInput,
 			ElevatorConstants.MAX_HEIGHT, 0);
-	
-	private final SparkPIDController rightElevatorPIDController = rightElevatorMotor.getPIDController();
 
-	// left motor
-	private final CANSparkMax leftElevatorMotor = new CANSparkMax(ArmConstants.LEFT_ELEVATOR_MOTOR_ID,
-			MotorType.kBrushless);
-	private final AnalogInput leftElevatorInput = new AnalogInput(ElevatorConstants.LEFT_POTIENTIOMETER_PORT);
-	private final AnalogPotentiometer leftElevatorPotentiometer = new AnalogPotentiometer(leftElevatorInput,
-			ElevatorConstants.MAX_HEIGHT, 0);
-	private final SparkPIDController leftElevatorPIDController = leftElevatorMotor.getPIDController();
+	private final SparkPIDController elevatorPIDController = leaderElevatorMotor.getPIDController();
 
 	private final ElevatorFeedforward elevatorFeedforward;
 
-	//TODO: (Brandon) Putting as something to talk about so we don't forget... the feedforward values for the elevator may change based on the arm pivot angle,
-	// and the feedforward values for the arm may change based on the elevator extension. Need to think through this issue...
+
+	private final Alert invalidArmMove = new Alert("Invalid Arm Move", AlertType.ERROR);
+	private final Alert invalidElevatorMove = new Alert("Invalid Elevator Move", AlertType.ERROR);
+
+	// TODO: (Brandon) Putting as something to talk about so we don't forget... the
+	// feedforward values for the elevator may change based on the arm pivot angle,
+	// and the feedforward values for the arm may change based on the elevator
+	// extension. Need to think through this issue...
 	/** Creates a new Arm. */
 	public Arm() {
 
 		// setup arm motors
 
-		rightArmMotor.restoreFactoryDefaults();
-		rightArmMotor.setIdleMode(IdleMode.kBrake);
-		//TODO: (Brandon) the current limit for the arm motors may need to be 40 Amps. Will need to look into this
-		rightArmMotor.setSmartCurrentLimit(20);
+		leaderArmMotor.restoreFactoryDefaults();
+		leaderArmMotor.setIdleMode(IdleMode.kBrake);
+		leaderArmMotor.setSmartCurrentLimit(ArmConstants.MAX_AMPERAGE);
 
-		leftArmMotor.restoreFactoryDefaults();
-		leftArmMotor.setIdleMode(IdleMode.kBrake);
-		//TODO: (Brandon) the current limit for the arm motors may need to be 40 Amps. Will need to look into this
-		leftArmMotor.setSmartCurrentLimit(20);
-		//TODO: (Brandon) You are correct that one of the motors will be inverted. You will need to do an experiment before running
-		// the code to see which one it is
- 		leftArmMotor.setInverted(true);
+		followerArmMotor.restoreFactoryDefaults();
+		followerArmMotor.setIdleMode(IdleMode.kBrake);
+		// Will need to look into this
+		followerArmMotor.setSmartCurrentLimit(ArmConstants.MAX_AMPERAGE);
+		followerArmMotor.setInverted(true);
+		followerArmMotor.follow(leaderArmMotor);// TODO: (Brandon) Do I need to tell the follower to invert or is it
+												// included in the setInverted method?
 
-		// setup arm pid controllers
-
-		rightArmPIDController.setP(ArmConstants.KP);
-		rightArmPIDController.setI(ArmConstants.KI);
-		rightArmPIDController.setD(ArmConstants.KD);
-		rightArmPIDController.setIZone(ArmConstants.kIz);
-		rightArmPIDController.setOutputRange(ArmConstants.kMinOutput,
+		// setup the arm pid controller
+		armPIDController.setP(ArmConstants.KP);
+		armPIDController.setI(ArmConstants.KI);
+		armPIDController.setD(ArmConstants.KD);
+		armPIDController.setIZone(ArmConstants.kIz);
+		armPIDController.setOutputRange(ArmConstants.kMinOutput,
 				ArmConstants.kMaxOutput);
-		rightArmPIDController.setFeedbackDevice(rightAbsoluteEncoder);
-		rightArmPIDController.setPositionPIDWrappingEnabled(true);
+		armPIDController.setFeedbackDevice(armAbsoluteEncoder);
+		armPIDController.setPositionPIDWrappingEnabled(true);
 
-		leftArmPIDController.setP(ArmConstants.KP);
-		leftArmPIDController.setI(ArmConstants.KI);
-		leftArmPIDController.setD(ArmConstants.KD);
-		leftArmPIDController.setIZone(ArmConstants.kIz);
-		leftArmPIDController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
-		leftArmPIDController.setFeedbackDevice(leftAbsoluteEncoder);
-		leftArmPIDController.setPositionPIDWrappingEnabled(true);
+		// setup the arm encoder
+		armAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
+		armAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
+		// TODO: (Brandon) Will need to manually move the arm to see if the absolute
+		// encoder needs to be inverted
+		armAbsoluteEncoder.setInverted(false);
 
-		// setup arm encoders
 
-		rightAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
-		rightAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
-		//TODO: (Brandon) Will need to manually move the arm to see if the absolute encoder needs to be inverted
-		rightAbsoluteEncoder.setInverted(false);
-
-		leftAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
-		leftAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
 
 		// setup elevator motors
-		rightElevatorMotor.restoreFactoryDefaults();
-		rightElevatorMotor.setIdleMode(IdleMode.kBrake);
-		//TODO: (Brandon) the current limit for the elevator motors may need to be 40 Amps. Will need to look into this
-		rightElevatorMotor.setSmartCurrentLimit(20);
+		leaderElevatorMotor.restoreFactoryDefaults();
+		leaderElevatorMotor.setIdleMode(IdleMode.kBrake);
+		leaderElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
 
-		leftElevatorMotor.restoreFactoryDefaults();
-		leftElevatorMotor.setIdleMode(IdleMode.kBrake);
-		//TODO: (Brandon) the current limit for the elevator motors may need to be 40 Amps. Will need to look into this
-		leftElevatorMotor.setSmartCurrentLimit(20);
+		followerElevatorMotor.restoreFactoryDefaults();
+		followerElevatorMotor.setIdleMode(IdleMode.kBrake);
+		followerElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
+		followerElevatorMotor.follow(leaderArmMotor);
 
 		// setup elevator pid controllers
-		rightElevatorPIDController.setP(ElevatorConstants.KP);
-		rightElevatorPIDController.setI(ElevatorConstants.KI);
-		rightElevatorPIDController.setD(ElevatorConstants.KD);
-		rightElevatorPIDController.setIZone(ElevatorConstants.kIz);
-		rightElevatorPIDController.setOutputRange(ElevatorConstants.kMinOutput,
+		elevatorPIDController.setP(ElevatorConstants.KP);
+		elevatorPIDController.setI(ElevatorConstants.KI);
+		elevatorPIDController.setD(ElevatorConstants.KD);
+		elevatorPIDController.setIZone(ElevatorConstants.kIz);
+		elevatorPIDController.setOutputRange(ElevatorConstants.kMinOutput,
 				ElevatorConstants.kMaxOutput);
-		rightElevatorPIDController.setFeedbackDevice(rightElevatorInput);
-
-		leftElevatorPIDController.setP(ElevatorConstants.KP);
-		leftElevatorPIDController.setI(ElevatorConstants.KI);
-		leftElevatorPIDController.setD(ElevatorConstants.KD);
-		leftElevatorPIDController.setIZone(ElevatorConstants.kIz);
-		leftElevatorPIDController.setOutputRange(ElevatorConstants.kMinOutput,
-				ElevatorConstants.kMaxOutput);
-		leftElevatorPIDController.setFeedbackDevice(rightElevatorInput);
-
-		leftAbsoluteEncoder.setInverted(true);
+		// elevatorPIDController.setFeedbackDevice(analogInput);
 
 		elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
 
-		//TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs. Only the Shuffleboard tabs should know about the subsystems
-		//TODO: (Brandon) All the info for one subsystem should be on one tab, correct? All on the Arm tab?
+		// TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs.
+		// Only the Shuffleboard tabs should know about the subsystems
+		// TODO: (Brandon) All the info for one subsystem should be on one tab, correct?
+		// All on the Arm tab?
 		MotorTab.getInstance()
-				.addMotor(new CANSparkMax[] { leftArmMotor, rightArmMotor, leftElevatorMotor, rightElevatorMotor });
+				.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor,
+						leaderElevatorMotor });
 	}
 
 	// do something functions
 
+	/**
+	 * Stops the arm from reaching its target
+	 * <b>Untested</b>
+	 */
 	public void stopArm() {
 		// disable();
-		leftArmPIDController.setReference(leftAbsoluteEncoder.getPosition(), CANSparkMax.ControlType.kPosition, 0);
-		rightArmPIDController.setReference(rightAbsoluteEncoder.getPosition(), CANSparkMax.ControlType.kPosition, 0);
+
+		armPIDController.setReference(armAbsoluteEncoder.getPosition(), CANSparkMax.ControlType.kPosition, 0);
 	}
 
-	//TODO: (Brandon) What is the measurement of the parameter target? If it is degrees, make that part of the name of the parameter so it is really clear
-	public void setArmTarget(double target) {
+	/**
+	 * safely set the target angle for the arm
+	 * 
+	 * @param targetDegrees the target angle for the arm in degrees
+	 */
+	public void setArmTarget(double targetDegrees) {
 
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
 		// height
-		if (target > ArmConstants.MAX_ANGLE) {
-			target = ArmConstants.MAX_ANGLE;
+		if (targetDegrees > ArmConstants.MAX_ANGLE) {
+			targetDegrees = ArmConstants.MAX_ANGLE;
 		}
-		// if the target is less than the min height, set the target to the min height
-		//TODO: (Brandon) This should be a constant as well as the minimum may not be zero. 
-		if (target < 0) {
-			target = 0;
+		if (targetDegrees < ArmConstants.MIN_ANGLE) {
+			targetDegrees = ArmConstants.MIN_ANGLE;
 		}
 
 		// if the target is less than the MIN_ABOVE_PASS_ANGLE, make sure the arm is
 		// extended, or retracted, if not, do nothing
-		//TODO: (Brandon) I think I know what you are doing here, but can you walk me through it?
-		if (target < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-			if (leftElevatorAbsoluteEncoder.getPosition() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT
-					&& leftAbsoluteEncoder.getPosition() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
-				return;
+
+		// if the arm is less than the threshold to go over the bumper
+		if (targetDegrees < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
+					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
+																						// extended
+				invalidArmMove.set(true);
+				return; // than don't move the arm
 			}
 		}
+		invalidArmMove.set(false);
+		double feedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(targetDegrees), 0);
 
-		//TODO: (Brandon) This can be at a class level. You don't need to create a feedforward each time
-		double feedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(target), 0);
-
-		leftArmPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0,
-				feedFowardValue, ArbFFUnits.kVoltage);
-		rightArmPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0,
+		armPIDController.setReference(targetDegrees, CANSparkMax.ControlType.kPosition, 0,
 				feedFowardValue, ArbFFUnits.kVoltage);
 
 	}
 
-	//TODO: (Brandon) What are the units of the parameter target? Please add that to the parameter name such as targetInches
-	public void setSelevatorTarget(double target){
+	/**
+	 * safely set the target height for the elevator
+	 * 
+	 * @param target the target height for the elevator in inches
+	 */
+	public void setSelevatorTarget(double target) {
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
 		if (target > ElevatorConstants.MAX_HEIGHT) {
@@ -210,45 +194,36 @@ public class Arm extends SubsystemBase {
 			target = ElevatorConstants.MIN_HEIGHT;
 		}
 		// if the arm is below the MIN_ABOVE_PASS_ANGLE, abort
-		if (leftAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+			invalidElevatorMove.set(true);
 			return;
 		}
-
-		//TODO: (Brandon) This can be at a class level. You don't need to create a feedforward each time
-		//TODO: (Brandon) I don't think the units for the feedforward will be radians since it is an elevator? Shouldn't this be something else?
+		invalidElevatorMove.set(false);
 
 		double feedFowardValue = elevatorFeedforward.calculate(Units.degreesToRadians(target), 0);
-		leftElevatorPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0,
+		elevatorPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0,
 				feedFowardValue, ArbFFUnits.kVoltage);
-		rightElevatorPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0,
+		elevatorPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0,
 				feedFowardValue, ArbFFUnits.kVoltage);
 	}
 
 	@Override
 	public void periodic() {
 
-		if (ArmConstants.KP != leftArmPIDController.getP()) {
-			leftArmPIDController.setP(ArmConstants.KP);
+		if (ArmConstants.KP != armPIDController.getP()) {
+			armPIDController.setP(ArmConstants.KP);
 		}
-		if (ArmConstants.KI != leftArmPIDController.getI()) {
-			leftArmPIDController.setI(ArmConstants.KI);
+		if (ArmConstants.KI != armPIDController.getI()) {
+			armPIDController.setI(ArmConstants.KI);
 		}
-		if (ArmConstants.KD != leftArmPIDController.getD()) {
-			leftArmPIDController.setD(ArmConstants.KD);
+		if (ArmConstants.KD != armPIDController.getD()) {
+			armPIDController.setD(ArmConstants.KD);
 		}
 	}
 
 	// get info functions
 	public double getRightAbsoluteEncoderPosition() {
-		return rightAbsoluteEncoder.getPosition();
-	}
-
-	public double getLeftAbsoluteEncoderPosition() {
-		return leftAbsoluteEncoder.getPosition();
-	}
-
-	public double getArmCurrentTarget() {
-		return currentArmTarget;
+		return armAbsoluteEncoder.getPosition();
 	}
 
 }
