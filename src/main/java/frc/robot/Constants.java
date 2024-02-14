@@ -71,11 +71,14 @@ public final class Constants {
 	}
 
 	public static class IntakeConstants {
-
-		public static final int MOTOR_CAN_ID = 20;
+		public static final int MOTOR_BOTTOM_CAN_ID = 20;
+		public static final int MOTOR_TOP_CAN_ID = 21;
 		public static final int SENSOR_DIO = 1;
+		public static final int POSITION_SENSOR_DIO = 2;
 		public static final double INTAKE_SPEED = 1;
 		public static final double OUTAKE_SPEED = -1;
+		public static final double ALIGNMENT_SPEED = 1; // What speed should the intake spin to align the note?
+		public static final double SHOOTING_INTAKE_SPEED = 1; // What speed should a note be dispensed into the shooter at?
 	}
 
 	public static class PivotConstants {
@@ -96,7 +99,7 @@ public final class Constants {
 
 	public static class ShooterConstants {
 		public static final int SHOOTER_MOTOR_ID = 25;
-		public static final int SENSOR_DIO = 2;
+		public static final int SENSOR_DIO = 3;
 
 		public enum ShootingPosition {
 			SUBWOOFER(0);
@@ -113,6 +116,9 @@ public final class Constants {
 		}
 
 		public static final int IDLE_SPEED = 0;
+
+		public static final double VELOCITY_MINIMUM = 0;
+		public static final double VELOCITY_MAXIMUM = 0;
 	}
 
 	public static final double BATTERY_WARNING_VOLTAGE = 11;

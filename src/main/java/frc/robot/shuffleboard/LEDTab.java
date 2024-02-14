@@ -8,20 +8,17 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.LED;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Head;
 
 public class LEDTab extends ShuffleboardTabBase {
 	private final LED led;
-	private final Intake intake;
-	private final Shooter shooter;
+	private final Head head;
 	private SendableChooser<Boolean> holdingNote;
 	private SendableChooser<Boolean> readyToShoot;
 
-	public LEDTab(LED led, Intake intake, Shooter shooter) {
+	public LEDTab(LED led, Head head) {
 		this.led = led;
-		this.intake = intake;
-		this.shooter = shooter;
+		this.head = head;
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
@@ -31,8 +28,8 @@ public class LEDTab extends ShuffleboardTabBase {
 	@Override
 	public void update() {
 		// these functions have not been defined
-		intake.setIsNoteAcquired(holdingNote.getSelected());
-		shooter.setIsReadyToShoot(readyToShoot.getSelected());
+		//head.setIsNoteAcquired(holdingNote.getSelected());
+		head.setIsReadyToShoot(readyToShoot.getSelected());
 	}
 
 	@Override
