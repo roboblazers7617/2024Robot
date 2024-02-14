@@ -58,6 +58,7 @@ public class TunableNumber extends SubsystemBase{
 
 	@Override
 	public void periodic() {
+		//TODO: (Brandon) Let's talk through the TunableNumbers code to see if it can be made more efficient. 
 		TestNumber.number = (int) number.get();
 		ArmConstants.MAX_ANGLE = maxClimberHeight.get();
 		// ArmConstants.KS = armKS.get();

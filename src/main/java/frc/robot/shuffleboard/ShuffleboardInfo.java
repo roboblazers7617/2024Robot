@@ -21,6 +21,8 @@ public class ShuffleboardInfo extends SubsystemBase {
 	private static ShuffleboardInfo instance;
 	private String[] copyTables;
 	private boolean isActivated = false;
+
+	//TODO: (Brandon) Typo... "Batter"
 	private Alert alert = new Alert("Batter voltage is below " + Constants.BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
 
 	public static ShuffleboardInfo getInstance() {
