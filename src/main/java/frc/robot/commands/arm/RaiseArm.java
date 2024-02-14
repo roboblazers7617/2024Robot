@@ -19,6 +19,9 @@ public class RaiseArm extends Command {
 	 * @param fast boolean to determine if the arm's setpoint should be set to the
 	 *             end instantly
 	 */
+	
+	 //TODO: (Brandon) I'm not quite sure I understand the logic of this command.
+	 // This command could just be a function or a command that is part of the Arm() class
 	public RaiseArm(Arm arm, boolean fast) {
 		this.arm = arm;
 		this.fast = fast;
