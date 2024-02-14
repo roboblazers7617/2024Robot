@@ -14,7 +14,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.util.Units;
-
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -41,15 +42,18 @@ public class Arm extends SubsystemBase {
 	// right motor
 	private final CANSparkMax rightElevatorMotor = new CANSparkMax(ArmConstants.RIGHT_ELEVATOR_MOTOR_ID,
 			MotorType.kBrushless);
-	private final SparkAbsoluteEncoder rightElevatorAbsoluteEncoder = rightElevatorMotor
-			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+	private final AnalogInput rightElevatorInput = new AnalogInput(ElevatorConstants.RIGHT_POTIENTIOMETER_PORT);
+	private final AnalogPotentiometer rightElevatorPotentiometer = new AnalogPotentiometer(rightElevatorInput,
+			ElevatorConstants.MAX_HEIGHT, 0);
+	
 	private final SparkPIDController rightElevatorPIDController = rightElevatorMotor.getPIDController();
 
 	// left motor
 	private final CANSparkMax leftElevatorMotor = new CANSparkMax(ArmConstants.LEFT_ELEVATOR_MOTOR_ID,
 			MotorType.kBrushless);
-	private final SparkAbsoluteEncoder leftElevatorAbsoluteEncoder = leftElevatorMotor
-			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+	private final AnalogInput leftElevatorInput = new AnalogInput(ElevatorConstants.LEFT_POTIENTIOMETER_PORT);
+	private final AnalogPotentiometer leftElevatorPotentiometer = new AnalogPotentiometer(leftElevatorInput,
+			ElevatorConstants.MAX_HEIGHT, 0);
 	private final SparkPIDController leftElevatorPIDController = leftElevatorMotor.getPIDController();
 
 	private final ElevatorFeedforward elevatorFeedforward;
@@ -112,7 +116,7 @@ public class Arm extends SubsystemBase {
 		rightElevatorPIDController.setIZone(ElevatorConstants.kIz);
 		rightElevatorPIDController.setOutputRange(ElevatorConstants.kMinOutput,
 				ElevatorConstants.kMaxOutput);
-		rightElevatorPIDController.setFeedbackDevice(rightElevatorAbsoluteEncoder);
+		rightElevatorPIDController.setFeedbackDevice(rightElevatorInput);
 
 		leftElevatorPIDController.setP(ElevatorConstants.KP);
 		leftElevatorPIDController.setI(ElevatorConstants.KI);
@@ -120,8 +124,7 @@ public class Arm extends SubsystemBase {
 		leftElevatorPIDController.setIZone(ElevatorConstants.kIz);
 		leftElevatorPIDController.setOutputRange(ElevatorConstants.kMinOutput,
 				ElevatorConstants.kMaxOutput);
-		leftElevatorPIDController.setFeedbackDevice(leftElevatorAbsoluteEncoder);
-		
+		leftElevatorPIDController.setFeedbackDevice(rightElevatorInput);
 
 		leftAbsoluteEncoder.setInverted(true);
 
@@ -170,7 +173,7 @@ public class Arm extends SubsystemBase {
 
 	}
 
-	public void setSelevatorTarget(double target){
+	public void setSelevatorTarget(double target) {
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
 		if (target > ElevatorConstants.MAX_HEIGHT) {

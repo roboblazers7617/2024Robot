@@ -86,6 +86,8 @@ public final class Constants {
 		public static final double MIN_HEIGHT = 0;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
 		public static final double MAX_BELOW_PASS_HEIGHT = 10;
+		public static final int RIGHT_POTIENTIOMETER_PORT = 496;
+		public static final int LEFT_POTIENTIOMETER_PORT = 45;
 
 	}
 
