@@ -1,5 +1,10 @@
 {
-    "editor.insertSpaces": false,
+	"editor.insertSpaces": false,
 	"editor.detectIndentation": false,
-	"java.configuration.updateBuildConfiguration": "interactive"
+	"java.configuration.updateBuildConfiguration": "interactive",
+	"editor.formatOnSave": true,
+	"java.format.settings.url": "eclipse-formatter.xml",
+	"[java]": {
+		"editor.defaultFormatter": "redhat.java"
+	}
 }
