@@ -6,5 +6,7 @@
 	"java.format.settings.url": "eclipse-formatter.xml",
 	"[java]": {
 		"editor.defaultFormatter": "redhat.java"
-	}
+	},
+	"editor.wordWrap": "on",
+	"editor.wrappingIndent": "indent"
 }
