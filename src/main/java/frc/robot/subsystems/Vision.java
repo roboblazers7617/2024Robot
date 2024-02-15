@@ -31,7 +31,7 @@ public class Vision extends SubsystemBase {
 	private PhotonPoseEstimator shooterEstimator;
 	private PhotonTrackedTarget intakeBestTag;
 	private PhotonTrackedTarget shooterBestTag;
-
+	
 	/** Creates a new Vision. */
 	public Vision() {
 		try {
@@ -39,44 +39,40 @@ public class Vision extends SubsystemBase {
 		} catch (IOException e) {
 			fieldLayout = null;
 		}
-		 intakeEstimator  = new PhotonPoseEstimator(fieldLayout,
-			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, intakeCamera, VisionConstants.INTAKE_CAMERA_POSITION);
-		shooterEstimator = new PhotonPoseEstimator(fieldLayout,
-			PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, shooterCamera, VisionConstants.SHOOTER_CAMERA_POSITION);
+		intakeEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, intakeCamera, VisionConstants.INTAKE_CAMERA_POSITION);
+		shooterEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, shooterCamera, VisionConstants.SHOOTER_CAMERA_POSITION);
 	}
-
+	
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
 		intakeCamResult = intakeCamera.getLatestResult();
-		shooterCamResult = new PhotonPipelineResult();//shooterCamera.getLatestResult();
+		shooterCamResult = new PhotonPipelineResult();// shooterCamera.getLatestResult();
 	}
 	
 	public Optional<EstimatedRobotPose> updateOdometry() {
 		intakeBestTag = intakeCamResult.getBestTarget();
 		intakeBestTag = intakeCamResult.getBestTarget();
-		if(intakeBestTag != null){
-			if(shooterBestTag != null){
-				if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()){
-					if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+		if (intakeBestTag != null) {
+			if (shooterBestTag != null) {
+				if (intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()) {
+					if (intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
 						return intakeEstimator.update();
 					else
 						return Optional.empty();
-				}
-				else{
-					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+				} else {
+					if (shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
 						return shooterEstimator.update();
 					else
 						return Optional.empty();
 				}
 			}
-			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+			if (intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
 				return intakeEstimator.update();
-		}
-		else if(shooterBestTag != null){
-			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+		} else if (shooterBestTag != null) {
+			if (shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
 				return shooterEstimator.update();
-			}
-			return Optional.empty();
+		}
+		return Optional.empty();
 	}
 }

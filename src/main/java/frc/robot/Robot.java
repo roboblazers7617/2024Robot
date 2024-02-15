@@ -12,25 +12,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.gradle file in the
- * project.
+ * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as described in the TimedRobot documentation. If you change the name of this class or the package after creating this project, you must also update the build.gradle file in the project.
  */
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
-
+	
 	private RobotContainer m_robotContainer;
-
+	
 	private Timer disabledTimer;
-
+	
 	/**
-	 * This function is run when the robot is first started up and should be used
-	 * for any
-	 * initialization code.
+	 * This function is run when the robot is first started up and should be used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
@@ -38,24 +30,19 @@ public class Robot extends TimedRobot {
 		// and put our
 		// autonomous chooser on the dashboard.
 		DataLogManager.start();
-
+		
 		DriverStation.startDataLog(DataLogManager.getLog());
 		m_robotContainer = new RobotContainer();
-
-		// Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
-    	// immediately when disabled, but then also let it be pushed more 
-    	disabledTimer = new Timer();
+		
+		// Create a timer to disable motor brake a few seconds after disable. This will let the robot stop
+		// immediately when disabled, but then also let it be pushed more
+		disabledTimer = new Timer();
 	}
-
+	
 	/**
-	 * This function is called every 20 ms, no matter the mode. Use this for items
-	 * like diagnostics
-	 * that you want ran during disabled, autonomous, teleoperated and test.
-	 *
+	 * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics that you want ran during disabled, autonomous, teleoperated and test.
 	 * <p>
-	 * This runs after the mode specific periodic functions, but before LiveWindow
-	 * and
-	 * SmartDashboard integrated updating.
+	 * This runs after the mode specific periodic functions, but before LiveWindow and SmartDashboard integrated updating.
 	 */
 	@Override
 	public void robotPeriodic() {
@@ -68,7 +55,7 @@ public class Robot extends TimedRobot {
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
 	}
-
+	
 	/** This function is called once each time the robot enters Disabled mode. */
 	@Override
 	public void disabledInit() {
@@ -76,39 +63,34 @@ public class Robot extends TimedRobot {
 		disabledTimer.reset();
 		disabledTimer.start();
 	}
-
+	
 	@Override
 	public void disabledPeriodic() {
-		if (disabledTimer.hasElapsed(Constants.SwerveConstants.BRAKE_TIMER_DURATION))
-		{
-		  m_robotContainer.setMotorBrake(false);
-		  disabledTimer.stop();
+		if (disabledTimer.hasElapsed(Constants.SwerveConstants.BRAKE_TIMER_DURATION)) {
+			m_robotContainer.setMotorBrake(false);
+			disabledTimer.stop();
 		}
 	}
-
+	
 	/**
-	 * This autonomous runs the autonomous command selected by your
-	 * {@link RobotContainer} class.
+	 * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
 	 */
 	@Override
 	public void autonomousInit() {
 		m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+		
 		// schedule the autonomous command (example)
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
 		}
-		//TODO: Do we need to set the brake mode for the drivetrain? Is that defaulted anywhere?
+		// TODO: Do we need to set the brake mode for the drivetrain? Is that defaulted anywhere?
 		// See YAGSL Example code
-
-
 	}
-
+	
 	/** This function is called periodically during autonomous. */
 	@Override
-	public void autonomousPeriodic() {
-	}
-
+	public void autonomousPeriodic() {}
+	
 	@Override
 	public void teleopInit() {
 		// This makes sure that the autonomous stops running when
@@ -118,34 +100,29 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
-
+		
 		m_robotContainer.setMotorBrake(true);
-
 	}
-
+	
 	/** This function is called periodically during operator control. */
 	@Override
-	public void teleopPeriodic() {
-	}
-
+	public void teleopPeriodic() {}
+	
 	@Override
 	public void testInit() {
 		// Cancels all running commands at the start of test mode.
 		CommandScheduler.getInstance().cancelAll();
 	}
-
+	
 	/** This function is called periodically during test mode. */
 	@Override
-	public void testPeriodic() {
-	}
-
+	public void testPeriodic() {}
+	
 	/** This function is called once when the robot is first started up. */
 	@Override
-	public void simulationInit() {
-	}
-
+	public void simulationInit() {}
+	
 	/** This function is called periodically whilst in simulation. */
 	@Override
-	public void simulationPeriodic() {
-	}
+	public void simulationPeriodic() {}
 }

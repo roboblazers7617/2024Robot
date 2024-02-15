@@ -12,7 +12,7 @@ public final class Autos {
 	public static Command nullAuto() {
 		return Commands.none();
 	}
-
+	
 	private Autos() {
 		throw new UnsupportedOperationException("This is a utility class!");
 	}

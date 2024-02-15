@@ -13,16 +13,16 @@ public class LED extends SubsystemBase {
 	private final SerialPort serial;
 	private final Intake intake;
 	private final Shooter shooter;
-
+	
 	public LED(SerialPort.Port port, Intake intake, Shooter shooter) {
 		serial = new SerialPort(9600, port);
-
+		
 		serial.setWriteBufferMode(SerialPort.WriteBufferMode.kFlushOnAccess);
-
+		
 		this.intake = intake;
 		this.shooter = shooter;
 	}
-
+	
 	@Override
 	public void periodic() {
 		// Set LED animations
@@ -44,7 +44,7 @@ public class LED extends SubsystemBase {
 			setTeleopEnabledAnimation();
 		}
 	}
-
+	
 	public void setDisconnectedAnimation() {
 		serial.writeString("dp\n");
 	}
@@ -56,23 +56,23 @@ public class LED extends SubsystemBase {
 	public void setAutoDisabledAnimation() {
 		serial.writeString("ad\n");
 	}
-
+	
 	public void setAutoEnabledAnimation() {
 		serial.writeString("ae\n");
 	}
-
+	
 	public void setTeleopDisabledAnimation() {
 		serial.writeString("td\n");
 	}
-
+	
 	public void setTeleopEnabledAnimation() {
 		serial.writeString("te\n");
 	}
-
+	
 	public void setHoldingNoteAnimation() {
 		serial.writeString("hn\n");
 	}
-
+	
 	public void setReadyToShootAnimation() {
 		serial.writeString("rs\n");
 	}

@@ -11,23 +11,21 @@ import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
 	/** Creates a new Pivot. */
-	public Pivot() {
-	}
-
+	public Pivot() {}
+	
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
 	}
-
-	public Command moveToPosition(PivotConstants.PivotPosition position){
+	
+	public Command moveToPosition(PivotConstants.PivotPosition position) {
 		return Commands.runOnce(() -> setPivotAngle(position.angle()), this).andThen(Commands.waitUntil(() -> isAtSetpoint()));
 	}
-
-	public boolean isAtSetpoint(){
+	
+	public boolean isAtSetpoint() {
 		return false;
 	}
-
-	private void setPivotAngle(double angle){
-
+	
+	private void setPivotAngle(double angle) {
 	}
 }

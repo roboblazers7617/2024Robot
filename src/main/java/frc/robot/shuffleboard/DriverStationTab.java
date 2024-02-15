@@ -22,26 +22,25 @@ public class DriverStationTab extends ShuffleboardTabBase {
 	private final IntegerPublisher numPublisher;
 	private final DoublePublisher voltagePublisher;
 	private Alert alert = new Alert("something is wrong", AlertType.ERROR);
-
+	
 	public DriverStationTab() {
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
+		
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
-
+		
 		numPublisher = networkTable.getIntegerTopic("number").publish();
-
+		
 		voltagePublisher = networkTable.getDoubleTopic("Battery Voltage").publish();
 	}
-
+	
 	@Override
 	public void update() {
 		number += 1;
 		numPublisher.set(number);
-
+		
 		voltagePublisher.set(RobotController.getBatteryVoltage());
-
 	}
-
+	
 	@Override
 	public void activateShuffleboard() {
 		// this should be called immediately
@@ -49,10 +48,8 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		tab.add("activate tabs", new ActivateTabs());
 		tab.add("start alert", new InstantCommand(() -> alert.set(true)));
 		tab.add("end alert", new InstantCommand(() -> alert.set(false)));
-
 	}
-
-
+	
 	@Override
 	public String getNetworkTable() {
 		return null;
