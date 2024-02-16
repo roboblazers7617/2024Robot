@@ -135,17 +135,17 @@ public class RobotContainer {
 
 		//TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
 		// the source for pickup so they do not need to manually do this 
-		driverController.povLeft().and(() -> checkAllianceColors(Alliance.Red)).onTrue(Commands.print("Red!"));
-				 /* .whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+		driverController.povLeft().and(() -> checkAllianceColors(Alliance.Red))
+				  .whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND))));*/
+			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND))));
 		
-		/*driverController.povLeft().and(() -> allianceColor.equals(Alliance.Red))
-				.whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
+		driverController.povLeft().and(() -> checkAllianceColors(Alliance.Blue))
+				  .whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(-1.0, OperatorConstants.JOYSTICK_DEADBAND))));*/
+			() -> (-MathUtil.applyDeadband(-1.0, OperatorConstants.JOYSTICK_DEADBAND))));
 
 	}
 
@@ -163,7 +163,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("test auto angle");
+		return new PathPlannerAuto("Do Nothing");
 	}
 
 	public void setMotorBrake(boolean isBraked){
