@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.66,
+      "x": 0.33,
       "y": 7.0
     },
-    "rotation": 0
+    "rotation": -90.0
   },
   "command": {
     "type": "sequential",
@@ -14,19 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "test path forward"
+            "pathName": "top angle start"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "SayHi"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "test path back"
           }
         }
       ]
