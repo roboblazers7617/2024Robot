@@ -49,12 +49,12 @@ public class Vision extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		intakeCamResult = intakeCamera.getLatestResult();
-		shooterCamResult = new PhotonPipelineResult();//shooterCamera.getLatestResult();
+		shooterCamResult = shooterCamera.getLatestResult();
 	}
 	
 	public Optional<EstimatedRobotPose> updateOdometry() {
 		intakeBestTag = intakeCamResult.getBestTarget();
-		intakeBestTag = intakeCamResult.getBestTarget();
+		shooterBestTag = shooterCamResult.getBestTarget();
 		if(intakeBestTag != null){
 			if(shooterBestTag != null){
 				if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()){
