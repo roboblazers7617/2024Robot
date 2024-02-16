@@ -65,7 +65,6 @@ public class MotorTab extends ShuffleboardTabBase{
 	@Override
 	public void update() {
 		for (int i = 0; i < numberOfMotors; i++) {
-			System.out.println("outputting values: " + i);
 			busVoltagePublishers[i].set(motors[i].getBusVoltage());
 			optionCurrentPublishers[i].set(motors[i].getOutputCurrent());
 			stickyFaultPublisher[i].set(motors[i].getStickyFaults());
