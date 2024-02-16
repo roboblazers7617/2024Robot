@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.Supplier;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -24,7 +23,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,7 +37,6 @@ import java.io.File;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
-import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -98,13 +95,13 @@ public class Drivetrain extends SubsystemBase {
 				this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
 				new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
 													// Constants class
-						new PIDConstants(5.0, 0.0, 0.0),
+						new PIDConstants(Constants.AutoConstants.LINEAR_AUTO_KP, Constants.AutoConstants.LINEAR_AUTO_KI, Constants.AutoConstants.LINEAR_AUTO_KD),
 						// Translation PID constants
 						new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p,
 								swerveDrive.swerveController.config.headingPIDF.i,
 								swerveDrive.swerveController.config.headingPIDF.d),
 						// Rotation PID constants
-						4.5,
+						5,
 						// Max module speed, in m/s
 						swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
 						// Drive base radius in meters. Distance from robot center to furthest module.

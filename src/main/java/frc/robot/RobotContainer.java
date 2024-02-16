@@ -6,8 +6,8 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.commands.Autos;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Shooter;
 import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.LEDTab;
@@ -19,11 +19,13 @@ import frc.robot.util.TunableNumber;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -46,7 +48,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final ShuffleboardInfo shuffleboard;
-	LED led = new LED(SerialPort.Port.kMXP);
+	Intake intake = new Intake();
+	Shooter shooter = new Shooter();
+	LED led = new LED(SerialPort.Port.kMXP, intake, shooter);
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(
@@ -69,6 +73,11 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
+
+		NamedCommands.registerCommand("SayHi", Commands.runOnce(() -> System.out.println("Hi")));
+
+
+
 		// Configure the trigger bindings
 		configureBindings();
 
@@ -80,10 +89,12 @@ public class RobotContainer {
 		tabs.add(new DriverStationTab());
 
 
-		tabs.add(MotorTab.getInstance());
+		// tabs.add(MotorTab.getInstance());
 
-		tabs.add(new LEDTab(led));
 		tabs.add(new SwerveTab(drivetrain));
+
+		tabs.add(new LEDTab(led, intake, shooter));
+
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
@@ -152,7 +163,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("New Path auto");
+		return new PathPlannerAuto("test auto angle");
 	}
 
 	public void setMotorBrake(boolean isBraked){

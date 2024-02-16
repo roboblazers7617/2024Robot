@@ -40,6 +40,10 @@ public final class Constants {
 
 	public static class AutoConstants {
 
+		public static final double LINEAR_AUTO_KP = 5.7524;
+		public static final double LINEAR_AUTO_KI = 0;
+		public static final double LINEAR_AUTO_KD = 0;
+
 	}
 
 	public static class SwerveConstants {
@@ -95,6 +99,9 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
+		public static final int SHOOTER_MOTOR_ID = 25;
+		public static final int SENSOR_DIO = 2;
+
 		public enum ShootingPosition {
 			SUBWOOFER(0);
 
@@ -110,7 +117,6 @@ public final class Constants {
 		}
 
 		public static final int IDLE_SPEED = 0;
-
 	}
 
 	public static final double BATTERY_WARNING_VOLTAGE = 11;

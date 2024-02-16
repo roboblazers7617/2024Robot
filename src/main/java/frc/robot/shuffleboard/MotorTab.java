@@ -5,8 +5,6 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
@@ -65,7 +63,6 @@ public class MotorTab extends ShuffleboardTabBase{
 	@Override
 	public void update() {
 		for (int i = 0; i < numberOfMotors; i++) {
-			System.out.println("outputting values: " + i);
 			busVoltagePublishers[i].set(motors[i].getBusVoltage());
 			optionCurrentPublishers[i].set(motors[i].getOutputCurrent());
 			stickyFaultPublisher[i].set(motors[i].getStickyFaults());
