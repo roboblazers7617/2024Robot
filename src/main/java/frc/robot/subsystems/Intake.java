@@ -18,6 +18,8 @@ public class Intake extends SubsystemBase {
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	private final DigitalInput isNoteAcquired = new DigitalInput(IntakeConstants.SENSOR_DIO);
 
+	private boolean noteAcquired = false;
+
 	/** Creates a new Intake. */
 	public Intake() {
 		intakeMotor.setIdleMode(IdleMode.kBrake);
@@ -39,7 +41,11 @@ public class Intake extends SubsystemBase {
 	}
 
 	public boolean isNoteAcquired() {
-		return isNoteAcquired.get();
+		return noteAcquired;
+	}
+
+	public void setIsNoteAcquired(boolean isNoteAcquired) {
+		noteAcquired = isNoteAcquired;
 	}
 
 	private void setIntakeSpeed(double intakeSpeed) {

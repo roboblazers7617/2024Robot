@@ -169,3 +169,8 @@ networktables.json
 simgui.json
 simgui-ds.json
 *.wpilog
+.datalogtool/
+ctre_sim/
+
+# Do not ignore external libraries
+!libs/*.jar
