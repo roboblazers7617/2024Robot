@@ -48,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final ShuffleboardInfo shuffleboard;
+	//TODO: (Max) Both the head and led should be "private final" variables
 	Head head = new Head();
 	LED led = new LED(SerialPort.Port.kMXP, head);
 

@@ -14,6 +14,9 @@ import frc.robot.Constants.ShooterConstants;
 
 public class HeadTab extends ShuffleboardTabBase {
 	private final Head head;
+
+	//TODO: (Max) Now that you have written the code for holding a note and ready to shoot, you should remove these sendable choosers as it should read
+	//directly from the subsystem
 	private SendableChooser<Boolean> holdingNote;
 	private SendableChooser<Boolean> readyToShoot;
 
@@ -43,6 +46,7 @@ public class HeadTab extends ShuffleboardTabBase {
 
 	@Override
 	public void update() {
+		//TODO: (Max) Change these to read the actual values in the subsystem
 		// these functions have not been defined
 		//head.setIsNoteAcquired(holdingNote.getSelected());
 		head.setIsReadyToShoot(readyToShoot.getSelected());
@@ -71,6 +75,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		//holdingNote.addOption("Holding Note", true);
 		//holdingNote.setDefaultOption("Not Holding Note", false);
 
+		//TODO: (Max) I don't think you need this any longer. correct? as was just for testing
 		readyToShoot = new SendableChooser<>();
 		readyToShoot.addOption("Ready To Shoot", true);
 		readyToShoot.setDefaultOption("Not Ready To Shoot", false);

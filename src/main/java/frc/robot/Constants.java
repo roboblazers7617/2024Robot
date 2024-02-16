@@ -73,8 +73,11 @@ public final class Constants {
 	public static class IntakeConstants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 20;
 		public static final int MOTOR_TOP_CAN_ID = 21;
+		//TODO: (Max) The sensors should have a more descriptive name so it is obvious what it is controlling
 		public static final int SENSOR_DIO = 1;
 		public static final int POSITION_SENSOR_DIO = 2;
+		//TODO: (Max) We very very rarely run motors at full speed, so you don't want the default to be one. It is good to start with something small
+		// like 0.25 for the first time you run a motor to ensure it isn't damaged if the code doesn't act as expected.
 		public static final double INTAKE_SPEED = 1;
 		public static final double OUTAKE_SPEED = -1;
 		public static final double ALIGNMENT_SPEED = 1; // What speed should the intake spin to align the note?
@@ -99,8 +102,15 @@ public final class Constants {
 
 	public static class ShooterConstants {
 		public static final int SHOOTER_MOTOR_ID = 25;
+		//TODO: (Max) The sensors should have a more descriptive name so it is obvious what it is controlling
 		public static final int SENSOR_DIO = 3;
 
+		//TODO: (Max) Let's talk among you, Brandon, Lukas and myself about how we keep track of these speeds as it will be similar for the arm positions. 
+		// Because we want to shoot from a 
+		//variable position, we likely can't use an enum for that. We will probably use an Interpolation Table. This will be a combo of Vision and
+		//shooter working together to calculate...
+		//Also these rpms we will want as TunableNumbers as we will likely adjust them from time to time, and it is difficult to redeploy code 
+		//each time we want to test a different number
 		public enum ShootingPosition {
 			SUBWOOFER(0);
 
