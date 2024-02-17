@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Head;
+import frc.robot.util.TunableNumber;
 
 public class HeadTab extends ShuffleboardTabBase {
 	private final Head head;
@@ -26,9 +27,9 @@ public class HeadTab extends ShuffleboardTabBase {
 	
 	private final BooleanPublisher readyToShootPublisher;
 	
-	private final DoubleSubscriber shootingPositionSubscriber;
+	private TunableNumber shootingPosition;
 	private final DoublePublisher shooterSpeedAtPositionPublisher;
-	private final DoubleSubscriber shooterInterpolationSpeedTuningSubscriber;
+	private TunableNumber shootingPositionSpeedTuning;
 	
 	public HeadTab(Head head) {
 		this.head = head;
@@ -48,9 +49,10 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		readyToShootPublisher = networkTable.getBooleanTopic("Ready To Shoot").publish();
 		
-		shootingPositionSubscriber = networkTable.getDoubleTopic("Shooting Position").subscribe(0);
 		shooterSpeedAtPositionPublisher = networkTable.getDoubleTopic("Shooter Speed At Position").publish();
-		shooterInterpolationSpeedTuningSubscriber = networkTable.getDoubleTopic("Shooting Position Tuning").subscribe(0);
+		
+		shootingPosition = new TunableNumber("Head", "Shooting Position", 0);
+		shootingPositionSpeedTuning = new TunableNumber("Head", "Shooting Position Speed Tuning", 0);
 	}
 	
 	@Override
@@ -66,7 +68,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		readyToShootPublisher.set(head.isReadyToShoot());
 		
-		shooterSpeedAtPositionPublisher.set(head.getShooterSpeedAtPosition(shootingPositionSubscriber.get()));
+		shooterSpeedAtPositionPublisher.set(head.getShooterSpeedAtPosition(shootingPosition.get()));
 	}
 	
 	@Override
@@ -76,10 +78,10 @@ public class HeadTab extends ShuffleboardTabBase {
 		tab.add("Intake from Source", head.intakePiece(true));
 		tab.add("Outake", head.outakePiece());
 		
-		tab.add("Spin Up", head.spinUpShooter(shootingPositionSubscriber.get()));
+		tab.add("Spin Up", head.spinUpShooter(shootingPosition.get()));
 		tab.add("Spin Down", head.spinDownShooter());
 		tab.add("Shoot", head.shoot());
-		tab.add("Set Speed at Position (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPositionSubscriber.get(), shooterInterpolationSpeedTuningSubscriber.get())));
+		tab.add("Set Speed at Position (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPosition.get(), shootingPositionSpeedTuning.get())));
 	}
 	
 	@Override
