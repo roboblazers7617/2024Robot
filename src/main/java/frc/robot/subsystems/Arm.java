@@ -55,10 +55,12 @@ public class Arm extends SubsystemBase {
 	
 	/** the potentiometer for the elevator */
 	private final AnalogPotentiometer potentiometer = new AnalogPotentiometer(ElevatorConstants.RIGHT_POTIENTIOMETER_PORT, ElevatorConstants.MAX_HEIGHT, 0);
-	
+
 	private final PIDController elevatorPIDController = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD);
 	
-	private final ElevatorFeedforward elevatorFeedforward;
+	InterpolatingDoubleTreeMap elevatorKS = new InterpolatingDoubleTreeMap();
+	InterpolatingDoubleTreeMap elevatorKG = new InterpolatingDoubleTreeMap();
+	InterpolatingDoubleTreeMap elevatorKV= new InterpolatingDoubleTreeMap();
 	
 	private final Alert invalidElevatorMove = new Alert("Invalid Elevator Move", AlertType.ERROR);
 	
@@ -113,7 +115,7 @@ public class Arm extends SubsystemBase {
 		followerElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
 		followerElevatorMotor.follow(leaderArmMotor);
 		
-		elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
+
 		
 		// TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs.
 		// Only the Shuffleboard tabs should know about the subsystems
@@ -124,6 +126,10 @@ public class Arm extends SubsystemBase {
 		
 		time.reset();
 		time.start();
+	}
+
+	private ElevatorFeedforward getElevatorFeedforward() {
+		return new ElevatorFeedforward(elevatorKS.get(potentiometer.get()), elevatorKG.get(potentiometer.get()), elevatorKV.get(potentiometer.get()));
 	}
 	
 	// do something functions
@@ -225,7 +231,7 @@ public class Arm extends SubsystemBase {
 				if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT && armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 					setArmTarget(ArmConstants.MIN_ABOVE_PASS_ANGLE);
 				} else if (armAbsoluteEncoder.getPosition() > ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-					setSelevatorTarget(ElevatorConstants.MIN_HEIGHT);
+					setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
 				} else if (potentiometer.get() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
 					setArmTarget(ArmConstants.MIN_ANGLE);
 				}
@@ -294,7 +300,7 @@ public class Arm extends SubsystemBase {
 	 *            the target height for the elevator in inches
 	 * @return if the elevator was successful
 	 */
-	public boolean setSelevatorTarget(double target) {
+	public boolean setElevatorTarget(double target) {
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
 		if (target > ElevatorConstants.MAX_HEIGHT) {
@@ -311,7 +317,7 @@ public class Arm extends SubsystemBase {
 		}
 		invalidElevatorMove.set(false);
 		
-		double feedFowardValue = elevatorFeedforward.calculate(Units.degreesToRadians(target), 0);
+		double feedFowardValue = getElevatorFeedforward().calculate(Units.degreesToRadians(target), 0);
 		double pid = elevatorPIDController.calculate(potentiometer.get(), target);
 		leaderElevatorMotor.setVoltage(pid + feedFowardValue);
 		return true;
