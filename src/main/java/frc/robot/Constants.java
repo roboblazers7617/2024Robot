@@ -105,7 +105,7 @@ public final class Constants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 25;
 		public static final int MOTOR_TOP_CAN_ID = 26;
 		//public static final int NOTE_SHOT_SENSOR_DIO = 3;
-
+		
 		public static final double kP = 0;
 		public static final double kI = 0;
 		public static final double kD = 0;
@@ -113,26 +113,7 @@ public final class Constants {
 		public static final double kFF = 0;
 		public static final double kMinOutput = 0;
 		public static final double kMaxOutput = 0;
-
-		/*
-		 * TODO: (Max) Let's talk among you, Brandon, Lukas and myself about how we keep track of these speeds as it will be similar for the arm positions.
-		 * Because we want to shoot from a variable position, we likely can't use an enum for that. We will probably use an Interpolation Table. This will be a combo of Vision and shooter working together to calculate...
-		 * Also these rpms we will want as TunableNumbers as we will likely adjust them from time to time, and it is difficult to redeploy code each time we want to test a different number
-		 */
-		public enum ShootingPosition {
-			SUBWOOFER(0);
-
-			ShootingPosition(int rpm) {
-				this.rpm = rpm;
-			}
-
-			private final int rpm;
-
-			public int rpm() {
-				return rpm;
-			}
-		}
-
+		
 		public static final int IDLE_SPEED = 0;
 
 		public static final double VELOCITY_MINIMUM = 0;
