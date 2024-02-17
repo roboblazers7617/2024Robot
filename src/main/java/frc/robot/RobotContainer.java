@@ -58,6 +58,7 @@ public class RobotContainer {
 	private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(vision);
 
+	// @formatter:off
 	private final AbsoluteDriveDirectAngle absoluteDrive = (new AbsoluteDriveDirectAngle(drivetrain,
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
@@ -68,6 +69,7 @@ public class RobotContainer {
 			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
 			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND))));
+	// @formatter:on
 
 
 	/**
@@ -82,7 +84,6 @@ public class RobotContainer {
 		// Configure the trigger bindings
 		configureBindings();
 
-		new TunableNumber();
 		shuffleboard = ShuffleboardInfo.getInstance();
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
