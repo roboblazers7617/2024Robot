@@ -57,14 +57,12 @@ public class Vision extends SubsystemBase {
 			if(shooterBestTag != null){
 				if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()){
 					if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
-						System.out.println("shooter update");
 						return intakeEstimator.update();}
 					else
 						return Optional.empty();
 				}
 				else{
 					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
-						System.out.println("shooter update");
 						return shooterEstimator.update();
 					}
 					else
@@ -72,12 +70,10 @@ public class Vision extends SubsystemBase {
 				}
 			}
 			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
-				System.out.println("shooter update");
 				return intakeEstimator.update();}
 		}
 		else if(shooterBestTag != null){
 			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
-				System.out.println("shooter update");
 				return shooterEstimator.update();}
 			}
 			return Optional.empty();
