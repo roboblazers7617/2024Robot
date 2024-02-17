@@ -17,6 +17,10 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.Interpolator;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -40,7 +44,8 @@ public class Arm extends SubsystemBase {
 	
 	private final SparkPIDController armPIDController = leaderArmMotor.getPIDController();
 	
-	private final ArmFeedforward armFeedFoward = new ArmFeedforward(ArmConstants.KS, ArmConstants.KG, ArmConstants.KV);
+	private final ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
+	private final ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
 	
 	// Elevator
 	/** the right motor */
@@ -51,8 +56,7 @@ public class Arm extends SubsystemBase {
 	/** the potentiometer for the elevator */
 	private final AnalogPotentiometer potentiometer = new AnalogPotentiometer(ElevatorConstants.RIGHT_POTIENTIOMETER_PORT, ElevatorConstants.MAX_HEIGHT, 0);
 	
-	private final PIDController elevatorPIDController = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI,
-			ElevatorConstants.KD);
+	private final PIDController elevatorPIDController = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD);
 	
 	private final ElevatorFeedforward elevatorFeedforward;
 	
@@ -109,9 +113,6 @@ public class Arm extends SubsystemBase {
 		followerElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
 		followerElevatorMotor.follow(leaderArmMotor);
 		
-
-
-		
 		elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
 		
 		// TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs.
@@ -159,9 +160,84 @@ public class Arm extends SubsystemBase {
 				targetDegrees = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
+		// calculate the feedforward value based on whether the elevator is extended or not
+		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
+		
 		double feedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(targetDegrees), 0);
 		
 		armPIDController.setReference(targetDegrees, CANSparkMax.ControlType.kPosition, 0, feedFowardValue, ArbFFUnits.kVoltage);
+	}
+	
+	/**
+	 * raises the arm to the maximum angle
+	 * 
+	 * @return a command to raise the arm
+	 */
+	public Command raiseArm() {
+		Command command = new Command() {
+			@Override
+			public void initialize() {
+				setArmTarget(ArmConstants.MAX_ANGLE);
+			}
+			
+			@Override
+			public boolean isFinished() {
+				return armAbsoluteEncoder.getPosition() > ArmConstants.MAX_ANGLE - 1;
+			}
+		};
+		command.addRequirements(this);
+		return command;
+	}
+	
+	/**
+	 * lowers the arm to the minimum angle
+	 * 
+	 * @return a command to lower the arm
+	 */
+	public Command lowerArm() {
+		Command command = new Command() {
+			@Override
+			public void initialize() {
+				setArmTarget(ArmConstants.MIN_ANGLE);
+			}
+			
+			@Override
+			public boolean isFinished() {
+				return armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ANGLE + 1;
+			}
+		};
+		command.addRequirements(this);
+		return command;
+	}
+	
+	/**
+	 * If the elevator is extended and the arm is below the MIN_ABOVE_PASS_ANGLE, raise the arm to the MIN_ABOVE_PASS_ANGLE. After the arm raised, retract the elevator if it is extended. Than lower the arm to the MIN_ANGLE
+	 * 
+	 * @return a command to stow the arm
+	 */
+	public Command stowArm() {
+		Command command = new Command() {
+			@Override
+			public void initialize() {}
+			
+			@Override
+			public void execute() {
+				if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT && armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+					setArmTarget(ArmConstants.MIN_ABOVE_PASS_ANGLE);
+				} else if (armAbsoluteEncoder.getPosition() > ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+					setSelevatorTarget(ElevatorConstants.MIN_HEIGHT);
+				} else if (potentiometer.get() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
+					setArmTarget(ArmConstants.MIN_ANGLE);
+				}
+			}
+			
+			@Override
+			public boolean isFinished() {
+				return armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ANGLE + 1 && potentiometer.get() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT + 1;
+			}
+		};
+		command.addRequirements(this);
+		return command;
 	}
 	
 	/**
@@ -181,6 +257,9 @@ public class Arm extends SubsystemBase {
 				setpoint = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
+		
+		// calculate the feedforward value based on whether the elevator is extended or not
+		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
 		
 		armPIDController.setReference(setpoint, CANSparkMax.ControlType.kPosition, 0, armFeedFoward.calculate(Units.degreesToRadians(setpoint), 0), ArbFFUnits.kVoltage);
 	}

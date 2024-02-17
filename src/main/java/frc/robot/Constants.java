@@ -42,9 +42,15 @@ public final class Constants {
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static double MIN_ABOVE_PASS_ANGLE = 25;
 
-		public static double KS = 0;
-		public static double KG = 0;//was 0.2
-		public static double KV = 0.389;
+		// Constants for extended state
+		public static final double EXTENDED_KS = 0; //these values are based on the test arm
+		public static final double EXTENDED_KG = .2;
+		public static final double EXTENDED_KV = .389;
+	
+		// Constants for retracted state
+		public static final double RETRACTED_KS = 0; //these values are based on the test arm
+		public static final double RETRACTED_KG = .2;
+		public static final double RETRACTED_KV = .389;
 		public static double KP = 0.001;
 		public static double KI = 0;
 		public static double KD = 0;
