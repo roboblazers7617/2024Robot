@@ -11,14 +11,13 @@ import edu.wpi.first.wpilibj.DriverStation;
  * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or value not in dashboard.
  */
 public class TunableNumber {
-	// private static final String tableKey = "TunableNumbers";
 	private NetworkTable networkTable;
 	private final NetworkTableEntry entry;
 	private double defaultValue;
 	private Map<Integer, Double> lastHasChangedValues = new HashMap<>();
 	
 	/**
-	 * Create a new TunableNumber
+	 * Create a new TunableNumber. Tunable Numbers should only be created in activateShuffleboard() methods.
 	 *
 	 * @param tab
 	 *            The name of the shuffleboard tab to be placed on
@@ -36,7 +35,7 @@ public class TunableNumber {
 	}
 	
 	/**
-	 * Get the current value, from dashboard if available and in tuning mode.
+	 * Get the current value from the dashboard 
 	 *
 	 * @return The current value
 	 */
