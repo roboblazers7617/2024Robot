@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
+
+import java.util.function.Supplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
@@ -16,6 +19,9 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -37,7 +43,6 @@ public class Arm extends SubsystemBase {
 	private final ArmFeedforward armFeedFoward = new ArmFeedforward(ArmConstants.KS, ArmConstants.KG,
 			ArmConstants.KV);
 
-
 	// Elevator
 	/** the right motor */
 	private final CANSparkMax leaderElevatorMotor = new CANSparkMax(ArmConstants.RIGHT_ELEVATOR_MOTOR_ID,
@@ -55,9 +60,13 @@ public class Arm extends SubsystemBase {
 
 	private final ElevatorFeedforward elevatorFeedforward;
 
-
 	private final Alert invalidArmMove = new Alert("Invalid Arm Move", AlertType.ERROR);
 	private final Alert invalidElevatorMove = new Alert("Invalid Elevator Move", AlertType.ERROR);
+
+	/** this is used for the position setpoint, in degrees, for setVelocity() */
+	private double setpoint;
+	private double dt, lastTime;
+	private Timer time = new Timer();
 
 	// TODO: (Brandon) Putting as something to talk about so we don't forget... the
 	// feedforward values for the elevator may change based on the arm pivot angle,
@@ -97,8 +106,6 @@ public class Arm extends SubsystemBase {
 		// encoder needs to be inverted
 		armAbsoluteEncoder.setInverted(false);
 
-
-
 		// setup elevator motors
 		leaderElevatorMotor.restoreFactoryDefaults();
 		leaderElevatorMotor.setIdleMode(IdleMode.kBrake);
@@ -127,36 +134,36 @@ public class Arm extends SubsystemBase {
 		MotorTab.getInstance()
 				.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor,
 						leaderElevatorMotor });
+
+		time.reset();
+		time.start();
+
 	}
 
 	// do something functions
 
 	/**
 	 * Stops the arm from reaching its target
-	 * <b>Untested</b>
 	 */
 	public void stopArm() {
-		// disable();
 
-		armPIDController.setReference(armAbsoluteEncoder.getPosition(), CANSparkMax.ControlType.kPosition, 0);
+		armPIDController.setReference(0, CANSparkMax.ControlType.kVelocity, 0);
 	}
 
 	/**
 	 * safely set the target angle for the arm
 	 * 
 	 * @param targetDegrees the target angle for the arm in degrees
+	 * @return if the arm was successful
 	 */
-	public void setArmTarget(double targetDegrees) {
+	public boolean setArmTarget(double targetDegrees) {
 
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
 		// height
-		if (targetDegrees > ArmConstants.MAX_ANGLE) {
-			targetDegrees = ArmConstants.MAX_ANGLE;
-		}
-		if (targetDegrees < ArmConstants.MIN_ANGLE) {
-			targetDegrees = ArmConstants.MIN_ANGLE;
-		}
+		targetDegrees = Math.min(targetDegrees, ArmConstants.MAX_ANGLE);
+		// if the target is less than the min height, set the target to the min height
+		targetDegrees = Math.max(targetDegrees, ArmConstants.MIN_ANGLE);
 
 		// if the target is less than the MIN_ABOVE_PASS_ANGLE, make sure the arm is
 		// extended, or retracted, if not, do nothing
@@ -167,7 +174,7 @@ public class Arm extends SubsystemBase {
 					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
 																						// extended
 				invalidArmMove.set(true);
-				return; // than don't move the arm
+				return false; // than don't move the arm
 			}
 		}
 		invalidArmMove.set(false);
@@ -175,15 +182,62 @@ public class Arm extends SubsystemBase {
 
 		armPIDController.setReference(targetDegrees, CANSparkMax.ControlType.kPosition, 0,
 				feedFowardValue, ArbFFUnits.kVoltage);
+		return true;
 
+	}
+
+	/** sets the velocity for the arm by moving a position setpoint 
+	 * @param velocityDegreesPerSec the velocity for the arm in degrees per second
+	 * @return if the arm was successful
+	*/
+	private boolean setArmVelocity(double velocityDegreesPerSec) {
+		setpoint = setpoint + velocityDegreesPerSec * dt;
+		setpoint = Math.min(setpoint, ArmConstants.MAX_ANGLE);
+		setpoint = Math.max(setpoint, ArmConstants.MIN_ANGLE);
+		if (setpoint < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
+					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
+																						// extended
+				invalidArmMove.set(true);
+				return false; // than don't move the arm
+			}
+		}
+
+		invalidArmMove.set(false);
+		armPIDController.setReference(setpoint, CANSparkMax.ControlType.kPosition, 0,
+				armFeedFoward.calculate(Units.degreesToRadians(setpoint), 0),
+				ArbFFUnits.kVoltage);
+		return true;
+	}
+
+	/**
+	 * sets the velocity for the arm. 
+	 * 
+	 * @param velocity the velocity for the arm in degrees per second
+	 * @return a command to set the velocity for the arm
+	 */
+	public Command setArmVelocityCommand(Supplier<Double> velocity) {
+		return new Command() {
+
+			@Override
+			public void initialize() {
+				setpoint = armAbsoluteEncoder.getPosition();
+			}
+
+			@Override
+			public void execute() {
+				setArmVelocity(velocity.get());
+			}
+		};
 	}
 
 	/**
 	 * safely set the target height for the elevator
 	 * 
 	 * @param target the target height for the elevator in inches
+	 * @return if the elevator was successful
 	 */
-	public void setSelevatorTarget(double target) {
+	public boolean setSelevatorTarget(double target) {
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
 		if (target > ElevatorConstants.MAX_HEIGHT) {
@@ -196,7 +250,7 @@ public class Arm extends SubsystemBase {
 		// if the arm is below the MIN_ABOVE_PASS_ANGLE, abort
 		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 			invalidElevatorMove.set(true);
-			return;
+			return false;
 		}
 		invalidElevatorMove.set(false);
 
@@ -205,10 +259,14 @@ public class Arm extends SubsystemBase {
 				feedFowardValue, ArbFFUnits.kVoltage);
 		elevatorPIDController.setReference(target, CANSparkMax.ControlType.kPosition, 0,
 				feedFowardValue, ArbFFUnits.kVoltage);
+		return true;
 	}
 
 	@Override
 	public void periodic() {
+
+		dt = time.get() - lastTime;
+		lastTime = time.get();
 
 		if (ArmConstants.KP != armPIDController.getP()) {
 			armPIDController.setP(ArmConstants.KP);

@@ -56,7 +56,8 @@ public final class Constants {
 		// public static final double VELOCITY_CONVERSION_FACTOR = 0;
 		public static final double GEAR_RATIO = 1.0/16.0;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
-		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60; 
+		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
+		public static final double MAX_MANNUAL_ARM_SPEED = 0.2; 
 
 
 		
@@ -98,9 +99,11 @@ public final class Constants {
 	public static class OperatorConstants {
 		public static final double JOYSTICK_DEADBAND = 0.01;
 		public static final int DRIVER_CONTROLLER_PORT = 0;
+		public static final int OPERATOR_CONTROLLER_PORT = 1;
 		public static final double DEFAULT_DRIVER_LIMITNG_FACTOR = 0.6;
 		public static final double FAST_DRIVER_LIMITING_FACTOR = 0.9;
 		public static final double SLOW_DRIVER_LIMITING_FACTOR = .3;
+		
 	}
 
 	public static class AutoConstants {

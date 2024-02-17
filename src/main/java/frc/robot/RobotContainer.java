@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.Autos;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -59,6 +61,8 @@ public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(
 			OperatorConstants.DRIVER_CONTROLLER_PORT);
+	private final CommandXboxController operatorController = new CommandXboxController(
+			OperatorConstants.OPERATOR_CONTROLLER_PORT);
 	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
 	private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(vision);
@@ -127,6 +131,7 @@ public class RobotContainer {
 		// driverController.y().whileTrue(arm.SysidDynamic(Direction.kReverse));
 
 
+		arm.setDefaultCommand(arm.setArmVelocityCommand(() -> operatorController.getRightY()));
 	}
 
 	/**
