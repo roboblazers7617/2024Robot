@@ -154,9 +154,8 @@ public class Arm extends SubsystemBase {
 	 * safely set the target angle for the arm
 	 * 
 	 * @param targetDegrees the target angle for the arm in degrees
-	 * @return if the arm was successful
 	 */
-	public boolean setArmTarget(double targetDegrees) {
+	public void setArmTarget(double targetDegrees) {
 
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
@@ -174,7 +173,7 @@ public class Arm extends SubsystemBase {
 					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
 																						// extended
 				invalidArmMove.set(true);
-				return false; // than don't move the arm
+				targetDegrees = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
 		invalidArmMove.set(false);
@@ -182,15 +181,16 @@ public class Arm extends SubsystemBase {
 
 		armPIDController.setReference(targetDegrees, CANSparkMax.ControlType.kPosition, 0,
 				feedFowardValue, ArbFFUnits.kVoltage);
-		return true;
 
 	}
 
-	/** sets the velocity for the arm by moving a position setpoint 
+	/**
+	 * sets the velocity for the arm by moving a position setpoint
+	 * 
 	 * @param velocityDegreesPerSec the velocity for the arm in degrees per second
-	 * @return if the arm was successful
-	*/
-	private boolean setArmVelocity(double velocityDegreesPerSec) {
+	 * 
+	 */
+	private void setArmVelocity(double velocityDegreesPerSec) {
 		setpoint = setpoint + velocityDegreesPerSec * dt;
 		setpoint = Math.min(setpoint, ArmConstants.MAX_ANGLE);
 		setpoint = Math.max(setpoint, ArmConstants.MIN_ANGLE);
@@ -199,7 +199,7 @@ public class Arm extends SubsystemBase {
 					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
 																						// extended
 				invalidArmMove.set(true);
-				return false; // than don't move the arm
+				setpoint = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
 
@@ -207,17 +207,16 @@ public class Arm extends SubsystemBase {
 		armPIDController.setReference(setpoint, CANSparkMax.ControlType.kPosition, 0,
 				armFeedFoward.calculate(Units.degreesToRadians(setpoint), 0),
 				ArbFFUnits.kVoltage);
-		return true;
 	}
 
 	/**
-	 * sets the velocity for the arm. 
+	 * sets the velocity for the arm.
 	 * 
 	 * @param velocity the velocity for the arm in degrees per second
 	 * @return a command to set the velocity for the arm
 	 */
 	public Command setArmVelocityCommand(Supplier<Double> velocity) {
-		return new Command() {
+		Command command = new Command() {
 
 			@Override
 			public void initialize() {
@@ -229,6 +228,8 @@ public class Arm extends SubsystemBase {
 				setArmVelocity(velocity.get());
 			}
 		};
+		command.addRequirements(this);
+		return command;
 	}
 
 	/**
