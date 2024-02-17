@@ -49,7 +49,7 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	private final SwerveDrive swerveDrive;
 	private final Vision vision;
-	private double driverlimitingFactor = OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR;
+	private final Timer time = new Timer();
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -203,6 +203,13 @@ public class Drivetrain extends SubsystemBase {
                         				  angularRotationX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false);
+    });
+
+	 driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
+                                                                      headingX.getAsDouble(),
+                                                                      headingY.getAsDouble(),
+																	  swerveDrive.getOdometryHeading().getRadians(),
+                                                                      swerveDrive.getMaximumVelocity()));
     });
   }
 
