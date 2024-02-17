@@ -160,7 +160,7 @@ public class RobotContainer {
 	}
 
 	private double processJoystickVelocity(double joystickInput){
-		return checkAllianceColors(Alliance.Blue) ? (-MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND)) * speedMultiplier : MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND) * speedMultiplier;
+		return /*checkAllianceColors(Alliance.Blue) ?*/ (-MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND)) * speedMultiplier; //: MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND) * speedMultiplier;
 	}
 
 		private double processJoystickAngular(double joystickInput){

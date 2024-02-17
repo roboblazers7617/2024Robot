@@ -204,13 +204,6 @@ public class Drivetrain extends SubsystemBase {
                         true,
                         false);
     });
-
-	 driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
-                                                                      headingX.getAsDouble(),
-                                                                      headingY.getAsDouble(),
-																	  swerveDrive.getOdometryHeading().getRadians(),
-                                                                      swerveDrive.getMaximumVelocity()));
-    });
   }
 
   /**
