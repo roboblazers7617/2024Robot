@@ -84,7 +84,6 @@ public class RobotContainer {
 		// Configure the trigger bindings
 		configureBindings();
 
-		new TunableNumber();
 		shuffleboard = ShuffleboardInfo.getInstance();
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
