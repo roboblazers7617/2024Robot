@@ -19,6 +19,8 @@ import frc.robot.util.TunableNumber;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.photonvision.PhotonUtils;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -27,6 +29,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -59,15 +62,15 @@ public class RobotContainer {
 	private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(vision);
 
-	private final Command absoluteDrive = drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX(), OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightY(), OperatorConstants.JOYSTICK_DEADBAND)));
+	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()),
+			() -> processJoystickVelocity(driverController.getLeftX()),
+			() -> processJoystickAngular(driverController.getRightX()),
+			() -> processJoystickAngular(driverController.getRightY()));
 
 	private final Command rotationDrive = drivetrain.driveCommand(
-			() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getRightX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)));
+			() -> processJoystickVelocity(driverController.getLeftY()),
+			() -> processJoystickVelocity(driverController.getLeftX()),
+			() -> processJoystickVelocity(driverController.getRightX()));
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -136,16 +139,16 @@ public class RobotContainer {
 		//TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
 		// the source for pickup so they do not need to manually do this 
 		driverController.povLeft().and(() -> checkAllianceColors(Alliance.Red))
-				  .whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND))));
+				  .whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()),
+			() -> processJoystickVelocity(driverController.getLeftX()),
+			() -> Math.cos(Units.degreesToRadians(60)),
+			() -> Math.sin(Units.degreesToRadians(60))));
 		
 		driverController.povLeft().and(() -> checkAllianceColors(Alliance.Blue))
-				  .whileTrue(drivetrain.driveCommand(() -> (-MathUtil.applyDeadband(driverController.getLeftY()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(driverController.getLeftX()* speedMultiplier, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(1.0, OperatorConstants.JOYSTICK_DEADBAND)),
-			() -> (-MathUtil.applyDeadband(-1.0, OperatorConstants.JOYSTICK_DEADBAND))));
+				  .whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()),
+			() -> processJoystickVelocity(driverController.getLeftX()),
+			() -> Math.cos(Units.degreesToRadians(-60)),
+			() -> Math.sin(Units.degreesToRadians(-60))));
 
 	}
 
@@ -154,6 +157,14 @@ public class RobotContainer {
 			return DriverStation.getAlliance().get() == checkAgainst;
 		}
 		return false;
+	}
+
+	private double processJoystickVelocity(double joystickInput){
+		return checkAllianceColors(Alliance.Blue) ? (-MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND)) * speedMultiplier : MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND) * speedMultiplier;
+	}
+
+		private double processJoystickAngular(double joystickInput){
+		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND),3) : Math.pow(MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND),3);
 	}
 
 	/**
