@@ -1,72 +1,68 @@
 package frc.robot.util;
 
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.IntegerEntry;
+import java.util.HashMap;
+import java.util.Map;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.TestNumber;
-
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
- * How to add your constant
- * <p> 1. Make sure to remove final from variable declaration
- * <p> 2. Add {@code private final IntegerEntry yourVariable}
- * <p> 3. Add {@code yourVariable = networkTable.getIntegerTopic("variable name on shuffleboard").getEntry(0);
-		yourVariableName.set(Constants.YOUR_CONSTANT);}
- * <p> 4. Add {@code Constants.YOUR_CONSTANT = (int) YourVariable.get();}
+ * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or value not in dashboard.
  */
-public class TunableNumber extends SubsystemBase{
-	// How to add your constant
-	// 1. Make sure to remove final from variable declaration
-	// 2. declare 
-
-	private final IntegerEntry number;
-	private final DoubleEntry maxClimberHeight;
-	// private final DoubleEntry armKS;
-	// private final DoubleEntry armKG;
-	// private final DoubleEntry armKV;
-	private final DoubleEntry armKP;
-	private final DoubleEntry armKI;
-	private final DoubleEntry armKD;
-	public TunableNumber(){
+public class TunableNumber {
+	private NetworkTable networkTable;
+	private final NetworkTableEntry entry;
+	private double defaultValue;
+	private Map<Integer, Double> lastHasChangedValues = new HashMap<>();
+	
+	/**
+	 * Create a new TunableNumber. Tunable Numbers should only be created in activateShuffleboard() methods.
+	 *
+	 * @param tab
+	 *            The name of the shuffleboard tab to be placed on
+	 * @param key
+	 *            The name of the field
+	 * @param defaultValue
+	 *            The default value
+	 */
+	public TunableNumber(String tab, String key, double defaultValue) {
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
-
-		// |  |  |
-		// \/ \/ \/
-		number = networkTable.getIntegerTopic("other number").getEntry(0);
-		number.set(TestNumber.number);
-		maxClimberHeight = networkTable.getDoubleTopic("max climber height").getEntry(0);
-		maxClimberHeight.set(ArmConstants.MAX_ANGLE);
-		// armKS = networkTable.getDoubleTopic("arm KS").getEntry(0);
-		// armKS.set(ArmConstants.KP);
-		// armKG = networkTable.getDoubleTopic("arm KG").getEntry(0);
-		// armKG.set(ArmConstants.KP);
-		// armKV = networkTable.getDoubleTopic("arm KV").getEntry(0);
-		// armKV.set(ArmConstants.KP);
-		armKP = networkTable.getDoubleTopic("arm KP").getEntry(0);
-		armKP.set(ArmConstants.KP);
-		armKI = networkTable.getDoubleTopic("arm KI").getEntry(0);
-		armKI.set(ArmConstants.KI);
-		armKD = networkTable.getDoubleTopic("arm KD").getEntry(0);
-		armKD.set(ArmConstants.KD);
-		// /\ /\ /\
-		//  |  |  |
+		if (!DriverStation.isFMSAttached()) {
+			networkTable = inst.getTable("Shuffleboard/" + tab);
+			entry = networkTable.getEntry(key);
+			this.defaultValue = defaultValue;
+			entry.setDouble(defaultValue);
+		}
+		else {
+			entry = null;
+		}
 	}
-
-	@Override
-	public void periodic() {
-		//TODO: (Brandon) Let's talk through the TunableNumbers code to see if it can be made more efficient. 
-		TestNumber.number = (int) number.get();
-		ArmConstants.MAX_ANGLE = maxClimberHeight.get();
-		// ArmConstants.KS = armKS.get();
-		// ArmConstants.KG = armKG.get();
-		// ArmConstants.KV = armKV.get();
-		ArmConstants.KP = armKP.get();
-		ArmConstants.KI = armKI.get();
-		ArmConstants.KD = armKD.get();
-
+	
+	/**
+	 * Get the current value from the dashboard
+	 *
+	 * @return The current value
+	 */
+	public double get() {
+		return !DriverStation.isFMSAttached() ? entry.getDouble(defaultValue) : defaultValue;
+	}
+	
+	/**
+	 * Checks whether the number has changed since our last check
+	 *
+	 * @param id
+	 *            Unique identifier for the caller to avoid conflicts when shared between multiple objects. Recommended approach is to pass the result of "hashCode()"
+	 * @return True if the number has changed since the last time this method was called, false otherwise.
+	 */
+	public boolean hasChanged(int id) {
+		double currentValue = get();
+		Double lastValue = lastHasChangedValues.get(id);
+		if (lastValue == null || currentValue != lastValue) {
+			lastHasChangedValues.put(id, currentValue);
+			return true;
+		}
+		
+		return false;
 	}
 }

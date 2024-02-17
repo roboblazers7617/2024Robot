@@ -90,9 +90,6 @@ public class RobotContainer {
 		// Configure the trigger bindings
 		configureBindings();
 
-		//TODO:(Brandon) Let's talk about Tunable Numbers. The way I have seen them implemented is 
-		// each number that is "tunable" has a separate instance of this class. I'll show you at practice
-		new TunableNumber();
 		shuffleboard = ShuffleboardInfo.getInstance();
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |

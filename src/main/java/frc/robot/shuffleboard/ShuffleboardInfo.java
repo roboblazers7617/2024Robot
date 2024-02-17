@@ -21,9 +21,8 @@ public class ShuffleboardInfo extends SubsystemBase {
 	private static ShuffleboardInfo instance;
 	private String[] copyTables;
 	private boolean isActivated = false;
-
-	//TODO: (Brandon) Typo... "Batter"
-	private Alert alert = new Alert("Batter voltage is below " + Constants.BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
+	private Alert enabledAlert = new Alert("Enabled batter voltage is below " + Constants.ENABLED_BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
+	private Alert disabledAlert = new Alert("Disabled batter voltage is below " + Constants.DISABLED_BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
 
 	public static ShuffleboardInfo getInstance() {
 		if (instance == null) {
@@ -85,11 +84,8 @@ public class ShuffleboardInfo extends SubsystemBase {
 
 
 		// create an Alert if the battery voltage is below BATTERY_WARNING_VOLTAGE
-		if (RobotController.getBatteryVoltage() < Constants.BATTERY_WARNING_VOLTAGE) {
-			alert.set(true);
-		} else {
-			alert.set(false);
-		}
+		enabledAlert.set(RobotController.getBatteryVoltage() < Constants.ENABLED_BATTERY_WARNING_VOLTAGE && DriverStation.isEnabled());
+		disabledAlert.set(RobotController.getBatteryVoltage() < Constants.DISABLED_BATTERY_WARNING_VOLTAGE && !DriverStation.isEnabled());
 		//batter voltage is displayed on the driver station tab
 
 	}
