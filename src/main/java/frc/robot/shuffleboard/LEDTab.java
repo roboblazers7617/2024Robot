@@ -8,17 +8,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.LED;
-import frc.robot.subsystems.Head;
 
 public class LEDTab extends ShuffleboardTabBase {
 	private final LED led;
-	private final Head head;
-	private SendableChooser<Boolean> holdingNote;
-	private SendableChooser<Boolean> readyToShoot;
 
-	public LEDTab(LED led, Head head) {
+	public LEDTab(LED led) {
 		this.led = led;
-		this.head = head;
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
@@ -28,8 +23,6 @@ public class LEDTab extends ShuffleboardTabBase {
 	@Override
 	public void update() {
 		// these functions have not been defined
-		//head.setIsNoteAcquired(holdingNote.getSelected());
-		head.setIsReadyToShoot(readyToShoot.getSelected());
 	}
 
 	@Override
@@ -41,17 +34,6 @@ public class LEDTab extends ShuffleboardTabBase {
 		tab.add("Auto Enabled Animation", new InstantCommand(() -> led.setAutoEnabledAnimation()).ignoringDisable(true));
 		tab.add("Teleop Disabled Animation", new InstantCommand(() -> led.setTeleopDisabledAnimation()).ignoringDisable(true));
 		tab.add("Teleop Enabled Animation", new InstantCommand(() -> led.setTeleopEnabledAnimation()).ignoringDisable(true));
-
-		holdingNote = new SendableChooser<>();
-		holdingNote.addOption("Holding Note", true);
-		holdingNote.setDefaultOption("Not Holding Note", false);
-
-		readyToShoot = new SendableChooser<>();
-		readyToShoot.addOption("Ready To Shoot", true);
-		readyToShoot.setDefaultOption("Not Ready To Shoot", false);
-
-		tab.add(holdingNote);
-		tab.add(readyToShoot);
 	}
 
 	@Override
