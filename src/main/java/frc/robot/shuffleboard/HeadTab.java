@@ -3,6 +3,7 @@ package frc.robot.shuffleboard;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -10,14 +11,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Head;
-import frc.robot.Constants.ShooterConstants;
 
 public class HeadTab extends ShuffleboardTabBase {
 	private final Head head;
 	
 	private final BooleanPublisher noteWithinHeadPublisher;
 	private final BooleanPublisher noteAlignedPublisher;
-	//private final BooleanPublisher noteInShooterPublisher;
+	// private final BooleanPublisher noteInShooterPublisher;
 	private final BooleanPublisher noteAcquiredPublisher;
 	
 	private final DoublePublisher shooterBottomSpeedPublisher;
@@ -25,6 +25,10 @@ public class HeadTab extends ShuffleboardTabBase {
 	private final DoublePublisher shooterSetPointPublisher;
 	
 	private final BooleanPublisher readyToShootPublisher;
+	
+	private final DoubleSubscriber shootingPositionSubscriber;
+	private final DoublePublisher shooterSpeedAtPositionPublisher;
+	private final DoubleSubscriber shooterInterpolationSpeedTuningSubscriber;
 	
 	public HeadTab(Head head) {
 		this.head = head;
@@ -35,7 +39,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		noteWithinHeadPublisher = networkTable.getBooleanTopic("Note Within Head").publish();
 		noteAlignedPublisher = networkTable.getBooleanTopic("Note Aligned").publish();
-		//noteInShooterPublisher = networkTable.getBooleanTopic("Note in Shooter").publish();
+		// noteInShooterPublisher = networkTable.getBooleanTopic("Note in Shooter").publish();
 		noteAcquiredPublisher = networkTable.getBooleanTopic("Note Acquired").publish();
 		
 		shooterBottomSpeedPublisher = networkTable.getDoubleTopic("Shooter Bottom Speed").publish();
@@ -43,13 +47,17 @@ public class HeadTab extends ShuffleboardTabBase {
 		shooterSetPointPublisher = networkTable.getDoubleTopic("Shooter Setpoint").publish();
 		
 		readyToShootPublisher = networkTable.getBooleanTopic("Ready To Shoot").publish();
+		
+		shootingPositionSubscriber = networkTable.getDoubleTopic("Shooting Position").subscribe(0);
+		shooterSpeedAtPositionPublisher = networkTable.getDoubleTopic("Shooter Speed At Position").publish();
+		shooterInterpolationSpeedTuningSubscriber = networkTable.getDoubleTopic("Shooting Position Tuning").subscribe(0);
 	}
 	
 	@Override
 	public void update() {
 		noteWithinHeadPublisher.set(head.isNoteWithinHead());
 		noteAlignedPublisher.set(head.isNoteAligned());
-		//noteInShooterPublisher.set(head.isNoteInShooter());
+		// noteInShooterPublisher.set(head.isNoteInShooter());
 		noteAcquiredPublisher.set(head.isNoteAcquired());
 		
 		shooterBottomSpeedPublisher.set(head.getShooterBottomSpeed());
@@ -57,6 +65,8 @@ public class HeadTab extends ShuffleboardTabBase {
 		shooterSetPointPublisher.set(head.getShooterSetPoint());
 		
 		readyToShootPublisher.set(head.isReadyToShoot());
+		
+		shooterSpeedAtPositionPublisher.set(head.getShooterSpeedAtPosition(shootingPositionSubscriber.get()));
 	}
 	
 	@Override
@@ -66,9 +76,10 @@ public class HeadTab extends ShuffleboardTabBase {
 		tab.add("Intake from Source", head.intakePiece(true));
 		tab.add("Outake", head.outakePiece());
 		
-		tab.add("Spin Up (Subwoofer)", head.spinUpShooter(ShooterConstants.ShootingPosition.SUBWOOFER));
+		tab.add("Spin Up", head.spinUpShooter(shootingPositionSubscriber.get()));
 		tab.add("Spin Down", head.spinDownShooter());
 		tab.add("Shoot", head.shoot());
+		tab.add("Set Speed at Position (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPositionSubscriber.get(), shooterInterpolationSpeedTuningSubscriber.get())));
 	}
 	
 	@Override

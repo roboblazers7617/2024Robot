@@ -4,21 +4,22 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
-import frc.robot.Constants.IntakeConstants;
 
 public class Head extends SubsystemBase {
 	// Shooter
@@ -29,6 +30,7 @@ public class Head extends SubsystemBase {
 	private final SparkPIDController shooterControllerBottom = shooterMotorBottom.getPIDController();
 	private final SparkPIDController shooterControllerTop = shooterMotorTop.getPIDController();
 	// private final DigitalInput isNoteInShooter = new DigitalInput(ShooterConstants.NOTE_SHOT_SENSOR_DIO);
+	private final InterpolatingDoubleTreeMap shooterInterpolationMap = new InterpolatingDoubleTreeMap();
 	
 	/*
 	 * Two motor intake
@@ -86,6 +88,11 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setFF(ShooterConstants.kFF);
 		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+		
+		// Shooter interpolation map
+		shooterInterpolationMap.put(8.0, 5.0);
+		shooterInterpolationMap.put(12.0, 15.0);
+		shooterInterpolationMap.put(20.0, 35.0);
 	}
 	
 	@Override
@@ -154,7 +161,15 @@ public class Head extends SubsystemBase {
 				});
 	}
 	
-	private void setShooterSpeed(int rpm) {
+	public double getShooterSpeedAtPosition(double position) {
+		return shooterInterpolationMap.get(position);
+	}
+	
+	public void setShooterSpeedAtPosition(double position, double speed) {
+		shooterInterpolationMap.put(position, speed);
+	}
+	
+	private void setShooterSpeed(double rpm) {
 		shooterSetPoint = rpm;
 		shooterControllerBottom.setReference(shooterSetPoint, ControlType.kVelocity);
 		shooterControllerTop.setReference(shooterSetPoint, ControlType.kVelocity);
@@ -172,10 +187,10 @@ public class Head extends SubsystemBase {
 		return shooterSetPoint;
 	}
 	
-	public Command spinUpShooter(ShooterConstants.ShootingPosition position) {
+	public Command spinUpShooter(double position) {
 		return Commands.runOnce(() -> {
 			shooterIdle = false;
-			setShooterSpeed(position.rpm());
+			setShooterSpeed(getShooterSpeedAtPosition(position));
 		}, this);
 	}
 	
