@@ -142,7 +142,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("test auto angle");
+		return new PathPlannerAuto("top front start 1 close 2 far wip");
 	}
 
 	public void setMotorBrake(boolean isBraked){

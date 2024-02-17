@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.33,
+      "x": 1.54,
       "y": 7.0
     },
-    "rotation": -90.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -14,18 +14,24 @@
         {
           "type": "path",
           "data": {
-            "pathName": "top angle start"
+            "pathName": "top front start to top ring"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "SayHi"
+            "pathName": "top ring to mid ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid ring to bot ring"
           }
         }
       ]
     }
   },
-  "folder": "auto test",
+  "folder": null,
   "choreoAuto": false
 }

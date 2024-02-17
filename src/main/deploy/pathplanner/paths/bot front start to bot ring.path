@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.65,
-        "y": 7.0
+        "x": 1.5338787698652874,
+        "y": 4.112577405249212
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.77,
-        "y": 7.0
+        "x": 2.5338787698652836,
+        "y": 4.112577405249212
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "bot front start"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 2.901226774314081,
+        "y": 4.105
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 7.414213562373095
-      },
-      "nextControl": {
-        "x": 4.0,
-        "y": 4.585786437626905
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 0.65,
-        "y": 5.0
-      },
-      "prevControl": {
-        "x": -0.8706906325745548,
-        "y": 5.0
+        "x": 1.9012267743140812,
+        "y": 4.105
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "bot ring"
     }
   ],
   "rotationTargets": [],
@@ -59,7 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "path test",
-  "previewStartingState": null,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
   "useDefaultConstraints": true
 }

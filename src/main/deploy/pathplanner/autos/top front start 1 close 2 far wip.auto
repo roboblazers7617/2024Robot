@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.54,
+      "y": 7.0
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "top front start to top ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "top ring to top far "
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "top far to top ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "top ring to topmid far"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "topmid far to top ring"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
