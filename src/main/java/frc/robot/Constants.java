@@ -24,7 +24,8 @@ import swervelib.math.Matter;
  */
 public final class Constants {
 
-	public final static double MAX_BATTERY_VOLTAGE = 12.0;
+	public final static double ENABLED_BATTERY_WARNING_VOLTAGE = 9.9;
+	public final static double DISABLED_BATTERY_WARNING_VOLTAGE = 12.2;
 
 	public static class TestNumber{
 		public static int number = 5;

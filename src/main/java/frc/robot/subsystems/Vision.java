@@ -47,33 +47,34 @@ public class Vision extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		intakeCamResult = intakeCamera.getLatestResult();
-		shooterCamResult = new PhotonPipelineResult();//shooterCamera.getLatestResult();
+		shooterCamResult = shooterCamera.getLatestResult();
 	}
 	
 	public Optional<EstimatedRobotPose> updateOdometry() {
 		intakeBestTag = intakeCamResult.getBestTarget();
-		intakeBestTag = intakeCamResult.getBestTarget();
+		shooterBestTag = shooterCamResult.getBestTarget();
 		if(intakeBestTag != null){
 			if(shooterBestTag != null){
 				if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()){
-					if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
-						return intakeEstimator.update();
+					if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
+						return intakeEstimator.update();}
 					else
 						return Optional.empty();
 				}
 				else{
-					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
+					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
 						return shooterEstimator.update();
+					}
 					else
 						return Optional.empty();
 				}
 			}
-			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
-				return intakeEstimator.update();
+			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
+				return intakeEstimator.update();}
 		}
 		else if(shooterBestTag != null){
-			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4)
-				return shooterEstimator.update();
+			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
+				return shooterEstimator.update();}
 			}
 			return Optional.empty();
 	}
