@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OperatorConstants;
@@ -50,6 +52,10 @@ public class Drivetrain extends SubsystemBase {
 	private final SwerveDrive swerveDrive;
 	private final Vision vision;
 	private final Timer time = new Timer();
+
+	private double dt = 0;
+	private double previousTime = 0;
+	private Supplier<Double> velocityRotation;
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -75,11 +81,7 @@ public class Drivetrain extends SubsystemBase {
   
 	setupPathPlanner();
 	this.vision = vision;
-
-	//for (int i = 0; i < 4; i++){
-	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
-	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
-	//}
+	time.start();
   }
 
 
@@ -197,12 +199,12 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
   {
+	velocityRotation = () -> getHeading().plus(Rotation2d.fromDegrees(angularRotationX.getAsDouble()*dt*OperatorConstants.ROTATION_RATE)).getRadians();
     return run(() -> {
-      swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(),
-                                          translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
-                        				  angularRotationX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
-                        true,
-                        false);
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
+                                                                      translationY.getAsDouble(),
+                                                                      angularRotationX.getAsDouble()
+                                                                      ));
     });
   }
 
@@ -251,6 +253,8 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 		processVision();
+		dt = time.get()-previousTime;
+		previousTime = time.get();
 	}
 
 	@Override

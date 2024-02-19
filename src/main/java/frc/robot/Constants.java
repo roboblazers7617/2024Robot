@@ -36,6 +36,7 @@ public final class Constants {
 		public static final double DEFAULT_DRIVER_LIMITNG_FACTOR = 0.6;
 		public static final double FAST_DRIVER_LIMITING_FACTOR = 0.9;
 		public static final double SLOW_DRIVER_LIMITING_FACTOR = .3;
+		public static final double ROTATION_RATE = 2;
 	}
 
 	public static class AutoConstants {
