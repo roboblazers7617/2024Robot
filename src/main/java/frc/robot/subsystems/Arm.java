@@ -136,7 +136,9 @@ public class Arm extends SubsystemBase {
 	}
 	
 	private ElevatorFeedforward getElevatorFeedforward() {
-		return new ElevatorFeedforward(elevatorKSTable.get(armAbsoluteEncoder.getPosition()), elevatorKGTable.get(armAbsoluteEncoder.getPosition()), elevatorKVTable.get(armAbsoluteEncoder.getPosition()));
+		// use the interpolation table to get the feedforward values
+		// return new ElevatorFeedforward(elevatorKSTable.get(armAbsoluteEncoder.getPosition()), elevatorKGTable.get(armAbsoluteEncoder.getPosition()), elevatorKVTable.get(armAbsoluteEncoder.getPosition()));
+		return new ElevatorFeedforward(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
 	}
 	
 	/** adds feedfoward values to the interpolation table */
