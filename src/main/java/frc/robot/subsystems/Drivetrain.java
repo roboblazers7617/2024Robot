@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 
@@ -51,11 +50,7 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	private final SwerveDrive swerveDrive;
 	private final Vision vision;
-	private final Timer time = new Timer();
-
-	private double dt = 0;
-	private double previousTime = 0;
-	private Supplier<Double> velocityRotation;
+	private double driverlimitingFactor = OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR;
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -81,7 +76,11 @@ public class Drivetrain extends SubsystemBase {
   
 	setupPathPlanner();
 	this.vision = vision;
-	time.start();
+
+	//for (int i = 0; i < 4; i++){
+	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
+	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
+	//}
   }
 
 
@@ -199,14 +198,17 @@ public class Drivetrain extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
   {
-	velocityRotation = () -> getHeading().plus(Rotation2d.fromDegrees(angularRotationX.getAsDouble()*dt*OperatorConstants.ROTATION_RATE)).getRadians();
-    return run(() -> {
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
-                                                                      translationY.getAsDouble(),
-                                                                      angularRotationX.getAsDouble()
-                                                                      ));
-    });
+	return run(() -> {
+    	swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(),
+                                          translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
+                        				  angularRotationX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
+                        true,
+                        false);
+    }).finallyDo(() -> {swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
+						});
   }
+
+  // () -> {swerveDrive.swerveController.lastAngleScalar = swerveDrive.getOdometryHeading().getRadians()/ Math.PI;
 
   /**
    * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
@@ -253,8 +255,6 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 		processVision();
-		dt = time.get()-previousTime;
-		previousTime = time.get();
 	}
 
 	@Override
