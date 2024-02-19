@@ -71,10 +71,13 @@ public class Arm extends SubsystemBase {
 	InterpolatingDoubleTreeMap elevatorKSTable = new InterpolatingDoubleTreeMap();
 	InterpolatingDoubleTreeMap elevatorKGTable = new InterpolatingDoubleTreeMap();
 	InterpolatingDoubleTreeMap elevatorKVTable= new InterpolatingDoubleTreeMap();
+
+	private final TunableNumber elevatorKS = new TunableNumber("arm", "Elevator KS", ElevatorConstants.KS);
+	private final TunableNumber elevatorKG = new TunableNumber("arm", "Elevator KG", ElevatorConstants.KG);
+	private final TunableNumber elevatorKV = new TunableNumber("arm", "Elevator KV", ElevatorConstants.KV);
 	
 	private final Alert invalidElevatorMove = new Alert("Invalid Elevator Move", AlertType.ERROR);
 
-	// create tunable numbers for the arm pid controller when the elevator is extended and retracted
 
 	
 
@@ -149,6 +152,13 @@ public class Arm extends SubsystemBase {
 
 	private ElevatorFeedforward getElevatorFeedforward() {
 		return new ElevatorFeedforward(elevatorKSTable.get(armAbsoluteEncoder.getPosition()), elevatorKGTable.get(armAbsoluteEncoder.getPosition()), elevatorKVTable.get(armAbsoluteEncoder.getPosition()));
+	}
+
+	/** adds feedfoward values to the interpolation table */
+	private void addElevatorFeedFowardValues(double ks, double kg, double kv) {
+		elevatorKSTable.put(armAbsoluteEncoder.getPosition(), ks);
+		elevatorKGTable.put(armAbsoluteEncoder.getPosition(), kg);
+		elevatorKVTable.put(armAbsoluteEncoder.getPosition(), kv);
 	}
 
 	
@@ -264,6 +274,16 @@ public class Arm extends SubsystemBase {
 			}
 		};
 		command.addRequirements(this);
+		return command;
+	}
+
+	public Command addElevatorFeedFowardValuesCommand() {
+		Command command = new Command() {
+			@Override
+			public void initialize() {
+				addElevatorFeedFowardValues(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
+			}
+		};
 		return command;
 	}
 	

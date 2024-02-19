@@ -40,6 +40,7 @@ public class ArmTab extends ShuffleboardTabBase {
 		ShuffleboardTab tab = Shuffleboard.getTab("arm");
 		// tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()).ignoringDisable(true));
 		tab.add("raise arm ", new RaiseArm(arm, true));
+		tab.add("add elevator feed foward values", arm.addElevatorFeedFowardValuesCommand());
 		// tab.add("lower arm", new InstantCommand(() -> arm.lowerArm()).ignoringDisable(true));
 		// tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
 		// tab.add("foward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kForward));
