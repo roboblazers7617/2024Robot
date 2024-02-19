@@ -28,14 +28,19 @@ public class TunableNumber {
 	 */
 	public TunableNumber(String tab, String key, double defaultValue) {
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		networkTable = inst.getTable("Shuffleboard/" + tab);
-		entry = networkTable.getEntry(key);
-		this.defaultValue = defaultValue;
-		entry.setDouble(defaultValue);
+		if (!DriverStation.isFMSAttached()) {
+			networkTable = inst.getTable("Shuffleboard/" + tab);
+			entry = networkTable.getEntry(key);
+			this.defaultValue = defaultValue;
+			entry.setDouble(defaultValue);
+		}
+		else {
+			entry = null;
+		}
 	}
 	
 	/**
-	 * Get the current value from the dashboard 
+	 * Get the current value from the dashboard
 	 *
 	 * @return The current value
 	 */
