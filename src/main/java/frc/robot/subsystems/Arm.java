@@ -24,6 +24,7 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,6 +32,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.shuffleboard.MotorTab;
 import frc.robot.util.Alert;
+import frc.robot.util.TunableNumber;
 import frc.robot.util.Alert.AlertType;
 
 public class Arm extends SubsystemBase {
@@ -43,6 +45,14 @@ public class Arm extends SubsystemBase {
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 	
 	private final SparkPIDController armPIDController = leaderArmMotor.getPIDController();
+
+	private final TunableNumber extendedArmKP = new TunableNumber("arm", "Extended Arm KP", ArmConstants.KP);
+	private final TunableNumber extendedArmKI = new TunableNumber("arm", "Extended Arm KI", ArmConstants.KI);
+	private final TunableNumber extendedArmKD = new TunableNumber("arm", "Extended Arm KD", ArmConstants.KD);
+	private final TunableNumber retractedArmKP = new TunableNumber("arm", "Retracted Arm KP", ArmConstants.KP);
+	private final TunableNumber retractedArmKI = new TunableNumber("arm", "Retracted Arm KI", ArmConstants.KI);
+	private final TunableNumber retractedArmKD = new TunableNumber("arm", "Retracted Arm KD", ArmConstants.KD);
+
 	
 	private final ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
 	private final ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
@@ -58,11 +68,16 @@ public class Arm extends SubsystemBase {
 
 	private final PIDController elevatorPIDController = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD);
 	
-	InterpolatingDoubleTreeMap elevatorKS = new InterpolatingDoubleTreeMap();
-	InterpolatingDoubleTreeMap elevatorKG = new InterpolatingDoubleTreeMap();
-	InterpolatingDoubleTreeMap elevatorKV= new InterpolatingDoubleTreeMap();
+	InterpolatingDoubleTreeMap elevatorKSTable = new InterpolatingDoubleTreeMap();
+	InterpolatingDoubleTreeMap elevatorKGTable = new InterpolatingDoubleTreeMap();
+	InterpolatingDoubleTreeMap elevatorKVTable= new InterpolatingDoubleTreeMap();
 	
 	private final Alert invalidElevatorMove = new Alert("Invalid Elevator Move", AlertType.ERROR);
+
+	// create tunable numbers for the arm pid controller when the elevator is extended and retracted
+
+	
+
 	
 	/** this is used for the position setpoint, in degrees, for setVelocity() */
 	private double setpoint;
@@ -123,14 +138,20 @@ public class Arm extends SubsystemBase {
 		// All on the Arm tab?
 		MotorTab.getInstance()
 				.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor, leaderElevatorMotor });
+
+
+
+		
 		
 		time.reset();
 		time.start();
 	}
 
 	private ElevatorFeedforward getElevatorFeedforward() {
-		return new ElevatorFeedforward(elevatorKS.get(potentiometer.get()), elevatorKG.get(potentiometer.get()), elevatorKV.get(potentiometer.get()));
+		return new ElevatorFeedforward(elevatorKSTable.get(armAbsoluteEncoder.getPosition()), elevatorKGTable.get(armAbsoluteEncoder.getPosition()), elevatorKVTable.get(armAbsoluteEncoder.getPosition()));
 	}
+
+	
 	
 	// do something functions
 	
@@ -328,14 +349,27 @@ public class Arm extends SubsystemBase {
 		dt = time.get() - lastTime;
 		lastTime = time.get();
 		
-		if (ArmConstants.KP != armPIDController.getP()) {
-			armPIDController.setP(ArmConstants.KP);
-		}
-		if (ArmConstants.KI != armPIDController.getI()) {
-			armPIDController.setI(ArmConstants.KI);
-		}
-		if (ArmConstants.KD != armPIDController.getD()) {
-			armPIDController.setD(ArmConstants.KD);
+		// if the elevator is extended
+		if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
+			if (extendedArmKP.get() != armPIDController.getP()) {
+				armPIDController.setP(ArmConstants.KP);
+			}
+			if (extendedArmKI.get() != armPIDController.getI()) {
+				armPIDController.setI(ArmConstants.KI);
+			}
+			if (extendedArmKD.get() != armPIDController.getD()) {
+				armPIDController.setD(ArmConstants.KD);
+			}
+		} else {
+			if (retractedArmKP.get() != armPIDController.getP()) {
+				armPIDController.setP(ArmConstants.KP);
+			}
+			if (retractedArmKI.get() != armPIDController.getI()) {
+				armPIDController.setI(ArmConstants.KI);
+			}
+			if (retractedArmKD.get() != armPIDController.getD()) {
+				armPIDController.setD(ArmConstants.KD);
+			}
 		}
 	}
 	
