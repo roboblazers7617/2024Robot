@@ -120,7 +120,7 @@ public class Head extends SubsystemBase {
 		setIntakeTopSpeed(intakeTopSpeed);
 	}
 	
-	public Command intakePiece(boolean isFromSource) {
+	public Command IntakePiece(boolean isFromSource) {
 		if (isFromSource) {
 			return Commands.runOnce(() -> {
 				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, -IntakeConstants.INTAKE_SPEED);
@@ -150,27 +150,24 @@ public class Head extends SubsystemBase {
 		}
 	}
 	
-	public Command outakePiece() {
+	public Command OutakePiece() {
 		return Commands.runOnce(() -> {
-			// TODO: (Max) You probably want to do this last in case this command is cancelled before it finishes
-			isNoteAcquired = false;
 			setIntakeSpeeds(IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
 		}, this)
 				.andThen(Commands.waitUntil(() -> !isNoteWithinHead()))
 				.andThen(Commands.waitSeconds(1))
 				.finallyDo(() -> {
+					isNoteAcquired = false;
 					setIntakeSpeeds(0, 0);
 				});
 	}
 	
-	// TODO: (Max) To make it more clear what units position is, you should make it something like "positionMeters"
-	public double getShooterSpeedAtPosition(double position) {
-		return shooterInterpolationMap.get(position);
+	public double getShooterSpeedAtPosition(double positionMeters) {
+		return shooterInterpolationMap.get(positionMeters);
 	}
 	
-	// TODO: (Max) Do you know what the behavior is if you try to add an entry to the interpolation table and the key already exists? Does it overwrite it? Or throw an error?
-	public void setShooterSpeedAtPosition(double position, double speed) {
-		shooterInterpolationMap.put(position, speed);
+	public void setShooterSpeedAtPosition(double positionMeters, double rpm) {
+		shooterInterpolationMap.put(positionMeters, rpm);
 	}
 	
 	private void setShooterSpeed(double rpm) {
@@ -191,25 +188,14 @@ public class Head extends SubsystemBase {
 		return shooterSetPoint;
 	}
 	
-	public Command spinUpShooter(boolean isForAmp) {
-		if (isForAmp) {
-			return spinUpShooterForDistance(1);
-		} else {
-			return spinUpShooterForDistance(0);
-		}
-	}
-	
-	// TODO: (Max) You will need a Command/function with a tunable number so we can try out different shooter speeds when we are trying to tune the shooter
-	// TODO: (Max) Commands should start with an uppercase letter to distinguish them as commands rather than functions.
-	public Command spinUpShooterForDistance(double position) {
+	public Command SpinUpShooter(double positionMeters) {
 		return Commands.runOnce(() -> {
 			shooterIdle = false;
-			setShooterSpeed(getShooterSpeedAtPosition(position));
+			setShooterSpeed(getShooterSpeedAtPosition(positionMeters));
 		}, this);
 	}
 	
-	// TODO: (Max) Commands should start with an uppercase letter to distinguish them as commands rather than functions.
-	public Command spinDownShooter() {
+	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
 			setShooterSpeed(ShooterConstants.IDLE_SPEED);
@@ -228,7 +214,7 @@ public class Head extends SubsystemBase {
 		// @formatter:on
 	}
 	
-	public Command shoot() {
+	public Command Shoot() {
 		// TODO: (Max) don't you need to command the shooter to spin up?
 		return Commands.waitUntil(() -> isReadyToShoot())
 				.andThen(Commands.runOnce(() -> {
@@ -240,7 +226,7 @@ public class Head extends SubsystemBase {
 				.finallyDo(() -> {
 					isNoteAcquired = false;
 					setIntakeSpeeds(0, 0);
-					spinDownShooter();
+					SpinDownShooter();
 				});
 	}
 	
