@@ -18,22 +18,15 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
-import edu.wpi.first.math.interpolation.Interpolator;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.shuffleboard.MotorTab;
-import frc.robot.util.Alert;
 import frc.robot.util.TunableNumber;
-import frc.robot.util.Alert.AlertType;
 
 public class Arm extends SubsystemBase {
 	// Arm
@@ -45,18 +38,18 @@ public class Arm extends SubsystemBase {
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 	
 	private final SparkPIDController armPIDController = leaderArmMotor.getPIDController();
-
+	
 	private final TunableNumber extendedArmKP = new TunableNumber("arm", "Extended Arm KP", ArmConstants.KP);
 	private final TunableNumber extendedArmKI = new TunableNumber("arm", "Extended Arm KI", ArmConstants.KI);
 	private final TunableNumber extendedArmKD = new TunableNumber("arm", "Extended Arm KD", ArmConstants.KD);
 	private final TunableNumber retractedArmKP = new TunableNumber("arm", "Retracted Arm KP", ArmConstants.KP);
 	private final TunableNumber retractedArmKI = new TunableNumber("arm", "Retracted Arm KI", ArmConstants.KI);
 	private final TunableNumber retractedArmKD = new TunableNumber("arm", "Retracted Arm KD", ArmConstants.KD);
-
 	
 	private final ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
 	private final ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
-
+	
+	/** the current target for the arm, it is within the total bounds of the arm but may not be a currently safe move */
 	private double armTarget;
 	
 	// Elevator
@@ -67,24 +60,19 @@ public class Arm extends SubsystemBase {
 	
 	/** the potentiometer for the elevator */
 	private final AnalogPotentiometer potentiometer = new AnalogPotentiometer(ElevatorConstants.RIGHT_POTIENTIOMETER_PORT, ElevatorConstants.MAX_HEIGHT, 0);
-
+	
 	private final PIDController elevatorPIDController = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD);
 	
 	InterpolatingDoubleTreeMap elevatorKSTable = new InterpolatingDoubleTreeMap();
 	InterpolatingDoubleTreeMap elevatorKGTable = new InterpolatingDoubleTreeMap();
-	InterpolatingDoubleTreeMap elevatorKVTable= new InterpolatingDoubleTreeMap();
-
+	InterpolatingDoubleTreeMap elevatorKVTable = new InterpolatingDoubleTreeMap();
+	
 	private final TunableNumber elevatorKS = new TunableNumber("arm", "Elevator KS", ElevatorConstants.KS);
 	private final TunableNumber elevatorKG = new TunableNumber("arm", "Elevator KG", ElevatorConstants.KG);
 	private final TunableNumber elevatorKV = new TunableNumber("arm", "Elevator KV", ElevatorConstants.KV);
 	
-	private final Alert invalidElevatorMove = new Alert("Invalid Elevator Move", AlertType.ERROR);
-
+	/** the current target for the elevator, it is within the total bounds of the arm but may not be a currently safe move */
 	private double elevatorTarget;
-
-
-	
-
 	
 	/** this is used for the position setpoint, in degrees, for setVelocity() */
 	private double dt, lastTime;
@@ -136,39 +124,29 @@ public class Arm extends SubsystemBase {
 		followerElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
 		followerElevatorMotor.follow(leaderArmMotor);
 		
-
-		
 		// TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs.
 		// Only the Shuffleboard tabs should know about the subsystems
 		// TODO: (Brandon) All the info for one subsystem should be on one tab, correct?
 		// All on the Arm tab?
 		MotorTab.getInstance()
 				.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor, leaderElevatorMotor });
-
-
-
-		
 		
 		time.reset();
 		time.start();
 	}
-
+	
 	private ElevatorFeedforward getElevatorFeedforward() {
 		return new ElevatorFeedforward(elevatorKSTable.get(armAbsoluteEncoder.getPosition()), elevatorKGTable.get(armAbsoluteEncoder.getPosition()), elevatorKVTable.get(armAbsoluteEncoder.getPosition()));
 	}
-
+	
 	/** adds feedfoward values to the interpolation table */
 	private void addElevatorFeedFowardValues(double ks, double kg, double kv) {
 		elevatorKSTable.put(armAbsoluteEncoder.getPosition(), ks);
 		elevatorKGTable.put(armAbsoluteEncoder.getPosition(), kg);
 		elevatorKVTable.put(armAbsoluteEncoder.getPosition(), kv);
 	}
-
-	
 	
 	// do something functions
-	
-
 	
 	/**
 	 * safely set the target angle for the arm
@@ -185,7 +163,6 @@ public class Arm extends SubsystemBase {
 		targetDegrees = Math.max(targetDegrees, ArmConstants.MIN_ANGLE);
 		
 		armTarget = targetDegrees;
-		
 	}
 	
 	/**
@@ -259,13 +236,14 @@ public class Arm extends SubsystemBase {
 		command.addRequirements(this);
 		return command;
 	}
-
+	
 	public Command addElevatorFeedFowardValuesCommand() {
 		Command command = new Command() {
 			@Override
 			public void initialize() {
 				addElevatorFeedFowardValues(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
 			}
+			
 			@Override
 			public boolean isFinished() {
 				return true;
@@ -284,13 +262,6 @@ public class Arm extends SubsystemBase {
 		armTarget = armTarget + velocityDegreesPerSec * dt;
 		armTarget = Math.min(armTarget, ArmConstants.MAX_ANGLE);
 		armTarget = Math.max(armTarget, ArmConstants.MIN_ANGLE);
-		if (armTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
-					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
-																						// extended
-				armTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
-			}
-		}
 		
 	}
 	
@@ -322,9 +293,8 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @param target
 	 *            the target height for the elevator in inches
-	 * @return if the elevator was successful
 	 */
-	public boolean setElevatorTarget(double target) {
+	public void setElevatorTarget(double target) {
 		// make sure the move can be done safely
 		// if the target is greater than the max height, set the target to the max
 		if (target > ElevatorConstants.MAX_HEIGHT) {
@@ -334,17 +304,7 @@ public class Arm extends SubsystemBase {
 		if (target < ElevatorConstants.MIN_HEIGHT) {
 			target = ElevatorConstants.MIN_HEIGHT;
 		}
-		// if the arm is below the MIN_ABOVE_PASS_ANGLE, abort
-		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-			invalidElevatorMove.set(true);
-			return false;
-		}
-		invalidElevatorMove.set(false);
-		
-		double feedFowardValue = getElevatorFeedforward().calculate(Units.degreesToRadians(target), 0);
-		double pid = elevatorPIDController.calculate(potentiometer.get(), target);
-		leaderElevatorMotor.setVoltage(pid + feedFowardValue);
-		return true;
+		elevatorTarget = target;
 	}
 	
 	@Override
@@ -374,10 +334,11 @@ public class Arm extends SubsystemBase {
 				armPIDController.setD(ArmConstants.KD);
 			}
 		}
-
+		// Arm
+		
 		// current arm target will be the reference set by the PID controller, based on what is currently safe
 		double currentArmTarget = armTarget;
-
+		
 		// if the arm is less than the threshold to go over the bumper
 		if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
@@ -386,12 +347,29 @@ public class Arm extends SubsystemBase {
 				currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
-
+		
 		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
 		
-		double feedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
+		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
 		
-		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, feedFowardValue, ArbFFUnits.kVoltage);
+		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
+		
+		// Elevator
+		// current elevator target will be the reference set by the PID controller, based on what is currently safe
+		double currentElevatorTarget = elevatorTarget;
+		// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
+		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+			if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && potentiometer.get() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
+				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
+			}
+			if (currentElevatorTarget > ElevatorConstants.MAX_BELOW_PASS_HEIGHT && potentiometer.get() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
+				currentElevatorTarget = ElevatorConstants.MAX_BELOW_PASS_HEIGHT;
+			}
+		}
+		
+		double ElevatorFeedFowardValue = getElevatorFeedforward().calculate(Units.degreesToRadians(currentElevatorTarget), 0);
+		double pid = elevatorPIDController.calculate(potentiometer.get(), currentElevatorTarget);
+		leaderElevatorMotor.setVoltage(pid + ElevatorFeedFowardValue);
 	}
 	
 	// get info functions
