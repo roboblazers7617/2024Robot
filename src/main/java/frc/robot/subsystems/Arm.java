@@ -56,6 +56,8 @@ public class Arm extends SubsystemBase {
 	
 	private final ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
 	private final ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
+
+	private double armTarget;
 	
 	// Elevator
 	/** the right motor */
@@ -78,12 +80,13 @@ public class Arm extends SubsystemBase {
 	
 	private final Alert invalidElevatorMove = new Alert("Invalid Elevator Move", AlertType.ERROR);
 
+	private double elevatorTarget;
+
 
 	
 
 	
 	/** this is used for the position setpoint, in degrees, for setVelocity() */
-	private double setpoint;
 	private double dt, lastTime;
 	private Timer time = new Timer();
 	
@@ -165,12 +168,7 @@ public class Arm extends SubsystemBase {
 	
 	// do something functions
 	
-	/**
-	 * Stops the arm from reaching its target
-	 */
-	public void stopArm() {
-		armPIDController.setReference(0, CANSparkMax.ControlType.kVelocity, 0);
-	}
+
 	
 	/**
 	 * safely set the target angle for the arm
@@ -186,23 +184,8 @@ public class Arm extends SubsystemBase {
 		// if the target is less than the min height, set the target to the min height
 		targetDegrees = Math.max(targetDegrees, ArmConstants.MIN_ANGLE);
 		
-		// if the target is less than the MIN_ABOVE_PASS_ANGLE, make sure the arm is
-		// extended, or retracted, if not, do nothing
+		armTarget = targetDegrees;
 		
-		// if the arm is less than the threshold to go over the bumper
-		if (targetDegrees < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
-					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
-																						// extended
-				targetDegrees = ArmConstants.MIN_ABOVE_PASS_ANGLE;
-			}
-		}
-		// calculate the feedforward value based on whether the elevator is extended or not
-		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
-		
-		double feedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(targetDegrees), 0);
-		
-		armPIDController.setReference(targetDegrees, CANSparkMax.ControlType.kPosition, 0, feedFowardValue, ArbFFUnits.kVoltage);
 	}
 	
 	/**
@@ -283,6 +266,10 @@ public class Arm extends SubsystemBase {
 			public void initialize() {
 				addElevatorFeedFowardValues(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
 			}
+			@Override
+			public boolean isFinished() {
+				return true;
+			}
 		};
 		return command;
 	}
@@ -294,21 +281,17 @@ public class Arm extends SubsystemBase {
 	 *            the velocity for the arm in degrees per second
 	 */
 	private void setArmVelocity(double velocityDegreesPerSec) {
-		setpoint = setpoint + velocityDegreesPerSec * dt;
-		setpoint = Math.min(setpoint, ArmConstants.MAX_ANGLE);
-		setpoint = Math.max(setpoint, ArmConstants.MIN_ANGLE);
-		if (setpoint < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+		armTarget = armTarget + velocityDegreesPerSec * dt;
+		armTarget = Math.min(armTarget, ArmConstants.MAX_ANGLE);
+		armTarget = Math.max(armTarget, ArmConstants.MIN_ANGLE);
+		if (armTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
 					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
 																						// extended
-				setpoint = ArmConstants.MIN_ABOVE_PASS_ANGLE;
+				armTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
 		
-		// calculate the feedforward value based on whether the elevator is extended or not
-		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
-		
-		armPIDController.setReference(setpoint, CANSparkMax.ControlType.kPosition, 0, armFeedFoward.calculate(Units.degreesToRadians(setpoint), 0), ArbFFUnits.kVoltage);
 	}
 	
 	/**
@@ -322,7 +305,7 @@ public class Arm extends SubsystemBase {
 		Command command = new Command() {
 			@Override
 			public void initialize() {
-				setpoint = armAbsoluteEncoder.getPosition();
+				armTarget = armAbsoluteEncoder.getPosition();
 			}
 			
 			@Override
@@ -391,6 +374,24 @@ public class Arm extends SubsystemBase {
 				armPIDController.setD(ArmConstants.KD);
 			}
 		}
+
+		// current arm target will be the reference set by the PID controller, based on what is currently safe
+		double currentArmTarget = armTarget;
+
+		// if the arm is less than the threshold to go over the bumper
+		if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
+					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
+																						// extended
+				currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
+			}
+		}
+
+		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
+		
+		double feedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
+		
+		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, feedFowardValue, ArbFFUnits.kVoltage);
 	}
 	
 	// get info functions
