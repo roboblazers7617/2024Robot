@@ -78,7 +78,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		tab.add("Intake from Source", head.intakePiece(true));
 		tab.add("Outake", head.outakePiece());
 		
-		tab.add("Spin Up", head.spinUpShooter(shootingPosition.get()));
+		tab.add("Spin Up", head.spinUpShooterForDistance(shootingPosition.get()));
 		tab.add("Spin Down", head.spinDownShooter());
 		tab.add("Shoot", head.shoot());
 		tab.add("Set Speed at Position (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPosition.get(), shootingPositionSpeedTuning.get())));

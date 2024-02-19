@@ -187,11 +187,19 @@ public class Head extends SubsystemBase {
 		return shooterSetPoint;
 	}
 	
-	public Command spinUpShooter(double position) {
+	public Command spinUpShooter(boolean isForAmp) {
+		if (isForAmp) {
+			return spinUpShooterForDistance(1);
+		} else {
+			return spinUpShooterForDistance(0);
+		}
+	}
+
+	public Command spinUpShooterForDistance(double position) {
 		return Commands.runOnce(() -> {
-			shooterIdle = false;
-			setShooterSpeed(getShooterSpeedAtPosition(position));
-		}, this);
+				shooterIdle = false;
+				setShooterSpeed(getShooterSpeedAtPosition(position));
+			}, this);
 	}
 	
 	public Command spinDownShooter() {
