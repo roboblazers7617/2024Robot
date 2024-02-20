@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -50,6 +51,8 @@ public class Arm extends SubsystemBase {
 	private final ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
 	
 	/** the current target for the arm, it is within the total bounds of the arm but may not be a currently safe move */
+	//TODO: (Brandon) This needs to be initialized in the constructor with the current angle
+	// of the arm so the arm doesn't try to move on boot-up
 	private double armTarget;
 	
 	// Elevator
@@ -97,11 +100,14 @@ public class Arm extends SubsystemBase {
 		followerArmMotor.setInverted(true);
 		followerArmMotor.follow(leaderArmMotor);// TODO: (Brandon) Do I need to tell the follower to invert or is it
 												// included in the setInverted method?
+		//TODO: (Brandon) Yes, you need to tell it to invert the motor. You can do that with a
+		//different version of the follow function that takes two arguments
 		
 		// setup the arm pid controller
 		armPIDController.setP(ArmConstants.KP);
 		armPIDController.setI(ArmConstants.KI);
 		armPIDController.setD(ArmConstants.KD);
+		//TODO: (Brandon) We won't be using a kI value, so we don't need to set the IZone 
 		armPIDController.setIZone(ArmConstants.kIz);
 		armPIDController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 		armPIDController.setFeedbackDevice(armAbsoluteEncoder);
@@ -172,6 +178,8 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to raise the arm
 	 */
+	//TODO: (Brandon) This can be re-written to be easier to read as follows in just one line
+	// 	return this.runOnce(() -> setArmTarget(ArmConstants.MAX_ANGLE));
 	public Command raiseArm() {
 		Command command = new Command() {
 			@Override
@@ -193,6 +201,10 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to lower the arm
 	 */
+	//TODO: (Brandon) This can be re-written to be easier to read as the one above
+	//TODO: (Brandon) Do you intend this will lower to the floor? If so, doesn't this command
+	//also need to tell the elevator to extend as if it is retracted the arm will not go all the way to the floor.
+	//I think the logic is something closer to the stow command where you move both arm and elevator
 	public Command lowerArm() {
 		Command command = new Command() {
 			@Override
@@ -214,6 +226,17 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to stow the arm
 	 */
+	// TODO: (Brandon) Since you have now added the safety checks into periodic, you don't need to
+	// put a bunch of logic here. You can just write a command that orders both the arm and 
+	// elevator to move. I think something like this...
+	/* 
+	public Command stowArm(){
+		return this.runOnce(() -> {
+				setArmTarget(Constants.ARM_STOW_ANGLE));
+				setElevatorTarget(Constants.ELEVATOR_POSITION);
+		});
+	}
+	*/
 	public Command stowArm() {
 		Command command = new Command() {
 			@Override
@@ -239,6 +262,10 @@ public class Arm extends SubsystemBase {
 		return command;
 	}
 	
+	//TODO: (Brandon) This whole funcation can be rewritten to shorten to just one line as 
+	/* 
+		return this.runOnce(() ->addElevatorFeedFowardValues(elevatorKS.get(), elevatorKG.get(), elevatorKV.get()) );
+	*/
 	public Command addElevatorFeedFowardValuesCommand() {
 		Command command = new Command() {
 			@Override
@@ -274,6 +301,8 @@ public class Arm extends SubsystemBase {
 	 *            the velocity for the arm in degrees per second
 	 * @return a command to set the velocity for the arm
 	 */
+	//TODO: (Brandon) I don't think this logic will work. To create the command I think
+	// you just need to do a this.runOnce() with a lambda function calling the setArmVelocity() function. 
 	public Command setArmVelocityCommand(Supplier<Double> velocity) {
 		Command command = new Command() {
 			@Override
@@ -315,6 +344,10 @@ public class Arm extends SubsystemBase {
 		lastTime = time.get();
 		
 		// if the elevator is extended
+		//TODO: (Brandon) Any chance you could change the name of the MAX_BELOW_PASS_HEIGHT
+		// constant? My brain (and probably others) don't understand what this value means...
+		//TODO: (Brandon) For now, let's try one PID controller and not switch and see if it works.
+		// it would simplify things for you
 		if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
 			if (extendedArmKP.get() != armPIDController.getP()) {
 				armPIDController.setP(ArmConstants.KP);
@@ -343,6 +376,8 @@ public class Arm extends SubsystemBase {
 		
 		// if the arm is less than the threshold to go over the bumper
 		if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+
+			//TODO: (Brandon) I don't quite understand the two checks here. Can you walk me through it?
 			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
 					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
 																						// extended
@@ -350,6 +385,7 @@ public class Arm extends SubsystemBase {
 			}
 		}
 		
+		//TODO: (Brandon) For now, let's try just one feedfoward to see if it works as it simplifies things
 		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
 		
 		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
@@ -360,6 +396,7 @@ public class Arm extends SubsystemBase {
 		// current elevator target will be the reference set by the PID controller, based on what is currently safe
 		double currentElevatorTarget = elevatorTarget;
 		// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
+		//TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
 		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 			if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && potentiometer.get() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
 				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
@@ -369,8 +406,11 @@ public class Arm extends SubsystemBase {
 			}
 		}
 		
+		//TODO: (Brandon) Won't the elevator be a linear (Position) value and not and angle?
 		double ElevatorFeedFowardValue = getElevatorFeedforward().calculate(Units.degreesToRadians(currentElevatorTarget), 0);
 		double pid = elevatorPIDController.calculate(potentiometer.get(), currentElevatorTarget);
+		//TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate 
+		// of movement
 		leaderElevatorMotor.setVoltage(pid + ElevatorFeedFowardValue);
 	}
 	

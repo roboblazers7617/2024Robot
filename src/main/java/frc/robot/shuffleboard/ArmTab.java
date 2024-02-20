@@ -25,6 +25,11 @@ public class ArmTab extends ShuffleboardTabBase {
 		NetworkTable networkTable = inst.getTable("logging/arm");
 
 		rightAbsoluteEncoderPub = networkTable.getDoubleTopic("Right Absolute Encoder").publish();
+		//TODO: (Brandon) You will need more data than this to debug. You will also need the motorEncoder of 
+		//both arm motors so you can see which direction they are moving when the arm moves. 
+
+		//TODO: (Brandon) You will need data about the elevator which is not added here. 
+		// Think about what you need to tune values and make sure that motors are moving the way you expect
 
 
 	}
@@ -38,6 +43,8 @@ public class ArmTab extends ShuffleboardTabBase {
 	@Override
 	public void activateShuffleboard() {
 		ShuffleboardTab tab = Shuffleboard.getTab("arm");
+		//TODO: (Brandon) Can you remove all the .ignoringDisable(true) as we don't want those to accidentally
+		// get put back in the code as it could be an arm safety issue
 		// tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()).ignoringDisable(true));
 		tab.add("raise arm ", new RaiseArm(arm, true));
 		tab.add("add elevator feed foward values", arm.addElevatorFeedFowardValuesCommand());
