@@ -76,7 +76,11 @@ public class HeadTab extends ShuffleboardTabBase {
 		ShuffleboardTab tab = Shuffleboard.getTab("Head");
 		tab.add("Intake from Ground", head.IntakePiece(false));
 		tab.add("Intake from Source", head.IntakePiece(true));
+		tab.add("Manual Intake from Ground", head.StartIntake(false));
+		tab.add("Manual Intake from Source", head.StartIntake(true));
 		tab.add("Outake", head.OutakePiece());
+		tab.add("Manual Outake", head.StartOutake());
+		tab.add("Stop Intake", head.StopIntake());
 		
 		tab.add("Spin Up", head.SpinUpShooter(shootingPosition.get()));
 		tab.add("Spin Down", head.SpinDownShooter());

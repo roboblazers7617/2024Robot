@@ -22,6 +22,9 @@ import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 
 public class Head extends SubsystemBase {
+	// Temperature at which the overheat alert should be triggered
+	private static final double MOTOR_OVERHEAT_TEMPERATURE = 85;
+	
 	// Shooter
 	private final CANSparkMax shooterMotorBottom = new CANSparkMax(ShooterConstants.MOTOR_BOTTOM_CAN_ID, MotorType.kBrushless);
 	private final CANSparkMax shooterMotorTop = new CANSparkMax(ShooterConstants.MOTOR_TOP_CAN_ID, MotorType.kBrushless);
@@ -83,12 +86,6 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setI(ShooterConstants.kI);
 		shooterControllerBottom.setD(ShooterConstants.kD);
 		shooterControllerTop.setD(ShooterConstants.kD);
-		//TODO: (Max) We aren't using iZone so don't need to set this
-		shooterControllerBottom.setIZone(ShooterConstants.kIZone);
-		shooterControllerTop.setIZone(ShooterConstants.kIZone);
-		//TODO: (Max) We aren't using the FF that is part of the controller so you don't need to set this
-		shooterControllerBottom.setFF(ShooterConstants.kFF);
-		shooterControllerTop.setFF(ShooterConstants.kFF);
 		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		
@@ -102,8 +99,7 @@ public class Head extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		// Temperature alert
-		//TODO: (Max) The overheat temp should be a constant at the top of the class to make it easier to find/change
-		if ((intakeMotorBottom.getMotorTemperature() > 85) || (intakeMotorTop.getMotorTemperature() > 85)) {
+		if ((intakeMotorBottom.getMotorTemperature() > MOTOR_OVERHEAT_TEMPERATURE) || (intakeMotorTop.getMotorTemperature() > MOTOR_OVERHEAT_TEMPERATURE)) {
 			motorTemperatureAlert.set(true);
 		} else {
 			motorTemperatureAlert.set(false);
@@ -123,9 +119,30 @@ public class Head extends SubsystemBase {
 		setIntakeTopSpeed(intakeTopSpeed);
 	}
 	
-	//TODO: (Max) There should also be commands to start and stop the intake that is not dependent
-	// on the beam breaks in case we want to run it manually
-
+	public Command StartIntake(boolean isFromSource) {
+		if (isFromSource) {
+			return Commands.runOnce(() -> {
+				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, -IntakeConstants.INTAKE_SPEED);
+			}, this);
+		} else {
+			return Commands.runOnce(() -> {
+				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
+			}, this);
+		}
+	}
+	
+	public Command StartOutake() {
+		return Commands.runOnce(() -> {
+			setIntakeSpeeds(IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
+		}, this);
+	}
+	
+	public Command StopIntake() {
+		return Commands.runOnce(() -> {
+			setIntakeSpeeds(0, 0);
+		}, this);
+	}
+	
 	public Command IntakePiece(boolean isFromSource) {
 		if (isFromSource) {
 			return Commands.runOnce(() -> {
@@ -168,12 +185,10 @@ public class Head extends SubsystemBase {
 				});
 	}
 	
-	//TODO: (Max) Can't this be private as no one else will need to use it? Just your class
 	public double getShooterSpeedAtPosition(double positionMeters) {
 		return shooterInterpolationMap.get(positionMeters);
 	}
 	
-	//TODO: (Max) shouldn't this be private?
 	public void setShooterSpeedAtPosition(double positionMeters, double rpm) {
 		shooterInterpolationMap.put(positionMeters, rpm);
 	}
