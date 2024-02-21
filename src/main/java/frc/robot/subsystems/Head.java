@@ -93,9 +93,8 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 		
 		// Shooter interpolation map
-		shooterInterpolationMap.put(8.0, 5.0);
-		shooterInterpolationMap.put(12.0, 15.0);
-		shooterInterpolationMap.put(20.0, 35.0);
+		shooterInterpolationMap.put(-1.0, 120.0); // Amp
+		shooterInterpolationMap.put(0.0, 360.0);
 	}
 	
 	@Override
