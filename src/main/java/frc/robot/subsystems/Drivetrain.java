@@ -208,7 +208,14 @@ public class Drivetrain extends SubsystemBase {
 						});
   }
 
-  // () -> {swerveDrive.swerveController.lastAngleScalar = swerveDrive.getOdometryHeading().getRadians()/ Math.PI;
+  public Command turnToAngleCommand(Rotation2d angle)
+  {
+	return Commands.run(() -> {
+    	this.driveFieldOriented(getTargetSpeeds(0, 0, angle));
+    }).raceWith(Commands.waitUntil(() -> Math.abs(getPitch().minus(angle).getDegrees())<=2)).finallyDo(() -> {swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
+						});
+  }
+
 
   /**
    * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
