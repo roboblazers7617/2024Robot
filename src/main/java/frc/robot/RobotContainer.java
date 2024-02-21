@@ -112,16 +112,17 @@ public class RobotContainer {
 		// the joysticks do not correctly drive the robot forward. Everything is reversed.
 		drivetrain.setDefaultCommand(absoluteDrive);
 		
-		driverController.povDown().toggleOnTrue(new LockWheelsState(drivetrain));
+		driverController.povRight().toggleOnTrue(new LockWheelsState(drivetrain));
+
 		driverController.leftBumper()
 				.onTrue(new ScheduleCommand(rotationDrive))
 				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
 		driverController.rightBumper()
-				.onTrue(Commands.runOnce(() -> speedMultiplier = SwerveConstants.SLOW_SPEED))
-				.onFalse(Commands.runOnce(() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
+				.onTrue(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.SLOW_SPEED_DECREMENT))
+				.onFalse(Commands.runOnce(() -> speedMultiplier += SwerveConstants.SLOW_SPEED_DECREMENT));
 		driverController.rightTrigger()
-				.onTrue(Commands.runOnce(() -> speedMultiplier = SwerveConstants.FAST_SPEED))
-				.onFalse(Commands.runOnce(() -> speedMultiplier = SwerveConstants.REGULAR_SPEED));
+				.onTrue(Commands.runOnce(() -> speedMultiplier += SwerveConstants.FAST_SPEED_INCREMENT))
+				.onFalse(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.FAST_SPEED_INCREMENT));
 		
 		// TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
 		// the source for pickup so they do not need to manually do this
@@ -132,7 +133,9 @@ public class RobotContainer {
 		driverController.povLeft()
 				.and(() -> checkAllianceColors(Alliance.Blue))
 				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> Math.cos(Units.degreesToRadians(-60)), () -> Math.sin(Units.degreesToRadians(-60))));
-		driverController.povRight().onTrue(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(63)));
+		
+		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier += SwerveConstants.PRECISE_INCREMENT));
+		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.PRECISE_INCREMENT));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
