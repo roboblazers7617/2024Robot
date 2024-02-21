@@ -64,6 +64,7 @@ public class RobotContainer {
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
+	private final CommandXboxController operatorController = new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
 	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
 	private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(vision);
