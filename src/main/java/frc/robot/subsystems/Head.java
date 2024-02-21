@@ -16,6 +16,8 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -54,8 +56,11 @@ public class Head extends SubsystemBase {
 	
 	private final Alert motorTemperatureAlert = new Alert("Intake motor too hot!", AlertType.ERROR);
 	
+	// Controller for haptics
+	private final XboxController operatorController;
+	
 	/** Creates a new Head. */
-	public Head() {
+	public Head(XboxController operatorController) {
 		// Shooter motor
 		shooterMotorBottom.restoreFactoryDefaults();
 		shooterMotorTop.restoreFactoryDefaults();
@@ -95,6 +100,8 @@ public class Head extends SubsystemBase {
 		// Shooter interpolation map
 		shooterInterpolationMap.put(-1.0, 120.0); // Amp
 		shooterInterpolationMap.put(0.0, 360.0);
+		
+		this.operatorController = operatorController;
 	}
 	
 	@Override
@@ -116,6 +123,11 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setD(ShooterConstants.kD.get());
 		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
+		
+		// Controller haptics
+		if (isReadyToShoot()) {
+			operatorController.setRumble(RumbleType.kBothRumble, 0.1);
+		}
 	}
 	
 	private void setIntakeBottomSpeed(double intakeSpeed) {
