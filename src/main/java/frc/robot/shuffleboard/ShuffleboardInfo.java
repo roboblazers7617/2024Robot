@@ -45,7 +45,6 @@ public class ShuffleboardInfo extends SubsystemBase {
 	public void activateTabs() {
 		if (isActivated == false) {
 			isActivated = true;
-			System.out.println("function being called");
 			for (int i = 1; i < tabs.size(); i++) {
 				if (tabs.get(i) != null) {
 					tabs.get(i).activateShuffleboard();
