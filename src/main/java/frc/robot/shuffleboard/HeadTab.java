@@ -82,7 +82,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		tab.add("Manual Outake", head.StartOutake());
 		tab.add("Stop Intake", head.StopIntake());
 		
-		tab.add("Spin Up", head.SpinUpShooter(shootingPosition.get()));
+		tab.add("Spin Up", head.SpinUpShooter(() -> shootingPosition.get()));
 		tab.add("Spin Down", head.SpinDownShooter());
 		tab.add("Shoot", head.Shoot());
 		tab.add("Set Speed at Position (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPosition.get(), shootingPositionSpeedTuning.get())));

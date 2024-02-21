@@ -7,6 +7,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.Supplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -80,14 +83,14 @@ public class Head extends SubsystemBase {
 		intakeMotorTop.setSmartCurrentLimit(20);
 		
 		// Shooter controller
-		shooterControllerBottom.setP(ShooterConstants.kP);
-		shooterControllerTop.setP(ShooterConstants.kP);
-		shooterControllerBottom.setI(ShooterConstants.kI);
-		shooterControllerTop.setI(ShooterConstants.kI);
-		shooterControllerBottom.setD(ShooterConstants.kD);
-		shooterControllerTop.setD(ShooterConstants.kD);
-		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
-		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+		shooterControllerBottom.setP(ShooterConstants.kP.get());
+		shooterControllerTop.setP(ShooterConstants.kP.get());
+		shooterControllerBottom.setI(ShooterConstants.kI.get());
+		shooterControllerTop.setI(ShooterConstants.kI.get());
+		shooterControllerBottom.setD(ShooterConstants.kD.get());
+		shooterControllerTop.setD(ShooterConstants.kD.get());
+		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
+		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 		
 		// Shooter interpolation map
 		shooterInterpolationMap.put(8.0, 5.0);
@@ -104,6 +107,16 @@ public class Head extends SubsystemBase {
 		} else {
 			motorTemperatureAlert.set(false);
 		}
+		
+		// Shooter controller
+		shooterControllerBottom.setP(ShooterConstants.kP.get());
+		shooterControllerTop.setP(ShooterConstants.kP.get());
+		shooterControllerBottom.setI(ShooterConstants.kI.get());
+		shooterControllerTop.setI(ShooterConstants.kI.get());
+		shooterControllerBottom.setD(ShooterConstants.kD.get());
+		shooterControllerTop.setD(ShooterConstants.kD.get());
+		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
+		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 	}
 	
 	private void setIntakeBottomSpeed(double intakeSpeed) {
@@ -211,10 +224,10 @@ public class Head extends SubsystemBase {
 		return shooterSetPoint;
 	}
 	
-	public Command SpinUpShooter(double positionMeters) {
+	public Command SpinUpShooter(Supplier<Double> positionMeters) {
 		return Commands.runOnce(() -> {
 			shooterIdle = false;
-			setShooterSpeed(getShooterSpeedAtPosition(positionMeters));
+			setShooterSpeed(getShooterSpeedAtPosition(positionMeters.get()));
 		}, this);
 	}
 	
