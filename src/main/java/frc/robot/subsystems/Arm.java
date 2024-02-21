@@ -57,9 +57,9 @@ public class Arm extends SubsystemBase {
 	
 	// Elevator
 	/** the right motor */
-	private final CANSparkMax leaderElevatorMotor = new CANSparkMax(ArmConstants.RIGHT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+	private final CANSparkMax leaderElevatorMotor = new CANSparkMax(ElevatorConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 	/** the left motor */
-	private final CANSparkMax followerElevatorMotor = new CANSparkMax(ArmConstants.LEFT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+	private final CANSparkMax followerElevatorMotor = new CANSparkMax(ElevatorConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
 	
 	/** the potentiometer for the elevator */
 	private final AnalogPotentiometer potentiometer = new AnalogPotentiometer(ElevatorConstants.RIGHT_POTIENTIOMETER_PORT, ElevatorConstants.MAX_HEIGHT, 0);
