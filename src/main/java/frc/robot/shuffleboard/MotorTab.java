@@ -12,72 +12,72 @@ import frc.robot.util.Alert.AlertType;
 /**
  * This class is used to create a tab on the shuffleboard that displays information about the motor power and current
  */
-public class MotorTab extends ShuffleboardTabBase{
-	private static MotorTab instance;
-
-	private final DoublePublisher[] busVoltagePublishers = new DoublePublisher[Constants.NUMBER_OF_MOTORS];
-	private final DoublePublisher[] optionCurrentPublishers = new DoublePublisher[Constants.NUMBER_OF_MOTORS];
-	private final DoublePublisher[] stickyFaultPublisher = new DoublePublisher[Constants.NUMBER_OF_MOTORS];
+public class MotorTab{
+	private final DoublePublisher[] busVoltagePublishers;
+	private final DoublePublisher[] optionCurrentPublishers;
+	private final DoublePublisher[] stickyFaultPublisher;
+	private final DoublePublisher[] motorTemperaturePublishers;
+	private final DoublePublisher[] motorEncoderPublishers;
 	private final CANSparkMax[] motors = new CANSparkMax[Constants.NUMBER_OF_MOTORS];
 	private int numberOfMotors = 0;
+	private final int totalNumberOfMotors;
 
 	private final Alert tooManyMotors = new Alert("Too many motors", AlertType.ERROR);
+
+	private final String tabName;
 	
-	private MotorTab(){
-
-	}
-
 	/**
-	 * This method is used to get the instance of the MotorTab
-	 * @return the instance of the MotorTab
+	 * This constructor is used to create a MotorTab, periodic() must be called in the subsystem's periodic method
+	 * @param totalNumberOfMotors the total number of motors that will be added to the MotorTab
+	 * @param tabName the name of the tab
 	 */
-	public static MotorTab getInstance(){
-		if(instance == null){
-			instance = new MotorTab();
-		}
-		return instance;
+	public MotorTab(int totalNumberOfMotors, String tabName){
+		busVoltagePublishers = new DoublePublisher[totalNumberOfMotors];
+		optionCurrentPublishers = new DoublePublisher[totalNumberOfMotors];
+		stickyFaultPublisher = new DoublePublisher[totalNumberOfMotors];
+		motorTemperaturePublishers = new DoublePublisher[totalNumberOfMotors];
+		motorEncoderPublishers = new DoublePublisher[totalNumberOfMotors];
+
+		this.tabName = tabName;
+		this.totalNumberOfMotors = totalNumberOfMotors;
 	}
+
 
 	/**
 	 * This method is used to add a motor to the MotorTab
 	 * @param newMotors an array of the new motors to be added
 	 */
 	public void addMotor(CANSparkMax[] newMotors){
-		if(newMotors.length + numberOfMotors > Constants.NUMBER_OF_MOTORS){
+		if(newMotors.length + numberOfMotors > totalNumberOfMotors){
 			tooManyMotors.setText("Too many motors. Increase Constants.NUMBER_OF_MOTORS to: " + (newMotors.length + numberOfMotors));
 			tooManyMotors.set(true);
 			return;
 		}
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		NetworkTable networkTable = inst.getTable("logging/MotorTab");
+		NetworkTable networkTable = inst.getTable("logging/" + tabName);
 		for(int i = 0; i < newMotors.length; i++){
 			motors[i + numberOfMotors] = newMotors[i];
 			busVoltagePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Bus Voltage").publish();
 			optionCurrentPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Total Current").publish();
 			stickyFaultPublisher[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Sticky Faults").publish();
+			motorTemperaturePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Motor Temperature").publish();
+			motorEncoderPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Encoder Position").publish();
 		}
 		numberOfMotors += newMotors.length;
 
 	}
-	@Override
+	/** this MUST be called in periodic() */
 	public void update() {
 		for (int i = 0; i < numberOfMotors; i++) {
 			busVoltagePublishers[i].set(motors[i].getBusVoltage());
 			optionCurrentPublishers[i].set(motors[i].getOutputCurrent());
 			stickyFaultPublisher[i].set(motors[i].getStickyFaults());
+			motorTemperaturePublishers[i].set(motors[i].getMotorTemperature());
+			motorEncoderPublishers[i].set(motors[i].getEncoder().getPosition());
 		}
 	}
 
-	@Override
-	public void activateShuffleboard() {
-		
-	}
-
-	@Override
-	public String getNetworkTable() {
-		return "MotorTab";
-	}
 	
 	
 }
