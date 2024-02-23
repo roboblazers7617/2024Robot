@@ -51,6 +51,7 @@ public class Drivetrain extends SubsystemBase {
 	private final SwerveDrive swerveDrive;
 	private final Vision vision;
 	private double driverlimitingFactor = OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR;
+	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -77,10 +78,10 @@ public class Drivetrain extends SubsystemBase {
 	setupPathPlanner();
 	this.vision = vision;
 
-	//for (int i = 0; i < 4; i++){
-	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
-	//	MotorTab.getInstance().addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
-	//}
+	for (int i = 0; i < 4; i++){
+		motorTab.addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
+		motorTab.addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
+	}
   }
 
 
@@ -255,6 +256,7 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 		processVision();
+		motorTab.update();
 	}
 
 	@Override
