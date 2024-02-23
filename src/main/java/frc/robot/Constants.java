@@ -63,7 +63,7 @@ public final class Constants {
 		public static final double SLOW_SPEED_DECREMENT = 0.3;
 		public static final double REGULAR_SPEED = 0.6;
 		public static final double FAST_SPEED_INCREMENT = .2;
-		public static final double PRECISE_INCREMENT = .2;
+		public static final double PRECISE_INCREMENT = .1;
 	}
 	
 	public static class IntakeConstants {
