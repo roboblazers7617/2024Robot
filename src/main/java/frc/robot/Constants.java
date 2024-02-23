@@ -173,7 +173,7 @@ public final class Constants {
 	}
 	
 	public static class ShooterConstants {
-		public static final int SHOOTER_MOTOR_ID = 25;
+		public static final int SHOOTER_MOTOR_ID = 22;
 		public static final int SENSOR_DIO = 2;
 		
 		public enum ShootingPosition {

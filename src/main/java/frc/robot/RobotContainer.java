@@ -88,7 +88,6 @@ public class RobotContainer {
 		tabs.add(new DriverStationTab());
 
 
-		tabs.add(MotorTab.getInstance());
 		tabs.add(new ArmTab(arm));
 
 		tabs.add(new SwerveTab(drivetrain));

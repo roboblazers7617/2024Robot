@@ -22,7 +22,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -47,13 +46,19 @@ public class Arm extends SubsystemBase {
 	private final TunableNumber retractedArmKI = new TunableNumber("arm", "Retracted Arm KI", ArmConstants.KI);
 	private final TunableNumber retractedArmKD = new TunableNumber("arm", "Retracted Arm KD", ArmConstants.KD);
 	
-	private final ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
-	private final ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
+	private ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
+	private ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
+
+	private final TunableNumber extendedArmKS = new TunableNumber("arm", "Extended Arm KS", ArmConstants.EXTENDED_KS);
+	private final TunableNumber extendedArmKG = new TunableNumber("arm", "Extended Arm KG", ArmConstants.EXTENDED_KG);
+	private final TunableNumber extendedArmKV = new TunableNumber("arm", "Extended Arm KV", ArmConstants.EXTENDED_KV);
+	private final TunableNumber retractedArmKS = new TunableNumber("arm", "Retracted Arm KS", ArmConstants.RETRACTED_KS);
+	private final TunableNumber retractedArmKG = new TunableNumber("arm", "Retracted Arm KG", ArmConstants.RETRACTED_KG);
+	private final TunableNumber retractedArmKV = new TunableNumber("arm", "Retracted Arm KV", ArmConstants.RETRACTED_KV);
 	
 	/** the current target for the arm, it is within the total bounds of the arm but may not be a currently safe move */
-	//TODO: (Brandon) This needs to be initialized in the constructor with the current angle
 	// of the arm so the arm doesn't try to move on boot-up
-	private double armTarget;
+	private double armTarget = armAbsoluteEncoder.getPosition();
 	
 	// Elevator
 	/** the right motor */
@@ -73,6 +78,8 @@ public class Arm extends SubsystemBase {
 	private final TunableNumber elevatorKS = new TunableNumber("arm", "Elevator KS", ElevatorConstants.KS);
 	private final TunableNumber elevatorKG = new TunableNumber("arm", "Elevator KG", ElevatorConstants.KG);
 	private final TunableNumber elevatorKV = new TunableNumber("arm", "Elevator KV", ElevatorConstants.KV);
+
+	private ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
 	
 	/** the current target for the elevator, it is within the total bounds of the arm but may not be a currently safe move */
 	private double elevatorTarget;
@@ -80,6 +87,8 @@ public class Arm extends SubsystemBase {
 	/** this is used for the position setpoint, in degrees, for setVelocity() */
 	private double dt, lastTime;
 	private Timer time = new Timer();
+	
+	private final MotorTab motorTab = new MotorTab(4, "arm", 2);
 	
 	// TODO: (Brandon) Putting as something to talk about so we don't forget... the
 	// feedforward values for the elevator may change based on the arm pivot angle,
@@ -92,22 +101,19 @@ public class Arm extends SubsystemBase {
 		leaderArmMotor.restoreFactoryDefaults();
 		leaderArmMotor.setIdleMode(IdleMode.kBrake);
 		leaderArmMotor.setSmartCurrentLimit(ArmConstants.MAX_AMPERAGE);
+		leaderArmMotor.setInverted(false);
 		
 		followerArmMotor.restoreFactoryDefaults();
 		followerArmMotor.setIdleMode(IdleMode.kBrake);
 		// Will need to look into this
 		followerArmMotor.setSmartCurrentLimit(ArmConstants.MAX_AMPERAGE);
-		followerArmMotor.setInverted(true);
-		followerArmMotor.follow(leaderArmMotor);// TODO: (Brandon) Do I need to tell the follower to invert or is it
-												// included in the setInverted method?
-		//TODO: (Brandon) Yes, you need to tell it to invert the motor. You can do that with a
-		//different version of the follow function that takes two arguments
+		followerArmMotor.follow(leaderArmMotor, true);
 		
 		// setup the arm pid controller
 		armPIDController.setP(ArmConstants.KP);
 		armPIDController.setI(ArmConstants.KI);
 		armPIDController.setD(ArmConstants.KD);
-		//TODO: (Brandon) We won't be using a kI value, so we don't need to set the IZone 
+		// TODO: (Brandon) We won't be using a kI value, so we don't need to set the IZone
 		armPIDController.setIZone(ArmConstants.kIz);
 		armPIDController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 		armPIDController.setFeedbackDevice(armAbsoluteEncoder);
@@ -124,17 +130,18 @@ public class Arm extends SubsystemBase {
 		leaderElevatorMotor.restoreFactoryDefaults();
 		leaderElevatorMotor.setIdleMode(IdleMode.kBrake);
 		leaderElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
+		leaderElevatorMotor.setInverted(false);
 		
 		followerElevatorMotor.restoreFactoryDefaults();
 		followerElevatorMotor.setIdleMode(IdleMode.kBrake);
 		followerElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
-		followerElevatorMotor.follow(leaderArmMotor);
+		followerElevatorMotor.follow(leaderArmMotor, true);
 		
 		// TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs.
 		// Only the Shuffleboard tabs should know about the subsystems
 		// TODO: (Brandon) All the info for one subsystem should be on one tab, correct?
 		// All on the Arm tab?
-		MotorTab.getInstance()
+		motorTab
 				.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor, leaderElevatorMotor });
 		
 		time.reset();
@@ -144,7 +151,13 @@ public class Arm extends SubsystemBase {
 	private ElevatorFeedforward getElevatorFeedforward() {
 		// use the interpolation table to get the feedforward values
 		// return new ElevatorFeedforward(elevatorKSTable.get(armAbsoluteEncoder.getPosition()), elevatorKGTable.get(armAbsoluteEncoder.getPosition()), elevatorKVTable.get(armAbsoluteEncoder.getPosition()));
-		return new ElevatorFeedforward(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
+		return elevatorFeedforward;
+	}
+
+	private ArmFeedforward getArmFeedforward() {
+		// return potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
+		// use just one feedforward for now, if we need 2, use line above
+		return extendedArmFeedForward;
 	}
 	
 	/** adds feedfoward values to the interpolation table */
@@ -178,8 +191,8 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to raise the arm
 	 */
-	//TODO: (Brandon) This can be re-written to be easier to read as follows in just one line
-	// 	return this.runOnce(() -> setArmTarget(ArmConstants.MAX_ANGLE));
+	// TODO: (Brandon) This can be re-written to be easier to read as follows in just one line
+	// return this.runOnce(() -> setArmTarget(ArmConstants.MAX_ANGLE));
 	public Command raiseArm() {
 		Command command = new Command() {
 			@Override
@@ -201,10 +214,10 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to lower the arm
 	 */
-	//TODO: (Brandon) This can be re-written to be easier to read as the one above
-	//TODO: (Brandon) Do you intend this will lower to the floor? If so, doesn't this command
-	//also need to tell the elevator to extend as if it is retracted the arm will not go all the way to the floor.
-	//I think the logic is something closer to the stow command where you move both arm and elevator
+	// TODO: (Brandon) This can be re-written to be easier to read as the one above
+	// TODO: (Brandon) Do you intend this will lower to the floor? If so, doesn't this command
+	// also need to tell the elevator to extend as if it is retracted the arm will not go all the way to the floor.
+	// I think the logic is something closer to the stow command where you move both arm and elevator
 	public Command lowerArm() {
 		Command command = new Command() {
 			@Override
@@ -227,16 +240,16 @@ public class Arm extends SubsystemBase {
 	 * @return a command to stow the arm
 	 */
 	// TODO: (Brandon) Since you have now added the safety checks into periodic, you don't need to
-	// put a bunch of logic here. You can just write a command that orders both the arm and 
+	// put a bunch of logic here. You can just write a command that orders both the arm and
 	// elevator to move. I think something like this...
-	/* 
-	public Command stowArm(){
-		return this.runOnce(() -> {
-				setArmTarget(Constants.ARM_STOW_ANGLE));
-				setElevatorTarget(Constants.ELEVATOR_POSITION);
-		});
-	}
-	*/
+	/*
+	 * public Command stowArm(){
+	 * return this.runOnce(() -> {
+	 * setArmTarget(Constants.ARM_STOW_ANGLE));
+	 * setElevatorTarget(Constants.ELEVATOR_POSITION);
+	 * });
+	 * }
+	 */
 	public Command stowArm() {
 		Command command = new Command() {
 			@Override
@@ -262,10 +275,10 @@ public class Arm extends SubsystemBase {
 		return command;
 	}
 	
-	//TODO: (Brandon) This whole funcation can be rewritten to shorten to just one line as 
-	/* 
-		return this.runOnce(() ->addElevatorFeedFowardValues(elevatorKS.get(), elevatorKG.get(), elevatorKV.get()) );
-	*/
+	// TODO: (Brandon) This whole funcation can be rewritten to shorten to just one line as
+	/*
+	 * return this.runOnce(() ->addElevatorFeedFowardValues(elevatorKS.get(), elevatorKG.get(), elevatorKV.get()) );
+	 */
 	public Command addElevatorFeedFowardValuesCommand() {
 		Command command = new Command() {
 			@Override
@@ -280,6 +293,19 @@ public class Arm extends SubsystemBase {
 		};
 		return command;
 	}
+
+	public Command generateNewElevatorFeedFoward(){
+		return this.runOnce(() -> {
+			elevatorFeedforward = new ElevatorFeedforward(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
+		});
+	}
+
+	public Command generateNewArmFeedFoward(){
+		return this.runOnce(() -> {
+			extendedArmFeedForward = new ArmFeedforward(extendedArmKS.get(), extendedArmKG.get(), extendedArmKV.get());
+			retractedArmFeedForward = new ArmFeedforward(retractedArmKS.get(), retractedArmKG.get(), retractedArmKV.get());
+		});
+	}
 	
 	/**
 	 * sets the velocity for the arm by moving a position setpoint
@@ -291,7 +317,6 @@ public class Arm extends SubsystemBase {
 		armTarget = armTarget + velocityDegreesPerSec * dt;
 		armTarget = Math.min(armTarget, ArmConstants.MAX_ANGLE);
 		armTarget = Math.max(armTarget, ArmConstants.MIN_ANGLE);
-		
 	}
 	
 	/**
@@ -301,8 +326,8 @@ public class Arm extends SubsystemBase {
 	 *            the velocity for the arm in degrees per second
 	 * @return a command to set the velocity for the arm
 	 */
-	//TODO: (Brandon) I don't think this logic will work. To create the command I think
-	// you just need to do a this.runOnce() with a lambda function calling the setArmVelocity() function. 
+	// TODO: (Brandon) I don't think this logic will work. To create the command I think
+	// you just need to do a this.runOnce() with a lambda function calling the setArmVelocity() function.
 	public Command setArmVelocityCommand(Supplier<Double> velocity) {
 		Command command = new Command() {
 			@Override
@@ -344,9 +369,9 @@ public class Arm extends SubsystemBase {
 		lastTime = time.get();
 		
 		// if the elevator is extended
-		//TODO: (Brandon) Any chance you could change the name of the MAX_BELOW_PASS_HEIGHT
+		// TODO: (Brandon) Any chance you could change the name of the MAX_BELOW_PASS_HEIGHT
 		// constant? My brain (and probably others) don't understand what this value means...
-		//TODO: (Brandon) For now, let's try one PID controller and not switch and see if it works.
+		// TODO: (Brandon) For now, let's try one PID controller and not switch and see if it works.
 		// it would simplify things for you
 		if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
 			if (extendedArmKP.get() != armPIDController.getP()) {
@@ -376,8 +401,7 @@ public class Arm extends SubsystemBase {
 		
 		// if the arm is less than the threshold to go over the bumper
 		if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-
-			//TODO: (Brandon) I don't quite understand the two checks here. Can you walk me through it?
+			// TODO: (Brandon) I don't quite understand the two checks here. Can you walk me through it?
 			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
 					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
 																						// extended
@@ -385,8 +409,8 @@ public class Arm extends SubsystemBase {
 			}
 		}
 		
-		//TODO: (Brandon) For now, let's try just one feedfoward to see if it works as it simplifies things
-		ArmFeedforward armFeedFoward = potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
+		// TODO: (Brandon) For now, let's try just one feedfoward to see if it works as it simplifies things
+		ArmFeedforward armFeedFoward = getArmFeedforward();
 		
 		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
 		
@@ -396,7 +420,7 @@ public class Arm extends SubsystemBase {
 		// current elevator target will be the reference set by the PID controller, based on what is currently safe
 		double currentElevatorTarget = elevatorTarget;
 		// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
-		//TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
+		// TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
 		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 			if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && potentiometer.get() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
 				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
@@ -406,16 +430,22 @@ public class Arm extends SubsystemBase {
 			}
 		}
 		
-		//TODO: (Brandon) Won't the elevator be a linear (Position) value and not and angle?
+		// TODO: (Brandon) Won't the elevator be a linear (Position) value and not and angle?
 		double ElevatorFeedFowardValue = getElevatorFeedforward().calculate(Units.degreesToRadians(currentElevatorTarget), 0);
 		double pid = elevatorPIDController.calculate(potentiometer.get(), currentElevatorTarget);
-		//TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate 
+		// TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate
 		// of movement
 		leaderElevatorMotor.setVoltage(pid + ElevatorFeedFowardValue);
+
+		motorTab.update();
 	}
 	
 	// get info functions
-	public double getRightAbsoluteEncoderPosition() {
+	public double getArmAbsoluteEncoderPosition() {
 		return armAbsoluteEncoder.getPosition();
+	}
+
+	public double getElevatorAbsoluteEncoderPosition() {
+		return potentiometer.get();
 	}
 }
