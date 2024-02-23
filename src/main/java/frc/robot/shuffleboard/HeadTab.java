@@ -6,7 +6,10 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -38,21 +41,23 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		NetworkTable networkTable = inst.getTable("logging/Head");
 		
-		noteWithinHeadPublisher = networkTable.getBooleanTopic("Note Within Head").publish();
-		noteAlignedPublisher = networkTable.getBooleanTopic("Note Aligned").publish();
-		// noteInShooterPublisher = networkTable.getBooleanTopic("Note in Shooter").publish();
-		noteAcquiredPublisher = networkTable.getBooleanTopic("Note Acquired").publish();
+		NetworkTable intakeNetworkTable = inst.getTable("logging/Head/Intake");
+		noteWithinHeadPublisher = intakeNetworkTable.getBooleanTopic("Note Within Head").publish();
+		noteAlignedPublisher = intakeNetworkTable.getBooleanTopic("Note Aligned").publish();
+		// noteInShooterPublisher = intakeNetworkTable.getBooleanTopic("Note in Shooter").publish();
+		noteAcquiredPublisher = intakeNetworkTable.getBooleanTopic("Note Acquired").publish();
 		
-		shooterBottomSpeedPublisher = networkTable.getDoubleTopic("Shooter Bottom Speed").publish();
-		shooterTopSpeedPublisher = networkTable.getDoubleTopic("Shooter Top Speed").publish();
-		shooterSetPointPublisher = networkTable.getDoubleTopic("Shooter Setpoint").publish();
+		NetworkTable shooterNetworkTable = inst.getTable("logging/Head/Shooter");
+		shooterBottomSpeedPublisher = shooterNetworkTable.getDoubleTopic("Bottom Speed").publish();
+		shooterTopSpeedPublisher = shooterNetworkTable.getDoubleTopic("Top Speed").publish();
+		shooterSetPointPublisher = shooterNetworkTable.getDoubleTopic("Setpoint").publish();
 		
-		readyToShootPublisher = networkTable.getBooleanTopic("Ready To Shoot").publish();
+		readyToShootPublisher = shooterNetworkTable.getBooleanTopic("Ready to Shoot").publish();
 		
-		shooterSpeedAtPositionPublisher = networkTable.getDoubleTopic("Shooter Speed At Position").publish();
+		shooterSpeedAtPositionPublisher = shooterNetworkTable.getDoubleTopic("Speed at Position").publish();
 		
-		shootingPosition = new TunableNumber("Head", "Shooting Position", 0);
-		shootingPositionSpeedTuning = new TunableNumber("Head", "Shooting Position Speed Tuning", 0);
+		shootingPosition = new TunableNumber("Head/Shooter", "Position (tuning)", 0);
+		shootingPositionSpeedTuning = new TunableNumber("Head/Shooter", "Speed (tuning)", 0);
 	}
 	
 	@Override
@@ -74,18 +79,44 @@ public class HeadTab extends ShuffleboardTabBase {
 	@Override
 	public void activateShuffleboard() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Head");
-		tab.add("Intake from Ground", head.IntakePiece(false));
-		tab.add("Intake from Source", head.IntakePiece(true));
-		tab.add("Manual Intake from Ground", head.StartIntake(false));
-		tab.add("Manual Intake from Source", head.StartIntake(true));
-		tab.add("Outake", head.OutakePiece());
-		tab.add("Manual Outake", head.StartOutake());
-		tab.add("Stop Intake", head.StopIntake());
+		// Intake
+		ShuffleboardLayout intakeLayout = tab.getLayout("Intake", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 0);
+		intakeLayout.add("Note Within Head", false).withPosition(0, 0);
+		intakeLayout.add("Note Aligned", false).withPosition(0, 1);
+		intakeLayout.add("Note Acquired", false).withPosition(0, 2);
 		
-		tab.add("Spin Up", head.SpinUpShooter(() -> shootingPosition.get()));
-		tab.add("Spin Down", head.SpinDownShooter());
-		tab.add("Shoot", head.Shoot());
-		tab.add("Set Speed at Position (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPosition.get(), shootingPositionSpeedTuning.get())));
+		intakeLayout.add("Intake from Ground", head.IntakePiece(false)).withPosition(1, 0);
+		intakeLayout.add("Intake from Source", head.IntakePiece(true)).withPosition(2, 0);
+		intakeLayout.add("Manual Intake from Ground", head.StartIntake(false)).withPosition(1, 1);
+		intakeLayout.add("Manual Intake from Source", head.StartIntake(true)).withPosition(2, 1);
+		intakeLayout.add("Outake", head.OutakePiece()).withPosition(3, 0);
+		intakeLayout.add("Manual Outake", head.StartOutake()).withPosition(3, 1);
+		
+		intakeLayout.add("Stop Intake", head.StopIntake()).withPosition(4, 0);
+		
+		// Shooter
+		ShuffleboardLayout shooterLayout = tab.getLayout("Shooter", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 2);
+		shooterLayout.add("Top Speed", 0.0).withPosition(0, 0);
+		shooterLayout.add("Bottom Speed", 0.0).withPosition(0, 1);
+		shooterLayout.add("Setpoint", 0.0).withPosition(0, 2);
+		
+		shooterLayout.add("Ready to Shoot", false).withPosition(1, 0);
+		
+		shooterLayout.add("Spin Up", head.SpinUpShooter(() -> shootingPosition.get())).withPosition(2, 0);
+		shooterLayout.add("Spin Down", head.SpinDownShooter()).withPosition(2, 1);
+		shooterLayout.add("Shoot", head.Shoot()).withPosition(2, 2);
+		
+		shooterLayout.add("Position (tuning)", 0.0).withPosition(3, 0);
+		shooterLayout.add("Speed at Position", 0.0).withPosition(3, 1);
+		
+		shooterLayout.add("Speed (tuning)", 0.0).withPosition(4, 0);
+		shooterLayout.add("Write Speed (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPosition.get(), shootingPositionSpeedTuning.get()))).withPosition(4, 1);
+		
+		shooterLayout.add("kP", 0.0).withPosition(5, 0);
+		shooterLayout.add("kI", 0.0).withPosition(5, 1);
+		shooterLayout.add("kD", 0.0).withPosition(5, 2);
+		shooterLayout.add("kMinOutput", 0.0).withPosition(6, 0);
+		shooterLayout.add("kMaxOutput", 0.0).withPosition(6, 1);
 	}
 	
 	@Override
