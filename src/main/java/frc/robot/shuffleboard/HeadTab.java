@@ -117,6 +117,8 @@ public class HeadTab extends ShuffleboardTabBase {
 		shooterLayout.add("kD", 0.0).withPosition(5, 2);
 		shooterLayout.add("kMinOutput", 0.0).withPosition(6, 0);
 		shooterLayout.add("kMaxOutput", 0.0).withPosition(6, 1);
+		shooterLayout.add("Velocity Threshold Minimum", 0.0).withPosition(7, 0);
+		shooterLayout.add("Velocity Threshold Maximum", 0.0).withPosition(7, 1);
 	}
 	
 	@Override

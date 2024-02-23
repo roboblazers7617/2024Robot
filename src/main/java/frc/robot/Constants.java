@@ -117,8 +117,8 @@ public final class Constants {
 		
 		public static final double IDLE_SPEED = 120;
 
-		public static final double VELOCITY_MINIMUM = 0;
-		public static final double VELOCITY_MAXIMUM = 0;
+		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0);
+		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 0);
 	}
 
 	public static final double BATTERY_WARNING_VOLTAGE = 11;
