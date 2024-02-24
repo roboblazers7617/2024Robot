@@ -16,7 +16,6 @@ public class ActivateTabs extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		System.out.println("tabs activated");
 		ShuffleboardInfo.getInstance().activateTabs();
 	}
 
