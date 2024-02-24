@@ -24,7 +24,9 @@ import org.photonvision.PhotonUtils;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import frc.robot.commands.TempHead;
 import frc.robot.commands.drivetrain.LockWheelsState;
+import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Intake;
@@ -71,7 +73,13 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		NamedCommands.registerCommand("SayHi", Commands.runOnce(() -> System.out.println("Hi")));
+		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
+		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
+		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
+		NamedCommands.registerCommand("turnTo0", drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)));
 		
+
+
 		// Configure the trigger bindings
 		configureBindings();
 		shuffleboard = ShuffleboardInfo.getInstance();
@@ -160,5 +168,12 @@ public class RobotContainer {
 	
 	public void setMotorBrake(boolean isBraked) {
 		drivetrain.setMotorBrake(isBraked);
+	}
+
+	public Command turnToSpeaker(){
+		if (checkAllianceColors(Alliance.Red)){
+			return new TurnToTag(drivetrain, 4);
+		}
+			return new TurnToTag(drivetrain, 7);
 	}
 }
