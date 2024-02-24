@@ -101,4 +101,8 @@ public class Climber extends SubsystemBase {
 			setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE);
 		})).finallyDo(() -> setSpeed(0, 0));
 	}
+
+	public CANSparkMax[] getMotors(){
+		return new CANSparkMax[] {leftClimber, rightClimber};
+	}
 }
