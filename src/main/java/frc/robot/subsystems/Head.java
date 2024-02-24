@@ -66,8 +66,8 @@ public class Head extends SubsystemBase {
 		shooterMotorBottom.setInverted(true);
 		shooterMotorTop.setInverted(true);
 		
-		shooterMotorBottom.setSmartCurrentLimit(20);
-		shooterMotorTop.setSmartCurrentLimit(20);
+		shooterMotorBottom.setSmartCurrentLimit(40);
+		shooterMotorTop.setSmartCurrentLimit(40);
 		
 		// Intake motor
 		intakeMotorBottom.restoreFactoryDefaults();
