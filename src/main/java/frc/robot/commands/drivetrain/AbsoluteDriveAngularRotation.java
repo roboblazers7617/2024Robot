@@ -4,12 +4,9 @@
 
 package frc.robot.commands.drivetrain;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.Drivetrain;
 import java.util.List;
@@ -20,7 +17,7 @@ import swervelib.math.SwerveMath;
 /**
  * An example command that uses an example subsystem.
  */
-public class VelocityRotationDrive extends Command {
+public class AbsoluteDriveAngularRotation extends Command {
 
 	private final Drivetrain swerve;
 	private final DoubleSupplier vX, vY, vTheta;
@@ -49,7 +46,7 @@ public class VelocityRotationDrive extends Command {
 	 *               looking through the driver station glass.
 	 * @param vTheta The rotation speed.
 	 */
-	public VelocityRotationDrive(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier vTheta) {
+	public AbsoluteDriveAngularRotation(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier vTheta) {
 		this.swerve = swerve;
 		this.vX = vX;
 		this.vY = vY;
@@ -73,7 +70,7 @@ public class VelocityRotationDrive extends Command {
 				SwerveConstants.LOOP_TIME, SwerveConstants.ROBOT_MASS, List.of(SwerveConstants.DRIVEBASE),
 				swerve.getSwerveDriveConfiguration());
 		
-		swerve.drive(translation, speeds.omegaRadiansPerSecond, true, false, false);
+		swerve.drive(translation, speeds.omegaRadiansPerSecond, true);
 	}
 
 	// Called once the command ends or is interrupted.
