@@ -48,7 +48,7 @@ public class Arm extends SubsystemBase {
 	
 	private ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
 	private ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
-
+	
 	private final TunableNumber extendedArmKS = new TunableNumber("arm", "Extended Arm KS", ArmConstants.EXTENDED_KS);
 	private final TunableNumber extendedArmKG = new TunableNumber("arm", "Extended Arm KG", ArmConstants.EXTENDED_KG);
 	private final TunableNumber extendedArmKV = new TunableNumber("arm", "Extended Arm KV", ArmConstants.EXTENDED_KV);
@@ -78,7 +78,7 @@ public class Arm extends SubsystemBase {
 	private final TunableNumber elevatorKS = new TunableNumber("arm", "Elevator KS", ElevatorConstants.KS);
 	private final TunableNumber elevatorKG = new TunableNumber("arm", "Elevator KG", ElevatorConstants.KG);
 	private final TunableNumber elevatorKV = new TunableNumber("arm", "Elevator KV", ElevatorConstants.KV);
-
+	
 	private ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
 	
 	/** the current target for the elevator, it is within the total bounds of the arm but may not be a currently safe move */
@@ -153,7 +153,7 @@ public class Arm extends SubsystemBase {
 		// return new ElevatorFeedforward(elevatorKSTable.get(armAbsoluteEncoder.getPosition()), elevatorKGTable.get(armAbsoluteEncoder.getPosition()), elevatorKVTable.get(armAbsoluteEncoder.getPosition()));
 		return elevatorFeedforward;
 	}
-
+	
 	private ArmFeedforward getArmFeedforward() {
 		// return potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
 		// use just one feedforward for now, if we need 2, use line above
@@ -293,14 +293,14 @@ public class Arm extends SubsystemBase {
 		};
 		return command;
 	}
-
-	public Command generateNewElevatorFeedFoward(){
+	
+	public Command generateNewElevatorFeedFoward() {
 		return this.runOnce(() -> {
 			elevatorFeedforward = new ElevatorFeedforward(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
 		});
 	}
-
-	public Command generateNewArmFeedFoward(){
+	
+	public Command generateNewArmFeedFoward() {
 		return this.runOnce(() -> {
 			extendedArmFeedForward = new ArmFeedforward(extendedArmKS.get(), extendedArmKG.get(), extendedArmKV.get());
 			retractedArmFeedForward = new ArmFeedforward(retractedArmKS.get(), retractedArmKG.get(), retractedArmKV.get());
@@ -373,27 +373,29 @@ public class Arm extends SubsystemBase {
 		// constant? My brain (and probably others) don't understand what this value means...
 		// TODO: (Brandon) For now, let's try one PID controller and not switch and see if it works.
 		// it would simplify things for you
-		if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
-			if (extendedArmKP.get() != armPIDController.getP()) {
-				armPIDController.setP(ArmConstants.KP);
-			}
-			if (extendedArmKI.get() != armPIDController.getI()) {
-				armPIDController.setI(ArmConstants.KI);
-			}
-			if (extendedArmKD.get() != armPIDController.getD()) {
-				armPIDController.setD(ArmConstants.KD);
-			}
-		} else {
-			if (retractedArmKP.get() != armPIDController.getP()) {
-				armPIDController.setP(ArmConstants.KP);
-			}
-			if (retractedArmKI.get() != armPIDController.getI()) {
-				armPIDController.setI(ArmConstants.KI);
-			}
-			if (retractedArmKD.get() != armPIDController.getD()) {
-				armPIDController.setD(ArmConstants.KD);
-			}
+		// if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
+		if (extendedArmKP.get() != armPIDController.getP()) {
+			armPIDController.setP(ArmConstants.KP);
 		}
+		if (extendedArmKI.get() != armPIDController.getI()) {
+			armPIDController.setI(ArmConstants.KI);
+		}
+		if (extendedArmKD.get() != armPIDController.getD()) {
+			armPIDController.setD(ArmConstants.KD);
+		}
+		// }
+		// else {
+		// if (retractedArmKP.get() != armPIDController.getP()) {
+		// armPIDController.setP(ArmConstants.KP);
+		// }
+		// if (retractedArmKI.get() != armPIDController.getI()) {
+		// armPIDController.setI(ArmConstants.KI);
+		// }
+		// if (retractedArmKD.get() != armPIDController.getD()) {
+		// armPIDController.setD(ArmConstants.KD);
+		// }
+		// }
+		
 		// Arm
 		
 		// current arm target will be the reference set by the PID controller, based on what is currently safe
@@ -401,7 +403,6 @@ public class Arm extends SubsystemBase {
 		
 		// if the arm is less than the threshold to go over the bumper
 		if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-			// TODO: (Brandon) I don't quite understand the two checks here. Can you walk me through it?
 			if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
 					&& potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
 																						// extended
@@ -409,7 +410,6 @@ public class Arm extends SubsystemBase {
 			}
 		}
 		
-		// TODO: (Brandon) For now, let's try just one feedfoward to see if it works as it simplifies things
 		ArmFeedforward armFeedFoward = getArmFeedforward();
 		
 		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
@@ -436,7 +436,7 @@ public class Arm extends SubsystemBase {
 		// TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate
 		// of movement
 		leaderElevatorMotor.setVoltage(pid + ElevatorFeedFowardValue);
-
+		
 		motorTab.update();
 	}
 	
@@ -444,7 +444,7 @@ public class Arm extends SubsystemBase {
 	public double getArmAbsoluteEncoderPosition() {
 		return armAbsoluteEncoder.getPosition();
 	}
-
+	
 	public double getElevatorAbsoluteEncoderPosition() {
 		return potentiometer.get();
 	}
