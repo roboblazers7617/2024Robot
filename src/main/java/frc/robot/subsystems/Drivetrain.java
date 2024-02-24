@@ -49,7 +49,7 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	private final SwerveDrive swerveDrive;
 	private final Vision vision;
-	private double driverlimitingFactor = OperatorConstants.DEFAULT_DRIVER_LIMITNG_FACTOR;
+
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
