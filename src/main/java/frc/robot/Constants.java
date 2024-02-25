@@ -31,8 +31,8 @@ public final class Constants {
 	}
 
 	public static class ArmConstants {
-		public static final int LEFT_MOTOR_ID = 25; 
-		public static final int RIGHT_MOTOR_ID = 26;
+		public static final int RIGHT_MOTOR_ID = 25; 
+		public static final int LEFT_MOTOR_ID = 26;
 		public static final int MAX_AMPERAGE = 40;
 
 		// Some relavant numbers
@@ -111,6 +111,7 @@ public final class Constants {
 	public static class OperatorConstants {
 		public static final double JOYSTICK_DEADBAND = 0.075;
 		public static final int DRIVER_CONTROLLER_PORT = 0;
+		public static final int OPERATOR_CONTROLLER_PORT = 1;
 		public static final double ROTATION_RATE = 2;
 	}
 	

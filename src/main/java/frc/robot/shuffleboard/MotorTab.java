@@ -73,18 +73,18 @@ public class MotorTab{
 		NetworkTable networkTable = inst.getTable("logging/" + tabName);
 		for(int i = 0; i < newMotors.length; i++){
 			motors[i + numberOfMotors] = newMotors[i];
-			busVoltagePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Bus Voltage").publish();
-			optionCurrentPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Total Current").publish();
-			stickyFaultPublisher[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Sticky Faults").publish();
-			motorTemperaturePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Motor Temperature").publish();
-			motorEncoderPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Encoder Position").publish();
+			busVoltagePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Bus Voltage").publish();
+			optionCurrentPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Total Current").publish();
+			stickyFaultPublisher[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Sticky Faults").publish();
+			motorTemperaturePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Motor Temperature").publish();
+			motorEncoderPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Encoder Position").publish();
 
 			// create shuffleboard entries for each of these with with a position
-			tab.add("Motor: " + (i+numberOfMotors) + " Bus Voltage", -1.0).withPosition(5, i + rowOffset);
-			tab.add("Motor: " + (i+numberOfMotors) + " Total Current", -1.0).withPosition(6, i + rowOffset);
-			tab.add("Motor: " + (i+numberOfMotors) + " Sticky Faults", -1.0).withPosition(7, i + rowOffset);
-			tab.add("Motor: " + (i+numberOfMotors) + " Motor Temperature", -1.0).withPosition(8, i + rowOffset);
-			tab.add("Motor: " + (i+numberOfMotors) + " Encoder Position", -1.0).withPosition(9, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Bus Voltage", -1.0).withPosition(5, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Total Current", -1.0).withPosition(6, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Sticky Faults", -1.0).withPosition(7, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Motor Temperature", -1.0).withPosition(8, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Encoder Position", -1.0).withPosition(9, i + rowOffset);
 		}
 		numberOfMotors += newMotors.length;
 

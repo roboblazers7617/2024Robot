@@ -31,8 +31,8 @@ import frc.robot.util.TunableNumber;
 public class Arm extends SubsystemBase {
 	// Arm
 	/** this is the right arm motor */
-	private final CANSparkMax leaderArmMotor = new CANSparkMax(ArmConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-	private final CANSparkMax followerArmMotor = new CANSparkMax(ArmConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+	private final CANSparkMax leaderArmMotor = new CANSparkMax(ArmConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+	private final CANSparkMax followerArmMotor = new CANSparkMax(ArmConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 	
 	private final SparkAbsoluteEncoder armAbsoluteEncoder = leaderArmMotor
 			.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -99,12 +99,12 @@ public class Arm extends SubsystemBase {
 		// setup arm motors
 		
 		leaderArmMotor.restoreFactoryDefaults();
-		leaderArmMotor.setIdleMode(IdleMode.kBrake);
+		leaderArmMotor.setIdleMode(IdleMode.kCoast);
 		leaderArmMotor.setSmartCurrentLimit(ArmConstants.MAX_AMPERAGE);
-		leaderArmMotor.setInverted(false);
+		leaderArmMotor.setInverted(true);
 		
 		followerArmMotor.restoreFactoryDefaults();
-		followerArmMotor.setIdleMode(IdleMode.kBrake);
+		followerArmMotor.setIdleMode(IdleMode.kCoast);
 		// Will need to look into this
 		followerArmMotor.setSmartCurrentLimit(ArmConstants.MAX_AMPERAGE);
 		followerArmMotor.follow(leaderArmMotor, true);
@@ -128,12 +128,12 @@ public class Arm extends SubsystemBase {
 		
 		// setup elevator motors
 		leaderElevatorMotor.restoreFactoryDefaults();
-		leaderElevatorMotor.setIdleMode(IdleMode.kBrake);
+		leaderElevatorMotor.setIdleMode(IdleMode.kCoast);
 		leaderElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
 		leaderElevatorMotor.setInverted(false);
 		
 		followerElevatorMotor.restoreFactoryDefaults();
-		followerElevatorMotor.setIdleMode(IdleMode.kBrake);
+		followerElevatorMotor.setIdleMode(IdleMode.kCoast);
 		followerElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
 		followerElevatorMotor.follow(leaderArmMotor, true);
 		
