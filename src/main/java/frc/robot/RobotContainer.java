@@ -167,7 +167,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("top front start 1 close 2 far wip");
+		return new PathPlannerAuto("test auto forwardback");
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
@@ -176,8 +176,8 @@ public class RobotContainer {
 
 	public Command turnToSpeaker(){
 		if (checkAllianceColors(Alliance.Red)){
-			return new TurnToTag(drivetrain, 4);
+			return new TurnToTag(drivetrain, 4, true);
 		}
-			return new TurnToTag(drivetrain, 7);
+			return new TurnToTag(drivetrain, 7,true);
 	}
 }

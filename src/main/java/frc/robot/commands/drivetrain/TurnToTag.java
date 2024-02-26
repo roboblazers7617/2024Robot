@@ -65,6 +65,11 @@ public class TurnToTag extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
+		if (invertFacing){
+			return Math.abs(drivetrain.getHeading().minus(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))).getDegrees()) <= 2;
+		}
+		else{
 		return Math.abs(drivetrain.getHeading().minus(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()).getDegrees()) <= 2;
+		}
 	}
 }

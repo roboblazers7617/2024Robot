@@ -8,7 +8,7 @@
   "autoFolders": [
     "auto test"
   ],
-  "defaultMaxVel": 5.0,
+  "defaultMaxVel": 2.5,
   "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 360.0,
   "defaultMaxAngAccel": 120.0,
