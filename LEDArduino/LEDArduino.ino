@@ -34,6 +34,7 @@ int mode = 3;
 int frameNumber;
 
 // Frames since last heartbeat
+#define FRAMES_UNTIL_HEARTBEAT_DEAD 10
 int framesSinceHeartbeat = 0;
 
 // String for serial data
@@ -277,7 +278,7 @@ void loop() {
 	}
 
 	// If there has been no heartbeat for a while, set the LEDs to the idle animation
-	if (framesSinceHeartbeat >= 10) {
+	if (framesSinceHeartbeat >= FRAMES_UNTIL_HEARTBEAT_DEAD) {
 		animationFrameDelay = 1;
 		mode = 3;
 	}
