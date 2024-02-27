@@ -62,7 +62,7 @@ public class RobotContainer {
 	Shooter shooter = new Shooter();
 	LED led = new LED(SerialPort.Port.kMXP, intake, shooter);
 	private final Arm arm = new Arm();
-
+	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
 	private final CommandXboxController operatorController = new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
@@ -87,10 +87,9 @@ public class RobotContainer {
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
 		tabs.add(new DriverStationTab());
-
-
+		
 		tabs.add(new ArmTab(arm));
-
+		
 		tabs.add(new SwerveTab(drivetrain));
 		
 		tabs.add(new LEDTab(led, intake, shooter));
@@ -143,7 +142,7 @@ public class RobotContainer {
 		
 		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
-		arm.setDefaultCommand(arm.setArmVelocityCommand(() -> operatorController.getRightY()));
+		arm.setDefaultCommand(arm.setArmVelocityCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
