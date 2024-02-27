@@ -43,25 +43,25 @@ public final class Constants {
 
 
 
-		public static final double MAX_ANGLE = 45;
-		public static final double MIN_ANGLE = 10;
+		public static final double MAX_ANGLE = 90;
+		public static final double MIN_ANGLE = 25;// should be 10
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static double MIN_ABOVE_PASS_ANGLE = 25;
 
 		// Constants for extended state
 		public static final double EXTENDED_KS = 0; //these values are based on the test arm
-		public static final double EXTENDED_KG = 0.5;
+		public static final double EXTENDED_KG = 0.4; // .5 while extended
 		public static final double EXTENDED_KV = 0.0;
 	
 		// Constants for retracted state
 		public static final double RETRACTED_KS = 0; //these values are based on calculator
 		public static final double RETRACTED_KG = 1.01;
 		public static final double RETRACTED_KV = .03;
-		public static final double KP = 0.01;
+		public static final double KP = 0.025;
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kIz = 0; //izone
-		public static final double kMinOutput = -1;
+		public static final double kMinOutput = -0.25;
 		public static final double kMaxOutput = 1;
 		public static final double minVel = 0;
 		// public static final double POSITION_CONVERSION_FACTOR = 16;

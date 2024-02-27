@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -58,7 +59,7 @@ public class Arm extends SubsystemBase {
 	
 	/** the current target for the arm, in degrees, it is within the total bounds of the arm but may not be a currently safe move */
 	// of the arm so the arm doesn't try to move on boot-up
-	private double armTarget = armAbsoluteEncoder.getPosition();
+	private double armTarget;
 	
 	// Elevator
 	/** the right motor */
@@ -127,6 +128,9 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setInverted(true);
 		armAbsoluteEncoder.setZeroOffset(171.7);
 		
+		armTarget = armAbsoluteEncoder.getPosition();
+		System.out.println("arm: target: " + armTarget);
+		
 		// setup elevator motors
 		leaderElevatorMotor.restoreFactoryDefaults();
 		leaderElevatorMotor.setIdleMode(IdleMode.kCoast);
@@ -194,20 +198,8 @@ public class Arm extends SubsystemBase {
 	 */
 	// TODO: (Brandon) This can be re-written to be easier to read as follows in just one line
 	// return this.runOnce(() -> setArmTarget(ArmConstants.MAX_ANGLE));
-	public Command raiseArm() {
-		Command command = new Command() {
-			@Override
-			public void initialize() {
-				setArmTarget(ArmConstants.MAX_ANGLE);
-			}
-			
-			@Override
-			public boolean isFinished() {
-				return armAbsoluteEncoder.getPosition() > ArmConstants.MAX_ANGLE - 1;
-			}
-		};
-		command.addRequirements(this);
-		return command;
+	public Command RaiseArm() {
+		return this.runOnce(() -> setArmTarget(60));
 	}
 	
 	/**
@@ -223,12 +215,12 @@ public class Arm extends SubsystemBase {
 		Command command = new Command() {
 			@Override
 			public void initialize() {
-				setArmTarget(ArmConstants.MIN_ANGLE);
+				setArmTarget(ArmConstants.MIN_ANGLE + 5);
 			}
 			
 			@Override
 			public boolean isFinished() {
-				return armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ANGLE + 1;
+				return armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ANGLE + 5 + 1;
 			}
 		};
 		command.addRequirements(this);
@@ -314,11 +306,12 @@ public class Arm extends SubsystemBase {
 	 * @param velocityDegreesPerSec
 	 *            the velocity for the arm in degrees per second
 	 */
-	private void setArmVelocity(double velocityDegreesPerSec) {
+	public void setArmVelocity(double velocityDegreesPerSec) {
 		armTarget = armTarget + velocityDegreesPerSec * dt;
 		armTarget = Math.min(armTarget, ArmConstants.MAX_ANGLE);
 		armTarget = Math.max(armTarget, ArmConstants.MIN_ANGLE);
 		System.out.println("arm velocity: " + velocityDegreesPerSec);
+		System.out.println("arm target: " + armTarget);
 	}
 	
 	/**
@@ -331,19 +324,20 @@ public class Arm extends SubsystemBase {
 	// TODO: (Brandon) I don't think this logic will work. To create the command I think
 	// you just need to do a this.runOnce() with a lambda function calling the setArmVelocity() function.
 	public Command setArmVelocityCommand(Supplier<Double> velocity) {
-		Command command = new Command() {
-			@Override
-			public void initialize() {
-				armTarget = armAbsoluteEncoder.getPosition();
-			}
+		// Command command = new Command() {
+		// 	@Override
+		// 	public void initialize() {
+		// 		// armTarget = armAbsoluteEncoder.getPosition();
+		// 	}
 			
-			@Override
-			public void execute() {
-				setArmVelocity(velocity.get());
-			}
-		};
-		command.addRequirements(this);
-		return command;
+		// 	@Override
+		// 	public void execute() {
+		// 		setArmVelocity(velocity.get());
+		// 	}
+		// };
+		// command.addRequirements(this);
+		// return command;
+		return new RunCommand(() -> setArmVelocity(velocity.get()));
 	}
 	
 	/**
@@ -399,7 +393,6 @@ public class Arm extends SubsystemBase {
 		// }
 		
 		// Arm
-		System.out.println("arm: target: " + armTarget);
 		
 		// current arm target will be the reference set by the PID controller, based on what is currently safe
 		double currentArmTarget = armTarget;
@@ -416,6 +409,8 @@ public class Arm extends SubsystemBase {
 		ArmFeedforward armFeedFoward = getArmFeedforward();
 		
 		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
+		System.out.println("arm feed foward: " + armFeedFowardValue);
+		System.out.println("arm target: " + armTarget);
 		
 		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
 		/*
@@ -450,5 +445,9 @@ public class Arm extends SubsystemBase {
 	
 	public double getElevatorAbsoluteEncoderPosition() {
 		return potentiometer.get();
+	}
+
+	public void teleopInit(){
+		armTarget = armAbsoluteEncoder.getPosition();
 	}
 }
