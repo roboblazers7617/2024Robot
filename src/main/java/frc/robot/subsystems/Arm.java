@@ -123,8 +123,6 @@ public class Arm extends SubsystemBase {
 		// setup the arm encoder
 		armAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
 		armAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
-		// TODO: (Brandon) Will need to manually move the arm to see if the absolute
-		// encoder needs to be inverted
 		armAbsoluteEncoder.setInverted(true);
 		armAbsoluteEncoder.setZeroOffset(171.7);
 		
@@ -144,8 +142,6 @@ public class Arm extends SubsystemBase {
 		
 		// TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs.
 		// Only the Shuffleboard tabs should know about the subsystems
-		// TODO: (Brandon) All the info for one subsystem should be on one tab, correct?
-		// All on the Arm tab?
 		motorTab
 				.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor, leaderElevatorMotor });
 		
@@ -196,8 +192,6 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to raise the arm
 	 */
-	// TODO: (Brandon) This can be re-written to be easier to read as follows in just one line
-	// return this.runOnce(() -> setArmTarget(ArmConstants.MAX_ANGLE));
 	public Command RaiseArm() {
 		return this.runOnce(() -> setArmTarget(60));
 	}
@@ -212,19 +206,15 @@ public class Arm extends SubsystemBase {
 	// also need to tell the elevator to extend as if it is retracted the arm will not go all the way to the floor.
 	// I think the logic is something closer to the stow command where you move both arm and elevator
 	public Command lowerArm() {
-		Command command = new Command() {
-			@Override
-			public void initialize() {
-				setArmTarget(ArmConstants.MIN_ANGLE + 5);
-			}
-			
-			@Override
-			public boolean isFinished() {
-				return armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ANGLE + 5 + 1;
-			}
-		};
-		command.addRequirements(this);
-		return command;
+		return this.runOnce(() -> setArmTarget(ArmConstants.MIN_ANGLE));
+	}
+
+	public Command RaiseElevator(){
+		return this.runOnce(() -> setElevatorTarget(ElevatorConstants.MAX_HEIGHT));
+	}
+
+	public Command lowerElevator(){
+		return this.runOnce(() -> setElevatorTarget(ElevatorConstants.MIN_HEIGHT));
 	}
 	
 	/**
@@ -325,15 +315,15 @@ public class Arm extends SubsystemBase {
 	// you just need to do a this.runOnce() with a lambda function calling the setArmVelocity() function.
 	public Command setArmVelocityCommand(Supplier<Double> velocity) {
 		// Command command = new Command() {
-		// 	@Override
-		// 	public void initialize() {
-		// 		// armTarget = armAbsoluteEncoder.getPosition();
-		// 	}
-			
-		// 	@Override
-		// 	public void execute() {
-		// 		setArmVelocity(velocity.get());
-		// 	}
+		// @Override
+		// public void initialize() {
+		// // armTarget = armAbsoluteEncoder.getPosition();
+		// }
+		
+		// @Override
+		// public void execute() {
+		// setArmVelocity(velocity.get());
+		// }
 		// };
 		// command.addRequirements(this);
 		// return command;
@@ -413,27 +403,26 @@ public class Arm extends SubsystemBase {
 		System.out.println("arm target: " + armTarget);
 		
 		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
-		/*
-		 * // Elevator
-		 * // current elevator target will be the reference set by the PID controller, based on what is currently safe
-		 * double currentElevatorTarget = elevatorTarget;
-		 * // if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
-		 * // TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
-		 * if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-		 * if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && potentiometer.get() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
-		 * currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
-		 * }
-		 * if (currentElevatorTarget > ElevatorConstants.MAX_BELOW_PASS_HEIGHT && potentiometer.get() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
-		 * currentElevatorTarget = ElevatorConstants.MAX_BELOW_PASS_HEIGHT;
-		 * }
-		 * }
-		 * // TODO: (Brandon) Won't the elevator be a linear (Position) value and not and angle?
-		 * double ElevatorFeedFowardValue = getElevatorFeedforward().calculate(Units.degreesToRadians(currentElevatorTarget), 0);
-		 * double pid = elevatorPIDController.calculate(potentiometer.get(), currentElevatorTarget);
-		 * // TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate
-		 * // of movement
-		 * leaderElevatorMotor.setVoltage(pid + ElevatorFeedFowardValue);
-		 */
+		
+		// Elevator
+		// current elevator target will be the reference set by the PID controller, based on what is currently safe
+		double currentElevatorTarget = elevatorTarget;
+		// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
+		// TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
+		// if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+		// 	if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && potentiometer.get() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
+		// 		currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
+		// 	}
+		// 	if (currentElevatorTarget > ElevatorConstants.MAX_BELOW_PASS_HEIGHT && potentiometer.get() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
+		// 		currentElevatorTarget = ElevatorConstants.MAX_BELOW_PASS_HEIGHT;
+		// 	}
+		// }
+		// TODO: (Brandon) Won't the elevator be a linear (Position) value and not and angle?
+		double ElevatorFeedFowardValue = getElevatorFeedforward().calculate(Units.degreesToRadians(currentElevatorTarget), 0);
+		// double pid = elevatorPIDController.calculate(potentiometer.get(), currentElevatorTarget);
+		// TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate
+		// of movement
+		leaderElevatorMotor.setVoltage(/* pid + */ ElevatorFeedFowardValue);
 		
 		motorTab.update();
 	}
@@ -446,8 +435,8 @@ public class Arm extends SubsystemBase {
 	public double getElevatorAbsoluteEncoderPosition() {
 		return potentiometer.get();
 	}
-
-	public void teleopInit(){
+	
+	public void teleopInit() {
 		armTarget = armAbsoluteEncoder.getPosition();
 	}
 }
