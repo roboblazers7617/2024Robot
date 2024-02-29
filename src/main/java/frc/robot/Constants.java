@@ -29,10 +29,89 @@ public final class Constants {
 	public static class TestNumber{
 		public static int number = 5;
 	}
+
+	public static class ArmConstants {
+		public static final int RIGHT_MOTOR_ID = 25; 
+		public static final int LEFT_MOTOR_ID = 26;
+		public static final int MAX_AMPERAGE = 40;
+
+		// Some relavant numbers
+		// arm mass: 35-40 lbs
+		// center of mass distance
+		// when retracted: 14.04112
+		// when extended: 17.64693
+
+
+
+		public static final double MAX_ANGLE = 90;
+		public static final double MIN_ANGLE = 10;
+		/** the mininum angle the arm can be where the elevator can pass over the bumper */
+		public static double MIN_ABOVE_PASS_ANGLE = 25;
+
+		// Constants for extended state
+		public static final double EXTENDED_KS = 0; //these values are based on the test arm
+		public static final double EXTENDED_KG = 0.5; // .5 while extended
+		public static final double EXTENDED_KV = 0.0;
 	
+		// Constants for retracted state
+		public static final double RETRACTED_KS = 0; //these values are based on calculator
+		public static final double RETRACTED_KG = 0.4;
+		public static final double RETRACTED_KV = 0.0;
+		public static final double KP = 0.025;
+		public static final double KI = 0;
+		public static final double KD = 0;
+		public static final double kIz = 0; //izone
+		public static final double kMinOutput = -0.25;
+		public static final double kMaxOutput = 1;
+		public static final double minVel = 0;
+		// public static final double POSITION_CONVERSION_FACTOR = 16;
+		// public static final double VELOCITY_CONVERSION_FACTOR = 0;
+		public static final double GEAR_RATIO = 1/100.0;
+		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
+		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
+		public static final double MAX_MANNUAL_ARM_SPEED = 45.0; 
+
+
+		
+		
+	}
+
+	public static class ElevatorConstants {
+		public static final int RIGHT_MOTOR_ID = 28;
+		public static final int LEFT_MOTOR_ID = 27;
+		public static final int MAX_AMPERAGE = 40;
+		public static final double KS = 0;
+		public static final double KG = 0.2;
+		public static final double KV = 0.389;
+		public static final double KP = 0.001;
+		public static final double KI = 0;
+		public static final double KD = 0;
+		public static final double kIz = 0; //izone
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
+		public static final double minVel = 0;
+		public static final double GEAR_RATIO = 1/12;
+		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
+		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
+
+		
+		/** the maximum height the elevator can safely reach */
+		public static final double MAX_HEIGHT = 25;
+		/** the mininum height the elevator can be to safely reach over the bumper of the robot */
+		public static final double MIN_ABOVE_PASS_HEIGHT = 20;
+		/** the mininum height the elevator reaches when its retracted */
+		public static final double MIN_HEIGHT = 0;
+		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
+		public static final double MAX_BELOW_PASS_HEIGHT = 10;
+		public static final int RIGHT_POTIENTIOMETER_PORT = 5;
+		// public static final int LEFT_POTIENTIOMETER_PORT = 45;
+
+	}
+
 	public static class OperatorConstants {
 		public static final double JOYSTICK_DEADBAND = 0.075;
 		public static final int DRIVER_CONTROLLER_PORT = 0;
+		public static final int OPERATOR_CONTROLLER_PORT = 1;
 		public static final double ROTATION_RATE = 2;
 	}
 	
@@ -92,7 +171,7 @@ public final class Constants {
 	}
 	
 	public static class ShooterConstants {
-		public static final int SHOOTER_MOTOR_ID = 25;
+		public static final int SHOOTER_MOTOR_ID = 22;
 		public static final int SENSOR_DIO = 2;
 		
 		public enum ShootingPosition {

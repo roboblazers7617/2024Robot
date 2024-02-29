@@ -5,6 +5,8 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
@@ -25,13 +27,15 @@ public class MotorTab{
 	private final Alert tooManyMotors = new Alert("Too many motors", AlertType.ERROR);
 
 	private final String tabName;
-	
+	private final ShuffleboardTab tab;
+	private final int rowOffset;
 	/**
 	 * This constructor is used to create a MotorTab, periodic() must be called in the subsystem's periodic method
 	 * @param totalNumberOfMotors the total number of motors that will be added to the MotorTab
 	 * @param tabName the name of the tab
+	 * @param rowOffset the number of rows that all of the motor displays will be lowered by
 	 */
-	public MotorTab(int totalNumberOfMotors, String tabName){
+	public MotorTab(int totalNumberOfMotors, String tabName, int rowOffset){
 		busVoltagePublishers = new DoublePublisher[totalNumberOfMotors];
 		optionCurrentPublishers = new DoublePublisher[totalNumberOfMotors];
 		stickyFaultPublisher = new DoublePublisher[totalNumberOfMotors];
@@ -40,6 +44,17 @@ public class MotorTab{
 
 		this.tabName = tabName;
 		this.totalNumberOfMotors = totalNumberOfMotors;
+		tab = Shuffleboard.getTab(tabName);
+		this.rowOffset = rowOffset;
+	}
+
+	/**
+	 * This constructor is used to create a MotorTab, periodic() must be called in the subsystem's periodic method
+	 * @param totalNumberOfMotors the total number of motors that will be added to the MotorTab
+	 * @param tabName the name of the tab
+	 */
+	public MotorTab(int totalNumberOfMotors, String tabName){
+		this(totalNumberOfMotors, tabName, 0);
 	}
 
 
@@ -58,11 +73,18 @@ public class MotorTab{
 		NetworkTable networkTable = inst.getTable("logging/" + tabName);
 		for(int i = 0; i < newMotors.length; i++){
 			motors[i + numberOfMotors] = newMotors[i];
-			busVoltagePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Bus Voltage").publish();
-			optionCurrentPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Total Current").publish();
-			stickyFaultPublisher[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Sticky Faults").publish();
-			motorTemperaturePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Motor Temperature").publish();
-			motorEncoderPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (i+numberOfMotors) + " Encoder Position").publish();
+			busVoltagePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Bus Voltage").publish();
+			optionCurrentPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Total Current").publish();
+			stickyFaultPublisher[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Sticky Faults").publish();
+			motorTemperaturePublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Motor Temperature").publish();
+			motorEncoderPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Encoder Position").publish();
+
+			// create shuffleboard entries for each of these with with a position
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Bus Voltage", -1.0).withPosition(5, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Total Current", -1.0).withPosition(6, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Sticky Faults", -1.0).withPosition(7, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Motor Temperature", -1.0).withPosition(8, i + rowOffset);
+			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Encoder Position", -1.0).withPosition(9, i + rowOffset);
 		}
 		numberOfMotors += newMotors.length;
 
