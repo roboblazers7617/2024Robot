@@ -127,13 +127,13 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setZeroOffset(171.7);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
-		System.out.println("arm: target: " + armTarget);
+		// System.out.println("arm: target: " + armTarget);
 		
 		// setup elevator motors
 		leaderElevatorMotor.restoreFactoryDefaults();
 		leaderElevatorMotor.setIdleMode(IdleMode.kCoast);
 		leaderElevatorMotor.setSmartCurrentLimit(ElevatorConstants.MAX_AMPERAGE);
-		leaderElevatorMotor.setInverted(false);
+		leaderElevatorMotor.setInverted(true);
 		
 		followerElevatorMotor.restoreFactoryDefaults();
 		followerElevatorMotor.setIdleMode(IdleMode.kCoast);
@@ -300,8 +300,8 @@ public class Arm extends SubsystemBase {
 		armTarget = armTarget + velocityDegreesPerSec * dt;
 		armTarget = Math.min(armTarget, ArmConstants.MAX_ANGLE);
 		armTarget = Math.max(armTarget, ArmConstants.MIN_ANGLE);
-		System.out.println("arm velocity: " + velocityDegreesPerSec);
-		System.out.println("arm target: " + armTarget);
+		// System.out.println("arm velocity: " + velocityDegreesPerSec);
+		// System.out.println("arm target: " + armTarget);
 	}
 	
 	/**
@@ -399,8 +399,8 @@ public class Arm extends SubsystemBase {
 		ArmFeedforward armFeedFoward = getArmFeedforward();
 		
 		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
-		System.out.println("arm feed foward: " + armFeedFowardValue);
-		System.out.println("arm target: " + armTarget);
+		// System.out.println("arm feed foward: " + armFeedFowardValue);
+		// System.out.println("arm target: " + armTarget);
 		
 		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
 		

@@ -81,9 +81,9 @@ public final class Constants {
 		public static final int LEFT_MOTOR_ID = 27;
 		public static final int MAX_AMPERAGE = 40;
 		public static final double KS = 0;
-		public static final double KG = 0.2;
-		public static final double KV = 0.389;
-		public static final double KP = 0.001;
+		public static final double KG = 0.0;// was .2
+		public static final double KV = 0.0; // was .389
+		public static final double KP = 0.0; // was .001
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kIz = 0; //izone
