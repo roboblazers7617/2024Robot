@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.289603297898468,
+        "y": 2.4361120719747715
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.2862599040448774,
+        "y": 2.4361120719747715
+      },
+      "isLocked": false,
+      "linkedName": "botmid far"
+    },
+    {
+      "anchor": {
+        "x": 4.147790496116358,
+        "y": 1.9867228632307663
+      },
+      "prevControl": {
+        "x": 5.10498363378001,
+        "y": 1.9867228632307663
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "way bot shoot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
