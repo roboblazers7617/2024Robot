@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.shuffleboard.MotorTab;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 
@@ -63,8 +64,8 @@ public class Head extends SubsystemBase {
 		shooterMotorBottom.setIdleMode(IdleMode.kCoast);
 		shooterMotorTop.setIdleMode(IdleMode.kCoast);
 		
-		shooterMotorBottom.setInverted(true);
-		shooterMotorTop.setInverted(true);
+		shooterMotorBottom.setInverted(false);
+		shooterMotorTop.setInverted(false);
 		
 		shooterMotorBottom.setSmartCurrentLimit(40);
 		shooterMotorTop.setSmartCurrentLimit(40);
@@ -76,8 +77,8 @@ public class Head extends SubsystemBase {
 		intakeMotorBottom.setIdleMode(IdleMode.kBrake);
 		intakeMotorTop.setIdleMode(IdleMode.kBrake);
 		
-		intakeMotorBottom.setInverted(false);
-		intakeMotorTop.setInverted(true);
+		intakeMotorBottom.setInverted(true);
+		intakeMotorTop.setInverted(false);
 		
 		intakeMotorBottom.setSmartCurrentLimit(20);
 		intakeMotorTop.setSmartCurrentLimit(20);
@@ -93,8 +94,10 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 		
 		// Shooter interpolation map
-		shooterInterpolationMap.put(-1.0, 120.0); // Amp
-		shooterInterpolationMap.put(0.0, 360.0);
+		shooterInterpolationMap.put(-1.0, 1000.0); // Amp
+		shooterInterpolationMap.put(0.0, 7000.0);
+
+		MotorTab.getInstance().addMotor(new CANSparkMax[] {shooterMotorBottom, shooterMotorTop, intakeMotorBottom, intakeMotorTop});
 	}
 	
 	@Override
@@ -116,6 +119,19 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setD(ShooterConstants.kD.get());
 		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
+	}
+
+	public Double getIntakeEncoderBottom() {
+		return intakeMotorBottom.getEncoder().getPosition();
+	}
+	public Double getIntakeEncoderTop() {
+		return intakeMotorTop.getEncoder().getPosition();
+	}
+	public Double getShooterEncoderBottom() {
+		return shooterMotorBottom.getEncoder().getPosition();
+	}
+	public Double getShooterEncoderTop() {
+		return shooterMotorTop.getEncoder().getPosition();
 	}
 	
 	private void setIntakeBottomSpeed(double intakeSpeed) {

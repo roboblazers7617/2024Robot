@@ -77,8 +77,8 @@ public final class Constants {
 	}
 
 	public static class IntakeConstants {
-		public static final int MOTOR_BOTTOM_CAN_ID = 20;
-		public static final int MOTOR_TOP_CAN_ID = 21;
+		public static final int MOTOR_BOTTOM_CAN_ID = 21;
+		public static final int MOTOR_TOP_CAN_ID = 20;
 		
 		public static final int NOTE_POSSESSION_SENSOR_DIO = 1;
 		public static final int NOTE_ALIGNMENT_SENSOR_DIO = 2;
@@ -106,16 +106,16 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static final int MOTOR_BOTTOM_CAN_ID = 22;
-		public static final int MOTOR_TOP_CAN_ID = 23;
+		public static final int MOTOR_BOTTOM_CAN_ID = 23;
+		public static final int MOTOR_TOP_CAN_ID = 22;
 		
-		public static final TunableNumber kP = new TunableNumber("Head/Shooter", "kP", 0.01);
+		public static final TunableNumber kP = new TunableNumber("Head/Shooter", "kP", 0.00005);
 		public static final TunableNumber kI = new TunableNumber("Head/Shooter", "kI", 0);
 		public static final TunableNumber kD = new TunableNumber("Head/Shooter", "kD", 0);
 		public static final TunableNumber kMinOutput = new TunableNumber("Head/Shooter", "kMinOutput", -1);
 		public static final TunableNumber kMaxOutput = new TunableNumber("Head/Shooter", "kMaxOutput", 1);
 		
-		public static final double IDLE_SPEED = 120;
+		public static final double IDLE_SPEED = 5000;
 
 		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0);
 		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 0);
