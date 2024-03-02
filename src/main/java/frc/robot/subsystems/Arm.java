@@ -298,7 +298,7 @@ public class Arm extends SubsystemBase {
 	public void setElevatorVelocity(double velocityDegreesPerSec) {
 		elevatorTarget = elevatorTarget + velocityDegreesPerSec * dt;
 		elevatorTarget = MathUtil.clamp(elevatorTarget, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT);
-		System.out.println("elevator target in volocity: " + elevatorTarget);
+		// System.out.println("elevator target in volocity: " + elevatorTarget);
 	}
 	
 	public Command ArmDefaultCommand(Supplier<Double> armVelocity, Supplier<Double> elevatorVelocity) {
@@ -392,7 +392,7 @@ public class Arm extends SubsystemBase {
 				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
 			}
 		}
-		System.out.println("current elevator target: " + currentElevatorTarget);
+		// System.out.println("current elevator target: " + currentElevatorTarget);
 		elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition,0,  0, ArbFFUnits.kVoltage);
 		elevatorPIDController.setFF(5);
 		// System.out.println("pid: " + pid);
