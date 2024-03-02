@@ -11,6 +11,8 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Head;
 import frc.robot.shuffleboard.ArmTab;
+
+import frc.robot.shuffleboard.ClimberTab;
 import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.LEDTab;
@@ -31,6 +33,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.commands.drivetrain.LockWheelsState;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.MathUtil;
@@ -62,6 +65,7 @@ public class RobotContainer {
 	private final Head head = new Head();
 	private final LED led = new LED(SerialPort.Port.kMXP, head);
 	private final Arm arm = new Arm();
+	private final Climber climber = new Climber();
 	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
@@ -96,6 +100,8 @@ public class RobotContainer {
 
 		tabs.add(new HeadTab(head));
 
+		tabs.add(new ClimberTab(climber));
+		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
@@ -152,6 +158,9 @@ public class RobotContainer {
 		operatorController.rightTrigger().onTrue(head.Shoot());
 		operatorController.start().whileTrue(head.StopIntake());
 		operatorController.back().onTrue(head.SpinDownShooter());
+
+		operatorController.povUp().whileTrue(((((((((((((((Commands.run(() -> climber.setSpeed(.2, .2), climber))))))))))))))));
+		operatorController.povUp().whileTrue(((((((((((((((Commands.run(() -> climber.setSpeed(-.2, -.2), climber))))))))))))))));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
