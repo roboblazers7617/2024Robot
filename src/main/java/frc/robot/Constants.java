@@ -65,7 +65,6 @@ public final class Constants {
 		public static final double KP = 0.025;
 		public static final double KI = 0;
 		public static final double KD = 0;
-		public static final double kIz = 0; //izone
 		public static final double kMinOutput = -0.25;
 		public static final double kMaxOutput = 1;
 		public static final double minVel = 0;
@@ -86,9 +85,9 @@ public final class Constants {
 		public static final int LEFT_MOTOR_ID = 27;
 		public static final int MAX_AMPERAGE = 40;
 		public static final double KS = 0;
-		public static final double KG = 0.0;// was .2
-		public static final double KV = 0.0; // was .389
-		public static final double KP = 0.001; // was .001
+		public static final double KG = 0.0;
+		public static final double KV = 0.0;
+		public static final double KP = 1.5; // was .2
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kIz = 0; //izone
@@ -103,14 +102,16 @@ public final class Constants {
 		/** the maximum height the elevator can safely reach */
 		public static final double MAX_HEIGHT = 18.6;
 		/** the mininum height the elevator can be to safely reach over the bumper of the robot */
-		public static final double MIN_ABOVE_PASS_HEIGHT = 20;
+		public static final double MIN_ABOVE_PASS_HEIGHT = 18.6;
 		/** the mininum height the elevator reaches when its retracted */
 		public static final double MIN_HEIGHT = 0;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
 		public static final double MAX_BELOW_PASS_HEIGHT = 10; // REMOVE THIS, IT DOES NOT EXIST
 		public static final int RIGHT_POTIENTIOMETER_PORT = 3;
 		// public static final int LEFT_POTIENTIOMETER_PORT = 45;
-		public static final double MAX_MANUAL_SPEED = 5;
+		public static final double MAX_MANUAL_SPEED = 20;
+		/** for potentiometer */
+		public static final double OFFSET = 0.999;
 
 	}
 

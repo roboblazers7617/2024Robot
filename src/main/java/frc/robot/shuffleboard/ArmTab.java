@@ -47,6 +47,9 @@ public class ArmTab extends ShuffleboardTabBase {
 		tab.add("arm subsystem", arm);
 		tab.add("lower arm", arm.lowerArm());
 		tab.add("toggle brake modes", arm.ToggleBrakeModes());
+		tab.add("extend elevator", arm.RaiseElevator());
+		tab.add("retract elevator", arm.lowerElevator());
+		tab.add("stow", arm.stow());
 		// tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
 		// tab.add("foward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kForward));
 		// tab.add("backward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kReverse));
