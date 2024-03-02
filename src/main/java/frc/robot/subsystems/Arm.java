@@ -394,7 +394,6 @@ public class Arm extends SubsystemBase {
 		}
 		// System.out.println("current elevator target: " + currentElevatorTarget);
 		elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition,0,  0, ArbFFUnits.kVoltage);
-		elevatorPIDController.setFF(5);
 		// System.out.println("pid: " + pid);
 		// System.out.println("elevator feed foward: " + ElevatorFeedFowardValue);
 		

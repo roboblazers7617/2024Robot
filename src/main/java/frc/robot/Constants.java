@@ -198,7 +198,18 @@ public final class Constants {
 		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0);
 		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 0);
 	}
-	
+
+	public static class ClimberConstants {
+		public static final int LEFT_CLIMBER_PORT = 30;
+		public static final int RIGHT_CLIMBER_PORT = 31;
+		public static final double MAX_ENCODER_VALUE = 100;
+		public static final double BALANCE_KP = 0;
+		public static final double BALANCE_KI = 0;
+		public static final double BALANCE_KD = 0;
+		public static final double CLIMB_HEIGHT = 60;
+		public static final double CLIMB_RATE = 0;
+	}
+
 	public static final double BATTERY_WARNING_VOLTAGE = 11;
 	public static final int NUMBER_OF_MOTORS = 10;
 	
