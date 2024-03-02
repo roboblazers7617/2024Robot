@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.shuffleboard.MotorTab;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 
@@ -96,8 +95,6 @@ public class Head extends SubsystemBase {
 		// Shooter interpolation map
 		shooterInterpolationMap.put(-1.0, 1000.0); // Amp
 		shooterInterpolationMap.put(0.0, 7000.0);
-
-		MotorTab.getInstance().addMotor(new CANSparkMax[] {shooterMotorBottom, shooterMotorTop, intakeMotorBottom, intakeMotorTop});
 	}
 	
 	@Override
