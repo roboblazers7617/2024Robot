@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
 		}
 
 		m_robotContainer.setMotorBrake(true);
-		m_robotContainer.teleopInit();
+		// m_robotContainer.teleopInit();
 
 	}
 

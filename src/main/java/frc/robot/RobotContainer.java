@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
@@ -142,7 +143,10 @@ public class RobotContainer {
 		
 		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
-		arm.setDefaultCommand(Commands.run(() -> arm.setArmVelocity(Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0), arm));
+		// arm.setDefaultCommand(Commands.run(() -> arm.setArmVelocity(Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0), arm));
+		arm.setDefaultCommand(Commands.run(() -> arm.setElevatorVelocity(Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ElevatorConstants.MAX_MANUAL_SPEED : 0), arm));
+
+
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {

@@ -41,12 +41,16 @@ public final class Constants {
 		// when retracted: 14.04112
 		// when extended: 17.64693
 
+		// stow values
+		// arm: 20.4
+		// elevator: retracted
+
 
 
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 10;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
-		public static double MIN_ABOVE_PASS_ANGLE = 25;
+		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
 		// Constants for extended state
 		public static final double EXTENDED_KS = 0; //these values are based on the test arm
@@ -83,7 +87,7 @@ public final class Constants {
 		public static final double KS = 0;
 		public static final double KG = 0.0;// was .2
 		public static final double KV = 0.0; // was .389
-		public static final double KP = 0.0; // was .001
+		public static final double KP = 0.001; // was .001
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kIz = 0; //izone
@@ -96,15 +100,16 @@ public final class Constants {
 
 		
 		/** the maximum height the elevator can safely reach */
-		public static final double MAX_HEIGHT = 25;
+		public static final double MAX_HEIGHT = 18.6;
 		/** the mininum height the elevator can be to safely reach over the bumper of the robot */
 		public static final double MIN_ABOVE_PASS_HEIGHT = 20;
 		/** the mininum height the elevator reaches when its retracted */
 		public static final double MIN_HEIGHT = 0;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
-		public static final double MAX_BELOW_PASS_HEIGHT = 10;
-		public static final int RIGHT_POTIENTIOMETER_PORT = 5;
+		public static final double MAX_BELOW_PASS_HEIGHT = 10; // REMOVE THIS, IT DOES NOT EXIST
+		public static final int RIGHT_POTIENTIOMETER_PORT = 3;
 		// public static final int LEFT_POTIENTIOMETER_PORT = 45;
+		public static final double MAX_MANUAL_SPEED = 5;
 
 	}
 
