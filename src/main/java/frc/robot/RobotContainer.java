@@ -145,6 +145,12 @@ public class RobotContainer {
 		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
+
+		operatorController.a().whileTrue(head.StartIntake(false));
+		operatorController.b().whileTrue(head.StartIntake(true));
+		operatorController.leftTrigger().whileTrue(head.IdleShooter());
+		operatorController.rightTrigger().onTrue(head.Shoot());
+		operatorController.start().whileTrue(head.StopIntake());
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {

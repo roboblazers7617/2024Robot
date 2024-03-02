@@ -117,16 +117,19 @@ public class Head extends SubsystemBase {
 		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 	}
-
+	
 	public Double getIntakeEncoderBottom() {
 		return intakeMotorBottom.getEncoder().getPosition();
 	}
+	
 	public Double getIntakeEncoderTop() {
 		return intakeMotorTop.getEncoder().getPosition();
 	}
+	
 	public Double getShooterEncoderBottom() {
 		return shooterMotorBottom.getEncoder().getPosition();
 	}
+	
 	public Double getShooterEncoderTop() {
 		return shooterMotorTop.getEncoder().getPosition();
 	}
@@ -241,6 +244,12 @@ public class Head extends SubsystemBase {
 			shooterIdle = false;
 			setShooterSpeed(getShooterSpeedAtPosition(positionMeters.get()));
 		}, this);
+	}
+	
+	public Command IdleShooter() {
+		return Commands.runOnce(() -> {
+			setShooterSpeed(getShooterSpeedAtPosition(0));
+		});
 	}
 	
 	public Command SpinDownShooter() {
