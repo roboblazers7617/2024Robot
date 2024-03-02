@@ -193,7 +193,7 @@ public final class Constants {
 		public static final TunableNumber kMinOutput = new TunableNumber("Head/Shooter", "kMinOutput", -1);
 		public static final TunableNumber kMaxOutput = new TunableNumber("Head/Shooter", "kMaxOutput", 1);
 		
-		public static final double IDLE_SPEED = 5000;
+		public static final double IDLE_SPEED = 0;
 
 		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0);
 		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 0);

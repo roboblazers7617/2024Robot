@@ -151,6 +151,7 @@ public class RobotContainer {
 		operatorController.leftTrigger().whileTrue(head.IdleShooter());
 		operatorController.rightTrigger().onTrue(head.Shoot());
 		operatorController.start().whileTrue(head.StopIntake());
+		operatorController.back().onTrue(head.SpinDownShooter());
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
