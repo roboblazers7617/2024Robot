@@ -160,7 +160,7 @@ public class RobotContainer {
 		operatorController.back().onTrue(head.SpinDownShooter());
 
 		operatorController.povUp().whileTrue(((((((((((((((Commands.run(() -> climber.setSpeed(.2, .2), climber))))))))))))))));
-		operatorController.povUp().whileTrue(((((((((((((((Commands.run(() -> climber.setSpeed(-.2, -.2), climber))))))))))))))));
+		operatorController.povDown().whileTrue(((((((((((((((Commands.run(() -> climber.setSpeed(-.2, -.2), climber))))))))))))))));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
