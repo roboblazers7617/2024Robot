@@ -167,7 +167,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("test auto forwardback");
+		return new PathPlannerAuto("mid front 2 piece auto");
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
