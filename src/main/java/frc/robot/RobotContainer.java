@@ -11,6 +11,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.shuffleboard.ArmTab;
+import frc.robot.shuffleboard.ClimberTab;
 import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.LEDTab;
@@ -30,6 +31,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.commands.drivetrain.LockWheelsState;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Intake;
@@ -63,6 +65,7 @@ public class RobotContainer {
 	Shooter shooter = new Shooter();
 	LED led = new LED(SerialPort.Port.kMXP, intake, shooter);
 	private final Arm arm = new Arm();
+	private final Climber climber = new Climber();
 	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
@@ -94,6 +97,8 @@ public class RobotContainer {
 		tabs.add(new SwerveTab(drivetrain));
 		
 		tabs.add(new LEDTab(led, intake, shooter));
+
+		tabs.add(new ClimberTab(climber));
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
