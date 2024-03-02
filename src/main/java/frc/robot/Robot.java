@@ -98,8 +98,6 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
 		}
-		//TODO: Do we need to set the brake mode for the drivetrain? Is that defaulted anywhere?
-		// See YAGSL Example code
 
 
 	}
@@ -120,6 +118,7 @@ public class Robot extends TimedRobot {
 		}
 
 		m_robotContainer.setMotorBrake(true);
+		// m_robotContainer.teleopInit();
 
 	}
 
