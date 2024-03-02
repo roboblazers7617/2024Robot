@@ -179,7 +179,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("mid front 2 piece auto");
+		return new PathPlannerAuto("4 piece bot front to top wip");
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
@@ -191,6 +191,7 @@ public class RobotContainer {
 			return new TurnToTag(drivetrain, 4, true);
 		}
 			return new TurnToTag(drivetrain, 7,true);
+	}
 	public void teleopInit(){
 		arm.teleopInit();
 	}
