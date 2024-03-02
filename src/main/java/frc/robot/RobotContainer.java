@@ -143,10 +143,7 @@ public class RobotContainer {
 		
 		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
-		// arm.setDefaultCommand(Commands.run(() -> arm.setArmVelocity(Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0), arm));
-		arm.setDefaultCommand(Commands.run(() -> arm.setElevatorVelocity(Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ElevatorConstants.MAX_MANUAL_SPEED : 0), arm));
-
-
+		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
@@ -176,9 +173,5 @@ public class RobotContainer {
 	
 	public void setMotorBrake(boolean isBraked) {
 		drivetrain.setMotorBrake(isBraked);
-	}
-
-	public void teleopInit(){
-		arm.teleopInit();
 	}
 }
