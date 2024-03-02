@@ -33,7 +33,7 @@ public class HeadTab extends ShuffleboardTabBase {
 	private TunableNumber shootingPosition;
 	private final DoublePublisher shooterSpeedAtPositionPublisher;
 	private TunableNumber shootingPositionSpeedTuning;
-
+	
 	private final DoublePublisher intakeBottomEncoderPublisher;
 	private final DoublePublisher intakeTopEncoderPublisher;
 	private final DoublePublisher shooterBottomEncoderPublisher;
@@ -63,7 +63,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		shootingPosition = new TunableNumber("Head/Shooter", "Position (tuning)", 0);
 		shootingPositionSpeedTuning = new TunableNumber("Head/Shooter", "Speed (tuning)", 0);
-
+		
 		intakeBottomEncoderPublisher = networkTable.getDoubleTopic("Intake Encoder Bottom").publish();
 		intakeTopEncoderPublisher = networkTable.getDoubleTopic("Intake Encoder Top").publish();
 		shooterBottomEncoderPublisher = networkTable.getDoubleTopic("Shooter Encoder Bottom").publish();
@@ -84,7 +84,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		readyToShootPublisher.set(head.isReadyToShoot());
 		
 		shooterSpeedAtPositionPublisher.set(head.getShooterSpeedAtPosition(shootingPosition.get()));
-
+		
 		intakeBottomEncoderPublisher.set(head.getIntakeEncoderBottom());
 		intakeTopEncoderPublisher.set(head.getIntakeEncoderTop());
 		shooterBottomEncoderPublisher.set(head.getShooterEncoderBottom());
@@ -108,6 +108,8 @@ public class HeadTab extends ShuffleboardTabBase {
 		intakeLayout.add("Manual Outake", head.StartOutake()).withPosition(3, 1);
 		
 		intakeLayout.add("Stop Intake", head.StopIntake()).withPosition(4, 0);
+		
+		intakeLayout.add("Feeder Speed", 0.0).withPosition(1, 2);
 		
 		// Shooter
 		ShuffleboardLayout shooterLayout = tab.getLayout("Shooter", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 2);

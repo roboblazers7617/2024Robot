@@ -286,7 +286,7 @@ public class Head extends SubsystemBase {
 		// TODO: (Max) don't you need to command the shooter to spin up?
 		return Commands.waitUntil(() -> isReadyToShoot())
 				.andThen(Commands.runOnce(() -> {
-					setIntakeSpeeds(IntakeConstants.FEEDER_SPEED, IntakeConstants.FEEDER_SPEED);
+					setIntakeSpeeds(IntakeConstants.FEEDER_SPEED.get(), IntakeConstants.FEEDER_SPEED.get());
 				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
 				.andThen(Commands.waitUntil(() -> !isNoteWithinHead()))
