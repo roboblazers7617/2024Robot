@@ -252,6 +252,17 @@ public class Head extends SubsystemBase {
 		});
 	}
 	
+	public Command StartShooterTest(){
+		return Commands.runOnce(() -> {
+			setShooterSpeed(5000);
+		});
+	}
+
+	public Command StopShooterTest(){
+		return Commands.runOnce(() -> {
+			setShooterSpeed(0);
+		});
+	}
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;

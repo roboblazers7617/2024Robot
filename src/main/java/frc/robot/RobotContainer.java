@@ -154,6 +154,8 @@ public class RobotContainer {
 
 		operatorController.a().whileTrue(head.StartIntake(false));
 		operatorController.b().whileTrue(head.StartIntake(true));
+		operatorController.x().onTrue(head.StartShooterTest());
+		operatorController.y().onTrue(head.StopShooterTest());
 		operatorController.leftTrigger().whileTrue(head.IdleShooter());
 		operatorController.rightTrigger().onTrue(head.Shoot());
 		operatorController.start().whileTrue(head.StopIntake());
