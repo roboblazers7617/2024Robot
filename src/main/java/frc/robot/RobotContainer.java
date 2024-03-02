@@ -95,11 +95,11 @@ public class RobotContainer {
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
-		tabs.add(new DriverStationTab());
+		// tabs.add(new DriverStationTab());
 		
-		tabs.add(new ArmTab(arm));
+		// tabs.add(new ArmTab(arm));
 		
-		tabs.add(new SwerveTab(drivetrain));
+		// tabs.add(new SwerveTab(drivetrain));
 		
 		tabs.add(new LEDTab(led, intake, shooter));
 		

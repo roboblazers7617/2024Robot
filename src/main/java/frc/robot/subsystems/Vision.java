@@ -70,12 +70,12 @@ public class Vision extends SubsystemBase {
 				}
 			}
 			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 15){
-				System.out.println("Intake");
+				// System.out.println("Intake");
 				return intakeEstimator.update();}
 		}
 		else if(shooterBestTag != null){
 			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 15){
-				System.out.println("Shooter");
+				// System.out.println("Shooter");
 				return shooterEstimator.update();}
 			}
 			return Optional.empty();
