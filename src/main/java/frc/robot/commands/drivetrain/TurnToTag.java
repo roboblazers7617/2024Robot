@@ -10,6 +10,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.subsystems.Drivetrain;
 
@@ -19,6 +20,7 @@ public class TurnToTag extends Command {
 	private final Drivetrain drivetrain;
 	private final PIDController controller;
 	private AprilTagFieldLayout fieldLayout;
+	private boolean invertFacing = false;
 	
 	public TurnToTag(Drivetrain drivetrain, int tagID) {
 		// Use addRequirements() here to declare subsystem dependencies.
@@ -34,6 +36,10 @@ public class TurnToTag extends Command {
 		}
 		tagPose = fieldLayout.getTagPose(tagID).get().toPose2d();
 	}
+	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing){
+		this(drivetrain, tagID);
+		this.invertFacing = invertFacing;
+	}
 	
 	// Called when the command is initially scheduled.
 	@Override
@@ -42,7 +48,12 @@ public class TurnToTag extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
+		if(invertFacing){
+			drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));
+		}
+		else{
 		drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
+		}
 	}
 	
 	// Called once the command ends or is interrupted.
