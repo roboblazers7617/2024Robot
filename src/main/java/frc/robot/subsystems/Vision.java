@@ -56,15 +56,13 @@ public class Vision extends SubsystemBase {
 		if(intakeBestTag != null){
 			if(shooterBestTag != null){
 				if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()){
-					if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 6){
-						System.out.println("Intake");
+					if((intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4) && intakeBestTag.getPoseAmbiguity() < .2){
 						return intakeEstimator.update();}
 					else
 						return Optional.empty();
 				}
 				else{
-					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 6){
-						System.out.println("Shooter");
+					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4 && shooterBestTag.getPoseAmbiguity() < .2){
 						return shooterEstimator.update();
 					}
 					else
