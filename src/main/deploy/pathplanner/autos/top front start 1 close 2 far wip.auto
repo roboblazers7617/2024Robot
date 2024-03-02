@@ -30,6 +30,18 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "turnToSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "top ring to top far "
@@ -42,6 +54,18 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "turnToSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "top ring to topmid far"
@@ -51,6 +75,12 @@
           "type": "path",
           "data": {
             "pathName": "topmid far to top ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnToSpeaker"
           }
         }
       ]
