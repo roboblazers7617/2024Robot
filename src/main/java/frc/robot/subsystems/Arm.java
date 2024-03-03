@@ -147,7 +147,7 @@ public class Arm extends SubsystemBase {
 		followerElevatorMotor.follow(leaderArmMotor, true);
 		
 		elevatorTarget = elevatorEncoder.getPosition();
-
+		
 		elevatorPIDController.setP(ElevatorConstants.KP);
 		elevatorPIDController.setI(ElevatorConstants.KI);
 		elevatorPIDController.setD(ElevatorConstants.KD);
@@ -164,8 +164,8 @@ public class Arm extends SubsystemBase {
 		
 		// teleopEnabled = new Trigger(() -> DriverStation.isTeleopEnabled());
 		// teleopEnabled.onTrue(this.runOnce(() -> {
-		// 	elevatorTarget = elevatorEncoder.getPosition();
-		// 	armTarget = armAbsoluteEncoder.getPosition();
+		// elevatorTarget = elevatorEncoder.getPosition();
+		// armTarget = armAbsoluteEncoder.getPosition();
 		// }));
 	}
 	
@@ -268,7 +268,6 @@ public class Arm extends SubsystemBase {
 		armTarget = armTarget + velocityDegreesPerSec * dt;
 		armTarget = MathUtil.clamp(armTarget, ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
 	}
-	
 	
 	/**
 	 * safely set the target height for the elevator
@@ -392,8 +391,15 @@ public class Arm extends SubsystemBase {
 				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
 			}
 		}
+		
+		double elevatorFeedForward;
+		if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 1.0) {
+			elevatorFeedForward = Math.copySign(0.2, (currentElevatorTarget - elevatorEncoder.getPosition()));
+		} else {
+			elevatorFeedForward = 0.0;
+		}
 		// System.out.println("current elevator target: " + currentElevatorTarget);
-		elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition,0,  0, ArbFFUnits.kVoltage);
+		elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, elevatorFeedForward, ArbFFUnits.kVoltage);
 		// System.out.println("pid: " + pid);
 		// System.out.println("elevator feed foward: " + ElevatorFeedFowardValue);
 		
