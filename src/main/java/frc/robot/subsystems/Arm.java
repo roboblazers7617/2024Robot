@@ -64,6 +64,8 @@ public class Arm extends SubsystemBase {
 	/** the current target for the arm, in degrees, it is within the total bounds of the arm but may not be a currently safe move */
 	// of the arm so the arm doesn't try to move on boot-up
 	private double armTarget;
+	/** the last actual arm target */
+	private double lastAcutalArmTarget;
 	
 	// Elevator
 	/** the right motor */
@@ -90,6 +92,8 @@ public class Arm extends SubsystemBase {
 	
 	/** the current target for the elevator, it is within the total bounds of the arm but may not be a currently safe move */
 	private double elevatorTarget;
+	/** the last actual elevator target */
+	private double lastAcutalElevatorTarget;
 	
 	/** this is used for the position setpoint, in degrees, for setVelocity() */
 	private double dt, lastTime;
@@ -147,7 +151,7 @@ public class Arm extends SubsystemBase {
 		followerElevatorMotor.follow(leaderArmMotor, true);
 		
 		elevatorTarget = elevatorEncoder.getPosition();
-
+		
 		elevatorPIDController.setP(ElevatorConstants.KP);
 		elevatorPIDController.setI(ElevatorConstants.KI);
 		elevatorPIDController.setD(ElevatorConstants.KD);
@@ -164,8 +168,8 @@ public class Arm extends SubsystemBase {
 		
 		// teleopEnabled = new Trigger(() -> DriverStation.isTeleopEnabled());
 		// teleopEnabled.onTrue(this.runOnce(() -> {
-		// 	elevatorTarget = elevatorEncoder.getPosition();
-		// 	armTarget = armAbsoluteEncoder.getPosition();
+		// elevatorTarget = elevatorEncoder.getPosition();
+		// armTarget = armAbsoluteEncoder.getPosition();
 		// }));
 	}
 	
@@ -268,7 +272,6 @@ public class Arm extends SubsystemBase {
 		armTarget = armTarget + velocityDegreesPerSec * dt;
 		armTarget = MathUtil.clamp(armTarget, ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
 	}
-	
 	
 	/**
 	 * safely set the target height for the elevator
@@ -375,12 +378,14 @@ public class Arm extends SubsystemBase {
 				currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
-		
-		ArmFeedforward armFeedFoward = getArmFeedforward();
-		
-		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
-		
-		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
+		if (lastAcutalArmTarget != currentArmTarget) {
+			ArmFeedforward armFeedFoward = getArmFeedforward();
+			
+			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
+			
+			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
+			lastAcutalArmTarget = currentArmTarget;
+		}
 		
 		// Elevator
 		// current elevator target will be the reference set by the PID controller, based on what is currently safe
@@ -392,10 +397,20 @@ public class Arm extends SubsystemBase {
 				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
 			}
 		}
-		// System.out.println("current elevator target: " + currentElevatorTarget);
-		elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition,0,  0, ArbFFUnits.kVoltage);
-		// System.out.println("pid: " + pid);
-		// System.out.println("elevator feed foward: " + ElevatorFeedFowardValue);
+		
+		/** this is a constant increase to make the elvator go faster */
+		if (currentElevatorTarget != lastAcutalElevatorTarget) {
+			double speedyElevatorFeedForward;
+			if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 1.0) {
+				speedyElevatorFeedForward = Math.copySign(0.2, (currentElevatorTarget - elevatorEncoder.getPosition()));
+			} else {
+				speedyElevatorFeedForward = 0.0;
+			}
+			
+			double elevatorFeedFowardValue = getElevatorFeedforward().calculate(currentElevatorTarget, 0);
+			elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, speedyElevatorFeedForward + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
+			lastAcutalElevatorTarget = currentElevatorTarget;
+		}
 		
 		motorTab.update();
 	}

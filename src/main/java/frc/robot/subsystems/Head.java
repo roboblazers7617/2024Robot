@@ -83,14 +83,14 @@ public class Head extends SubsystemBase {
 		intakeMotorTop.setSmartCurrentLimit(20);
 		
 		// Shooter controller
-		shooterControllerBottom.setP(ShooterConstants.kP.get());
-		shooterControllerTop.setP(ShooterConstants.kP.get());
-		shooterControllerBottom.setI(ShooterConstants.kI.get());
-		shooterControllerTop.setI(ShooterConstants.kI.get());
-		shooterControllerBottom.setD(ShooterConstants.kD.get());
-		shooterControllerTop.setD(ShooterConstants.kD.get());
-		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
-		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
+		shooterControllerBottom.setP(ShooterConstants.kP);
+		shooterControllerTop.setP(ShooterConstants.kP);
+		shooterControllerBottom.setI(ShooterConstants.kI);
+		shooterControllerTop.setI(ShooterConstants.kI);
+		shooterControllerBottom.setD(ShooterConstants.kD);
+		shooterControllerTop.setD(ShooterConstants.kD);
+		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		
 		// Shooter interpolation map
 		shooterInterpolationMap.put(-1.0, 1000.0); // Amp
@@ -106,18 +106,6 @@ public class Head extends SubsystemBase {
 		} else {
 			motorTemperatureAlert.set(false);
 		}
-		
-		// Shooter controller
-		shooterControllerBottom.setP(ShooterConstants.kP.get());
-		shooterControllerTop.setP(ShooterConstants.kP.get());
-		shooterControllerBottom.setI(ShooterConstants.kI.get());
-		shooterControllerTop.setI(ShooterConstants.kI.get());
-		shooterControllerBottom.setD(ShooterConstants.kD.get());
-		shooterControllerTop.setD(ShooterConstants.kD.get());
-		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
-		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
-
-		
 	}
 	
 	public Double getIntakeEncoderBottom() {
@@ -181,7 +169,8 @@ public class Head extends SubsystemBase {
 			}, this)
 					.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
 					.andThen(Commands.runOnce(() -> {
-						setIntakeSpeeds(-IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED);
+						//TODO: merge failed, not my code so commented to fix it
+						setIntakeSpeeds(/*IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED*/IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
 					}))
 					.andThen(Commands.waitUntil(() -> isNoteAligned()))
 					.finallyDo(() -> {
@@ -192,10 +181,6 @@ public class Head extends SubsystemBase {
 			return Commands.runOnce(() -> {
 				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
 			}, this)
-					.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
-					.andThen(Commands.runOnce(() -> {
-						setIntakeSpeeds(-IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED);
-					}))
 					.andThen(Commands.waitUntil(() -> isNoteAligned()))
 					.finallyDo(() -> {
 						isNoteAcquired = true;
@@ -251,6 +236,7 @@ public class Head extends SubsystemBase {
 	
 	public Command IdleShooter() {
 		return Commands.runOnce(() -> {
+			shooterIdle = true;
 			setShooterSpeed(getShooterSpeedAtPosition(0));
 		});
 	}

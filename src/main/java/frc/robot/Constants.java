@@ -102,7 +102,7 @@ public final class Constants {
 		/** the maximum height the elevator can safely reach */
 		public static final double MAX_HEIGHT = 18.6;
 		/** the mininum height the elevator can be to safely reach over the bumper of the robot */
-		public static final double MIN_ABOVE_PASS_HEIGHT = 18.6;
+		public static final double MIN_ABOVE_PASS_HEIGHT = 18;
 		/** the mininum height the elevator reaches when its retracted */
 		public static final double MIN_HEIGHT = 0;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
@@ -163,10 +163,8 @@ public final class Constants {
 		
 		public static final double INTAKE_SPEED = 1.0;
 		public static final double OUTAKE_SPEED = -0.25;
-		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
-		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 0.25); // What speed should a note be fed into the shooter at?
+		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
 	}
-	
 	public static class PivotConstants {
 		public enum PivotPosition {
 			STOWED(0);
@@ -187,11 +185,11 @@ public final class Constants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 23;
 		public static final int MOTOR_TOP_CAN_ID = 22;
 		
-		public static final TunableNumber kP = new TunableNumber("Head/Shooter", "kP", 0.00005);
-		public static final TunableNumber kI = new TunableNumber("Head/Shooter", "kI", 0);
-		public static final TunableNumber kD = new TunableNumber("Head/Shooter", "kD", 0);
-		public static final TunableNumber kMinOutput = new TunableNumber("Head/Shooter", "kMinOutput", -1);
-		public static final TunableNumber kMaxOutput = new TunableNumber("Head/Shooter", "kMaxOutput", 1);
+		public static final double kP = 0.00005;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
 		
 		public static final double IDLE_SPEED = 0;
 
