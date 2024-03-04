@@ -94,7 +94,7 @@ public class Head extends SubsystemBase {
 		
 		// Shooter interpolation map
 		shooterInterpolationMap.put(-1.0, 1000.0); // Amp
-		shooterInterpolationMap.put(0.0, 7000.0);
+		shooterInterpolationMap.put(0.0, 9000.0);
 	}
 	
 	@Override

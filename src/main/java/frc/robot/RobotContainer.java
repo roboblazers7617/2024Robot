@@ -94,13 +94,13 @@ public class RobotContainer {
 		
 		tabs.add(new ArmTab(arm));
 		
-		tabs.add(new SwerveTab(drivetrain));
+		//tabs.add(new SwerveTab(drivetrain));
 
-		tabs.add(new LEDTab(led));
+		//tabs.add(new LEDTab(led));
 
 		tabs.add(new HeadTab(head));
 
-		tabs.add(new ClimberTab(climber));
+		//tabs.add(new ClimberTab(climber));
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
@@ -152,9 +152,11 @@ public class RobotContainer {
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
-		operatorController.a().whileTrue(head.StartIntake(false));
-		operatorController.b().whileTrue(head.StartIntake(true));
-		operatorController.leftTrigger().whileTrue(head.IdleShooter());
+		operatorController.a().whileTrue(head.StartIntake(false)).onFalse(head.StopIntake());
+		operatorController.b().whileTrue(head.StartIntake(true)).onFalse(head.StopIntake());
+		operatorController.y().whileTrue(head.OutakePiece()).onFalse(head.StopIntake());
+		operatorController.x().whileTrue(head.IdleShooter()).onFalse(head.SpinDownShooter());
+		operatorController.leftTrigger().whileTrue(head.IdleShooter()).onFalse(head.SpinDownShooter());
 		operatorController.rightTrigger().onTrue(head.Shoot());
 		operatorController.start().whileTrue(head.StopIntake());
 		operatorController.back().onTrue(head.SpinDownShooter());
