@@ -30,7 +30,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SwerveControlRequestPar
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import frc.robot.commands.TempHead;
 import frc.robot.commands.drivetrain.LockWheelsState;
+import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
@@ -83,7 +85,13 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		NamedCommands.registerCommand("SayHi", Commands.runOnce(() -> System.out.println("Hi")));
+		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
+		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
+		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
+		NamedCommands.registerCommand("turnTo0", turnTo0());
 		
+
+
 		// Configure the trigger bindings
 		configureBindings();
 		shuffleboard = ShuffleboardInfo.getInstance();
@@ -173,10 +181,29 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("Do Nothing");
+		return new PathPlannerAuto("4 piece top front to bot wip");
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
 		drivetrain.setMotorBrake(isBraked);
+	}
+
+	public Command turnToSpeaker(){
+		if (checkAllianceColors(Alliance.Red)){
+			return new TurnToTag(drivetrain, 4, true);
+		}
+			return new TurnToTag(drivetrain, 7,true);
+	}
+	public void teleopInit(){
+		arm.teleopInit();
+	}
+	/**
+	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
+	 */
+	public Command turnTo0(){
+		if (checkAllianceColors(Alliance.Red)){
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180));
+		}
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
 	}
 }
