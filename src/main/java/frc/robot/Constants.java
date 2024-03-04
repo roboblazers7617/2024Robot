@@ -49,7 +49,7 @@ public final class Constants {
 
 
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 10;
+		public static final double MIN_ANGLE = 2;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
@@ -102,7 +102,7 @@ public final class Constants {
 		/** the maximum height the elevator can safely reach */
 		public static final double MAX_HEIGHT = 18.6;
 		/** the mininum height the elevator can be to safely reach over the bumper of the robot */
-		public static final double MIN_ABOVE_PASS_HEIGHT = 18.6;
+		public static final double MIN_ABOVE_PASS_HEIGHT = 18;
 		/** the mininum height the elevator reaches when its retracted */
 		public static final double MIN_HEIGHT = 0;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
