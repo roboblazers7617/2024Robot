@@ -179,10 +179,6 @@ public class Head extends SubsystemBase {
 			return Commands.runOnce(() -> {
 				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
 			}, this)
-					.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
-					.andThen(Commands.runOnce(() -> {
-						setIntakeSpeeds(-IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED);
-					}))
 					.andThen(Commands.waitUntil(() -> isNoteAligned()))
 					.finallyDo(() -> {
 						isNoteAcquired = true;
