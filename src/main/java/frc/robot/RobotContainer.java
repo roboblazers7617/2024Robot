@@ -85,7 +85,7 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
-		NamedCommands.registerCommand("turnTo0", drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180)));
+		NamedCommands.registerCommand("turnTo0", turnTo0());
 		
 
 
@@ -179,7 +179,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("4 piece bot front to top wip");
+		return new PathPlannerAuto("4 piece top front to bot wip");
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
@@ -194,5 +194,14 @@ public class RobotContainer {
 	}
 	public void teleopInit(){
 		arm.teleopInit();
+	}
+	/**
+	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
+	 */
+	public Command turnTo0(){
+		if (checkAllianceColors(Alliance.Red)){
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180));
+		}
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
 	}
 }

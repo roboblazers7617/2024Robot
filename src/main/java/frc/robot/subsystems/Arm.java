@@ -404,82 +404,82 @@ public class Arm extends SubsystemBase {
 	
 	@Override
 	public void periodic() {
-		// dt = time.get() - lastTime;
-		// lastTime = time.get();
+		dt = time.get() - lastTime;
+		lastTime = time.get();
 		
-		// // if the elevator is extended
-		// // TODO: (Brandon) Any chance you could change the name of the MAX_BELOW_PASS_HEIGHT
-		// // constant? My brain (and probably others) don't understand what this value means...
-		// // TODO: (Brandon) For now, let's try one PID controller and not switch and see if it works.
-		// // it would simplify things for you
-		// // if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
-		// if (extendedArmKP.get() != armPIDController.getP()) {
-		// 	armPIDController.setP(extendedArmKP.get());
+		// if the elevator is extended
+		// TODO: (Brandon) Any chance you could change the name of the MAX_BELOW_PASS_HEIGHT
+		// constant? My brain (and probably others) don't understand what this value means...
+		// TODO: (Brandon) For now, let's try one PID controller and not switch and see if it works.
+		// it would simplify things for you
+		// if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
+		if (extendedArmKP.get() != armPIDController.getP()) {
+			armPIDController.setP(extendedArmKP.get());
+		}
+		if (extendedArmKI.get() != armPIDController.getI()) {
+			armPIDController.setI(extendedArmKI.get());
+		}
+		if (extendedArmKD.get() != armPIDController.getD()) {
+			armPIDController.setD(extendedArmKD.get());
+		}
 		// }
-		// if (extendedArmKI.get() != armPIDController.getI()) {
-		// 	armPIDController.setI(extendedArmKI.get());
+		// else {
+		// if (retractedArmKP.get() != armPIDController.getP()) {
+		// armPIDController.setP(ArmConstants.KP);
 		// }
-		// if (extendedArmKD.get() != armPIDController.getD()) {
-		// 	armPIDController.setD(extendedArmKD.get());
+		// if (retractedArmKI.get() != armPIDController.getI()) {
+		// armPIDController.setI(ArmConstants.KI);
 		// }
-		// // }
-		// // else {
-		// // if (retractedArmKP.get() != armPIDController.getP()) {
-		// // armPIDController.setP(ArmConstants.KP);
-		// // }
-		// // if (retractedArmKI.get() != armPIDController.getI()) {
-		// // armPIDController.setI(ArmConstants.KI);
-		// // }
-		// // if (retractedArmKD.get() != armPIDController.getD()) {
-		// // armPIDController.setD(ArmConstants.KD);
-		// // }
-		// // }
-		
-		// // Arm
-		
-		// // current arm target will be the reference set by the PID controller, based on what is currently safe
-		// double currentArmTarget = armTarget;
-		
-		// // if the arm is less than the threshold to go over the bumper
-		// // if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-		// // if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
-		// // && potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
-		// // // extended
-		// // currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
-		// // }
-		// // }
-		
-		// ArmFeedforward armFeedFoward = getArmFeedforward();
-		
-		// double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
-		// // System.out.println("arm feed foward: " + armFeedFowardValue);
-		// // System.out.println("arm target: " + armTarget);
-		
-		// armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
-		
-		// // Elevator
-		// // current elevator target will be the reference set by the PID controller, based on what is currently safe
-		// double currentElevatorTarget = elevatorTarget;
-		// // if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
-		// // TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
-		// if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-		// 	if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
-		// 		currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
-		// 	}
-		// 	if (currentElevatorTarget > ElevatorConstants.MAX_BELOW_PASS_HEIGHT && elevatorEncoder.getPosition() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
-		// 		currentElevatorTarget = ElevatorConstants.MAX_BELOW_PASS_HEIGHT;
-		// 	}
+		// if (retractedArmKD.get() != armPIDController.getD()) {
+		// armPIDController.setD(ArmConstants.KD);
 		// }
-		// // TODO: (Brandon) Won't the elevator be a linear (Position) value and not and angle?
-		// double ElevatorFeedFowardValue = getElevatorFeedforward().calculate(currentElevatorTarget, 0);
-		// double pid = elevatorPIDController.calculate(elevatorEncoder.getPosition(), currentElevatorTarget);
-		// // TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate
-		// // of movement
-		// leaderElevatorMotor.setVoltage(pid + ElevatorFeedFowardValue);
-		// // System.out.println("pid: " + pid);
-		// // System.out.println("elevator feed foward: " + ElevatorFeedFowardValue);
+		// }
 		
-		// motorTab.update();
+		// Arm
+		
+		// current arm target will be the reference set by the PID controller, based on what is currently safe
+		double currentArmTarget = armTarget;
+		
+		// if the arm is less than the threshold to go over the bumper
+		// if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+		// if (potentiometer.get() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT // and the elevator is not retracted
+		// && potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) { // and the elevator is not
+		// // extended
+		// currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
+		// }
+		// }
+		
+		ArmFeedforward armFeedFoward = getArmFeedforward();
+		
+		double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
+		// System.out.println("arm feed foward: " + armFeedFowardValue);
+		// System.out.println("arm target: " + armTarget);
+		
+		armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
+		
+		// Elevator
+		// current elevator target will be the reference set by the PID controller, based on what is currently safe
+		double currentElevatorTarget = elevatorTarget;
+		// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
+		// TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
+		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+			if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
+				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
+			}
+			if (currentElevatorTarget > ElevatorConstants.MAX_BELOW_PASS_HEIGHT && elevatorEncoder.getPosition() < ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
+				currentElevatorTarget = ElevatorConstants.MAX_BELOW_PASS_HEIGHT;
+			}
+		}
+		// TODO: (Brandon) Won't the elevator be a linear (Position) value and not and angle?
+		double ElevatorFeedFowardValue = getElevatorFeedforward().calculate(currentElevatorTarget, 0);
+		double pid = elevatorPIDController.calculate(elevatorEncoder.getPosition(), currentElevatorTarget);
+		// TODO: (Brandon) We may need to clamp the value being passed to the motor to keep it in a controllable rate
+		// of movement
+		leaderElevatorMotor.setVoltage(pid + ElevatorFeedFowardValue);
+		// System.out.println("pid: " + pid);
+		// System.out.println("elevator feed foward: " + ElevatorFeedFowardValue);
+		
+		motorTab.update();
 	}
 	
 	// get info functions
