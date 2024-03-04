@@ -85,7 +85,7 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
-		NamedCommands.registerCommand("turnTo0", drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)));
+		NamedCommands.registerCommand("turnTo0", drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180)));
 		
 
 
@@ -95,11 +95,11 @@ public class RobotContainer {
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
-		// tabs.add(new DriverStationTab());
+		tabs.add(new DriverStationTab());
 		
-		// tabs.add(new ArmTab(arm));
+		tabs.add(new ArmTab(arm));
 		
-		// tabs.add(new SwerveTab(drivetrain));
+		tabs.add(new SwerveTab(drivetrain));
 		
 		tabs.add(new LEDTab(led, intake, shooter));
 		
@@ -179,7 +179,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("top front start 1 close 2 far wip");
+		return new PathPlannerAuto("4 piece bot front to top wip");
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
