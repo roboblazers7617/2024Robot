@@ -234,6 +234,7 @@ public class Head extends SubsystemBase {
 	
 	public Command IdleShooter() {
 		return Commands.runOnce(() -> {
+			shooterIdle = true;
 			setShooterSpeed(getShooterSpeedAtPosition(0));
 		});
 	}
