@@ -83,14 +83,14 @@ public class Head extends SubsystemBase {
 		intakeMotorTop.setSmartCurrentLimit(20);
 		
 		// Shooter controller
-		shooterControllerBottom.setP(ShooterConstants.kP.get());
-		shooterControllerTop.setP(ShooterConstants.kP.get());
-		shooterControllerBottom.setI(ShooterConstants.kI.get());
-		shooterControllerTop.setI(ShooterConstants.kI.get());
-		shooterControllerBottom.setD(ShooterConstants.kD.get());
-		shooterControllerTop.setD(ShooterConstants.kD.get());
-		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
-		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
+		shooterControllerBottom.setP(ShooterConstants.kP);
+		shooterControllerTop.setP(ShooterConstants.kP);
+		shooterControllerBottom.setI(ShooterConstants.kI);
+		shooterControllerTop.setI(ShooterConstants.kI);
+		shooterControllerBottom.setD(ShooterConstants.kD);
+		shooterControllerTop.setD(ShooterConstants.kD);
+		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		
 		// Shooter interpolation map
 		shooterInterpolationMap.put(-1.0, 1000.0); // Amp
@@ -106,16 +106,6 @@ public class Head extends SubsystemBase {
 		} else {
 			motorTemperatureAlert.set(false);
 		}
-		
-		// Shooter controller
-		shooterControllerBottom.setP(ShooterConstants.kP.get());
-		shooterControllerTop.setP(ShooterConstants.kP.get());
-		shooterControllerBottom.setI(ShooterConstants.kI.get());
-		shooterControllerTop.setI(ShooterConstants.kI.get());
-		shooterControllerBottom.setD(ShooterConstants.kD.get());
-		shooterControllerTop.setD(ShooterConstants.kD.get());
-		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
-		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 	}
 	
 	public Double getIntakeEncoderBottom() {

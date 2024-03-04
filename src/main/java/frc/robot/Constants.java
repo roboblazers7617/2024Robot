@@ -187,11 +187,11 @@ public final class Constants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 23;
 		public static final int MOTOR_TOP_CAN_ID = 22;
 		
-		public static final TunableNumber kP = new TunableNumber("Head/Shooter", "kP", 0.00005);
-		public static final TunableNumber kI = new TunableNumber("Head/Shooter", "kI", 0);
-		public static final TunableNumber kD = new TunableNumber("Head/Shooter", "kD", 0);
-		public static final TunableNumber kMinOutput = new TunableNumber("Head/Shooter", "kMinOutput", -1);
-		public static final TunableNumber kMaxOutput = new TunableNumber("Head/Shooter", "kMaxOutput", 1);
+		public static final double kP = 0.00005;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
 		
 		public static final double IDLE_SPEED = 0;
 
