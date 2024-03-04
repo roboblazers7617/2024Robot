@@ -39,8 +39,6 @@ public class Climber extends SubsystemBase {
 		
 		leftClimber.setIdleMode(IdleMode.kBrake);
 		
-		rightClimber.setInverted(true);
-		
 		leftClimberEncoder = leftClimber.getEncoder();
 		rightClimberEncoder = rightClimber.getEncoder();
 		leftClimberEncoder.setPosition(0.0);

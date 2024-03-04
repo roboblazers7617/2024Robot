@@ -94,7 +94,7 @@ public class Head extends SubsystemBase {
 		
 		// Shooter interpolation map
 		shooterInterpolationMap.put(-1.0, 1000.0); // Amp
-		shooterInterpolationMap.put(0.0, 7000.0);
+		shooterInterpolationMap.put(0.0, 9000.0);
 	}
 	
 	@Override
@@ -116,6 +116,8 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setD(ShooterConstants.kD.get());
 		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput.get(), ShooterConstants.kMaxOutput.get());
+
+		
 	}
 	
 	public Double getIntakeEncoderBottom() {
@@ -158,6 +160,7 @@ public class Head extends SubsystemBase {
 			}, this);
 		}
 	}
+	
 	
 	public Command StartOutake() {
 		return Commands.runOnce(() -> {
@@ -254,7 +257,7 @@ public class Head extends SubsystemBase {
 	
 	public Command StartShooterTest(){
 		return Commands.runOnce(() -> {
-			setShooterSpeed(5000);
+			setShooterSpeed(9000);
 		});
 	}
 

@@ -49,7 +49,7 @@ public final class Constants {
 
 
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 10;
+		public static final double MIN_ANGLE = 2.0;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
@@ -138,7 +138,7 @@ public final class Constants {
 		 * The total mass of the robot, in kilograms. Includes Batteries and bumper
 		 * weight
 		 */
-		public static final double ROBOT_MASS = Units.lbsToKilograms(85.3);
+		public static final double ROBOT_MASS = Units.lbsToKilograms(150);
 		
 		/**
 		 * The total mass of the drivetrain, eboard, and associated components. Position
@@ -161,7 +161,7 @@ public final class Constants {
 		public static final int NOTE_POSSESSION_SENSOR_DIO = 1;
 		public static final int NOTE_ALIGNMENT_SENSOR_DIO = 2;
 		
-		public static final double INTAKE_SPEED = 0.25;
+		public static final double INTAKE_SPEED = 1.0;
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 0.25); // What speed should a note be fed into the shooter at?

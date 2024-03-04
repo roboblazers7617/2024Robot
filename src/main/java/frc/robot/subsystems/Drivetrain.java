@@ -60,7 +60,7 @@ public class Drivetrain extends SubsystemBase {
 	public Drivetrain(Vision vision) {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
-		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
+		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);

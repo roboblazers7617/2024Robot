@@ -370,7 +370,7 @@ public class Arm extends SubsystemBase {
 		
 		// if the arm is less than the threshold to go over the bumper
 		if (currentArmTarget < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-			if (elevatorEncoder.getPosition() < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) { // and the elevator is not
+			if (elevatorEncoder.getPosition() < 18.0) { // and the elevator is not
 				// extended
 				currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
