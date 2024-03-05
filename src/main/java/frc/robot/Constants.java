@@ -163,6 +163,7 @@ public final class Constants {
 		
 		public static final double INTAKE_SPEED = 1.0;
 		public static final double OUTAKE_SPEED = -0.25;
+		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
 	}
 	public static class PivotConstants {

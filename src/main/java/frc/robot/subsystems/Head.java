@@ -168,8 +168,7 @@ public class Head extends SubsystemBase {
 			}, this)
 					.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
 					.andThen(Commands.runOnce(() -> {
-						// TODO: merge failed, not my code so commented to fix it
-						setIntakeSpeeds(/* IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED */IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
+						setIntakeSpeeds(IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED);
 					}))
 					.andThen(Commands.waitUntil(() -> isNoteAligned()))
 					.finallyDo(() -> {
