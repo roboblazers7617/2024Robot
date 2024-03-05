@@ -149,7 +149,6 @@ public class Head extends SubsystemBase {
 		}
 	}
 	
-	
 	public Command StartOutake() {
 		return Commands.runOnce(() -> {
 			setIntakeSpeeds(IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
@@ -169,8 +168,8 @@ public class Head extends SubsystemBase {
 			}, this)
 					.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
 					.andThen(Commands.runOnce(() -> {
-						//TODO: merge failed, not my code so commented to fix it
-						setIntakeSpeeds(/*IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED*/IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
+						// TODO: merge failed, not my code so commented to fix it
+						setIntakeSpeeds(/* IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED */IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
 					}))
 					.andThen(Commands.waitUntil(() -> isNoteAligned()))
 					.finallyDo(() -> {
@@ -227,10 +226,10 @@ public class Head extends SubsystemBase {
 		return shooterSetPoint;
 	}
 	
-	public Command SpinUpShooter(Supplier<Double> positionMeters) {
+	public Command SpinUpShooter(double positionMeters) {
 		return Commands.runOnce(() -> {
 			shooterIdle = false;
-			setShooterSpeed(getShooterSpeedAtPosition(positionMeters.get()));
+			setShooterSpeed(getShooterSpeedAtPosition(positionMeters));
 		}, this);
 	}
 	
@@ -240,15 +239,14 @@ public class Head extends SubsystemBase {
 			setShooterSpeed(getShooterSpeedAtPosition(-1));
 		});
 	}
-
-
+	
 	public Command ShootInSpeaker() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
 			setShooterSpeed(12000);
 		});
 	}
-
+	
 	public Command IdleShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
@@ -256,17 +254,18 @@ public class Head extends SubsystemBase {
 		});
 	}
 	
-	public Command StartShooterTest(){
+	public Command StartShooterTest() {
 		return Commands.runOnce(() -> {
 			setShooterSpeed(9000);
 		});
 	}
-
-	public Command StopShooterTest(){
+	
+	public Command StopShooterTest() {
 		return Commands.runOnce(() -> {
 			setShooterSpeed(0);
 		});
 	}
+	
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;

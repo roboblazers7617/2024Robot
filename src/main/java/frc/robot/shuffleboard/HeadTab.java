@@ -119,7 +119,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		shooterLayout.add("Ready to Shoot", false).withPosition(1, 0);
 		
-		shooterLayout.add("Spin Up", head.SpinUpShooter(() -> shootingPosition.get())).withPosition(2, 0);
+		shooterLayout.add("Spin Up", head.SpinUpShooter(shootingPosition.get())).withPosition(2, 0);
 		shooterLayout.add("Spin Down", head.SpinDownShooter()).withPosition(2, 1);
 		shooterLayout.add("Shoot", head.Shoot()).withPosition(2, 2);
 		
