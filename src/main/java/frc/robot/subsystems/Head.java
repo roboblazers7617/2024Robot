@@ -93,7 +93,7 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		
 		// Shooter interpolation map
-		shooterInterpolationMap.put(-1.0, 1000.0); // Amp
+		shooterInterpolationMap.put(-1.0, 3000.0); // Amp
 		shooterInterpolationMap.put(0.0, 9000.0);
 	}
 	
@@ -237,7 +237,7 @@ public class Head extends SubsystemBase {
 	public Command ShootInAmp() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
-			setShooterSpeed(3000);
+			setShooterSpeed(getShooterSpeedAtPosition(-1));
 		});
 	}
 
