@@ -234,6 +234,21 @@ public class Head extends SubsystemBase {
 		}, this);
 	}
 	
+	public Command ShootInAmp() {
+		return Commands.runOnce(() -> {
+			shooterIdle = true;
+			setShooterSpeed(3000);
+		});
+	}
+
+
+	public Command ShootInSpeaker() {
+		return Commands.runOnce(() -> {
+			shooterIdle = true;
+			setShooterSpeed(12000);
+		});
+	}
+
 	public Command IdleShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;

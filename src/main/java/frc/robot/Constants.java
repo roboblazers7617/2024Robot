@@ -49,7 +49,7 @@ public final class Constants {
 
 
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 2.0;
+		public static final double MIN_ANGLE = 1.5;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 

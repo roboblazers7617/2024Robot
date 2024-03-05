@@ -155,8 +155,8 @@ public class RobotContainer {
 		operatorController.a().whileTrue(head.StartIntake(false)).onFalse(head.StopIntake());
 		operatorController.b().whileTrue(head.StartIntake(true)).onFalse(head.StopIntake());
 		operatorController.y().whileTrue(head.OutakePiece()).onFalse(head.StopIntake());
-		operatorController.x().whileTrue(head.IdleShooter()).onFalse(head.SpinDownShooter());
-		operatorController.leftTrigger().whileTrue(head.IdleShooter()).onFalse(head.SpinDownShooter());
+		operatorController.x().whileTrue(head.ShootInSpeaker()).onFalse(head.SpinDownShooter());
+		operatorController.leftTrigger().whileTrue(head.ShootInAmp()).onFalse(head.SpinDownShooter());
 		operatorController.rightTrigger().onTrue(head.Shoot());
 		operatorController.start().whileTrue(head.StopIntake());
 		operatorController.back().onTrue(head.SpinDownShooter());
