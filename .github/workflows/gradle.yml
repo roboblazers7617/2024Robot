@@ -72,7 +72,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-results
-      
+          path: build
+
       - name: Initialize Gradle
         run: ./gradlew
 
