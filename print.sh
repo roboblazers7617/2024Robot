@@ -1,5 +1,5 @@
 #!/bin/sh
-output=$(grep System.out.print -n -r --include "*.java" --exclude ./src/main/java/frc/robot/util/Alert.java)
+output=$(grep -v -E "(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)" -r --include "*.java" --exclude ./src/main/java/frc/robot/util/Alert.java | grep System.out.print)
 empty=""
 # echo $output
 if test "$output" = "" 
