@@ -72,6 +72,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-results
+      
+      - name: Initialize Gradle
+        run: ./gradlew
 
       - name: Simulate
         run: ./simulate.sh
