@@ -1,3 +1,4 @@
+#!/bin/sh
 output=$(grep System.out.print -n -r --include "*.java" --exclude ./src/main/java/frc/robot/util/Alert.java)
 empty=""
 # echo $output
