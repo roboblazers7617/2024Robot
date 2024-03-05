@@ -1,4 +1,4 @@
-output=$(grep System.out.print -r --include "*.java" --exclude ./src/main/java/frc/robot/util/Alert.java)
+output=$(grep System.out.print -n -r --include "*.java" --exclude ./src/main/java/frc/robot/util/Alert.java)
 empty=""
 # echo $output
 if test "$output" = "" 
