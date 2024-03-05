@@ -19,8 +19,7 @@ import frc.robot.util.TunableNumber;
 public class HeadTab extends ShuffleboardTabBase {
 	private final Head head;
 	
-	private final BooleanPublisher noteWithinHeadPublisher;
-	private final BooleanPublisher noteAlignedPublisher;
+	private final BooleanPublisher noteWithinSensorPublisher;
 	// private final BooleanPublisher noteInShooterPublisher;
 	private final BooleanPublisher noteAcquiredPublisher;
 	
@@ -47,9 +46,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		NetworkTable networkTable = inst.getTable("logging/Head");
 		
 		NetworkTable intakeNetworkTable = inst.getTable("logging/Head/Intake");
-		noteWithinHeadPublisher = intakeNetworkTable.getBooleanTopic("Note Within Head").publish();
-		noteAlignedPublisher = intakeNetworkTable.getBooleanTopic("Note Aligned").publish();
-		// noteInShooterPublisher = intakeNetworkTable.getBooleanTopic("Note in Shooter").publish();
+		noteWithinSensorPublisher = intakeNetworkTable.getBooleanTopic("Note Within Sensor").publish();
 		noteAcquiredPublisher = intakeNetworkTable.getBooleanTopic("Note Acquired").publish();
 		
 		NetworkTable shooterNetworkTable = inst.getTable("logging/Head/Shooter");
@@ -72,8 +69,7 @@ public class HeadTab extends ShuffleboardTabBase {
 	
 	@Override
 	public void update() {
-		noteWithinHeadPublisher.set(head.isNoteWithinHead());
-		noteAlignedPublisher.set(head.isNoteAligned());
+		noteWithinSensorPublisher.set(head.isNoteWithinSensor());
 		// noteInShooterPublisher.set(head.isNoteInShooter());
 		noteAcquiredPublisher.set(head.isNoteAcquired());
 		
@@ -96,9 +92,8 @@ public class HeadTab extends ShuffleboardTabBase {
 		ShuffleboardTab tab = Shuffleboard.getTab("Head");
 		// Intake
 		ShuffleboardLayout intakeLayout = tab.getLayout("Intake", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 0);
-		intakeLayout.add("Note Within Head", false).withPosition(0, 0);
-		intakeLayout.add("Note Aligned", false).withPosition(0, 1);
-		intakeLayout.add("Note Acquired", false).withPosition(0, 2);
+		intakeLayout.add("Note Within Sensor", false).withPosition(0, 0);
+		intakeLayout.add("Note Acquired", false).withPosition(0, 1);
 		
 		intakeLayout.add("Intake from Ground", head.IntakePiece(false)).withPosition(1, 0);
 		intakeLayout.add("Intake from Source", head.IntakePiece(true)).withPosition(2, 0);

@@ -158,8 +158,7 @@ public final class Constants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 21;
 		public static final int MOTOR_TOP_CAN_ID = 20;
 		
-		public static final int NOTE_POSSESSION_SENSOR_DIO = 1;
-		public static final int NOTE_ALIGNMENT_SENSOR_DIO = 2;
+		public static final int NOTE_SENSOR_DIO = 1;
 		
 		public static final double INTAKE_SPEED = 1.0;
 		public static final double OUTAKE_SPEED = -0.25;

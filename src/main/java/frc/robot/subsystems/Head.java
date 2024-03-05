@@ -45,8 +45,7 @@ public class Head extends SubsystemBase {
 	 */
 	private final CANSparkMax intakeMotorBottom = new CANSparkMax(IntakeConstants.MOTOR_BOTTOM_CAN_ID, MotorType.kBrushless);
 	private final CANSparkMax intakeMotorTop = new CANSparkMax(IntakeConstants.MOTOR_TOP_CAN_ID, MotorType.kBrushless);
-	private final DigitalInput isNoteWithinHead = new DigitalInput(IntakeConstants.NOTE_POSSESSION_SENSOR_DIO);
-	private final DigitalInput isNoteInPosition = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
+	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private boolean isNoteAcquired = false; // Since none of the sensors will be active when a note is intaken and aligned, this boolean is necessary to know if the robot has a note.
 	
 	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
@@ -166,11 +165,12 @@ public class Head extends SubsystemBase {
 			return Commands.runOnce(() -> {
 				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, -IntakeConstants.INTAKE_SPEED);
 			}, this)
-					.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
+					.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
+					.andThen(Commands.waitSeconds(0.5))
 					.andThen(Commands.runOnce(() -> {
 						setIntakeSpeeds(IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED);
 					}))
-					.andThen(Commands.waitUntil(() -> isNoteAligned()))
+					.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 					.finallyDo(() -> {
 						isNoteAcquired = true;
 						setIntakeSpeeds(0, 0);
@@ -179,7 +179,7 @@ public class Head extends SubsystemBase {
 			return Commands.runOnce(() -> {
 				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
 			}, this)
-					.andThen(Commands.waitUntil(() -> isNoteAligned()))
+					.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 					.finallyDo(() -> {
 						isNoteAcquired = true;
 						setIntakeSpeeds(0, 0);
@@ -191,8 +191,8 @@ public class Head extends SubsystemBase {
 		return Commands.runOnce(() -> {
 			setIntakeSpeeds(IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
 		}, this)
-				.andThen(Commands.waitUntil(() -> !isNoteWithinHead()))
-				.andThen(Commands.waitSeconds(1))
+				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
+				.andThen(Commands.waitSeconds(3))
 				.finallyDo(() -> {
 					isNoteAcquired = false;
 					setIntakeSpeeds(0, 0);
@@ -290,8 +290,8 @@ public class Head extends SubsystemBase {
 				.andThen(Commands.runOnce(() -> {
 					setIntakeSpeeds(IntakeConstants.FEEDER_SPEED.get(), IntakeConstants.FEEDER_SPEED.get());
 				}))
-				.andThen(Commands.waitUntil(() -> isNoteWithinHead()))
-				.andThen(Commands.waitUntil(() -> !isNoteWithinHead()))
+				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
+				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 				.andThen(Commands.waitSeconds(0.5))
 				.finallyDo(() -> {
 					isNoteAcquired = false;
@@ -300,29 +300,12 @@ public class Head extends SubsystemBase {
 				});
 	}
 	
-	public boolean isNoteWithinHead() {
-		// TODO: (Max) In 2022 we ran into some funkiness where this didn't work. We couldn't figure out why. If this doesn't work, you just need to do this...
-		// boolean sensorVal = shooterSensor.get();
-		// return !sensorVal;
-		return isNoteWithinHead.get();
-	}
-	
-	public boolean isNoteAligned() {
-		// TODO: (Max) In 2022 we ran into some funkiness where this didn't work. We couldn't figure out why. If this doesn't work, you just need to do this...
-		// boolean sensorVal = shooterSensor.get();
-		// return !sensorVal;
-		return !isNoteInPosition.get();
+	public boolean isNoteWithinSensor() {
+		return isNoteInSensor.get();
 	}
 	
 	// Does the intake have a note?
 	public boolean isNoteAcquired() {
 		return isNoteAcquired;
 	}
-	
-	// public boolean isNoteInShooter() {
-	// // TODO: (Max) In 2022 we ran into some funkiness where this didn't work. We couldn't figure out why. If this doesn't work, you just need to do this...
-	// // boolean sensorVal = shooterSensor.get();
-	// // return !sensorVal;
-	// return isNoteInShooter.get();
-	// }
 }
