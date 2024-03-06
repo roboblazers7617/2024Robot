@@ -122,6 +122,15 @@ public class Arm extends SubsystemBase {
 		followerArmMotor.setSmartCurrentLimit(ArmConstants.MAX_AMPERAGE);
 		followerArmMotor.follow(leaderArmMotor, true);
 		
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus1, 1000);
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus3, 1000);
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus4, 1000);
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus5, 1000);
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus6, 1000);
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus7, 1000);
+		followerArmMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus2, 1000);
+		
 		// setup the arm pid controller
 		armPIDController.setP(ArmConstants.KP);
 		armPIDController.setI(ArmConstants.KI);
@@ -139,6 +148,14 @@ public class Arm extends SubsystemBase {
 		armTarget = armAbsoluteEncoder.getPosition();
 		// System.out.println("arm: target: " + armTarget);
 		
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus1, 1000);
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus3, 1000);
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus4, 1000);
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus5, 1000);
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus6, 1000);
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus7, 1000);
+		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus2, 1000);
 		// setup elevator motors
 		leaderElevatorMotor.restoreFactoryDefaults();
 		leaderElevatorMotor.setIdleMode(IdleMode.kBrake);
@@ -344,15 +361,15 @@ public class Arm extends SubsystemBase {
 		// TODO: (Brandon) For now, let's try one PID controller and not switch and see if it works.
 		// it would simplify things for you
 		// if (potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT) {
-		if (extendedArmKP.get() != armPIDController.getP()) {
-			armPIDController.setP(extendedArmKP.get());
-		}
-		if (extendedArmKI.get() != armPIDController.getI()) {
-			armPIDController.setI(extendedArmKI.get());
-		}
-		if (extendedArmKD.get() != armPIDController.getD()) {
-			armPIDController.setD(extendedArmKD.get());
-		}
+		// if (extendedArmKP.get() != armPIDController.getP()) {
+		// armPIDController.setP(extendedArmKP.get());
+		// }
+		// if (extendedArmKI.get() != armPIDController.getI()) {
+		// armPIDController.setI(extendedArmKI.get());
+		// }
+		// if (extendedArmKD.get() != armPIDController.getD()) {
+		// armPIDController.setD(extendedArmKD.get());
+		// }
 		// }
 		// else {
 		// if (retractedArmKP.get() != armPIDController.getP()) {
@@ -386,33 +403,34 @@ public class Arm extends SubsystemBase {
 			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
 			lastAcutalArmTarget = currentArmTarget;
 		}
-		
-		// Elevator
-		// current elevator target will be the reference set by the PID controller, based on what is currently safe
-		double currentElevatorTarget = elevatorTarget;
-		// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
-		// TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
-		if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
-			if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
-				currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
-			}
-		}
-		
-		/** this is a constant increase to make the elvator go faster */
-		if (currentElevatorTarget != lastAcutalElevatorTarget) {
-			double speedyElevatorFeedForward;
-			if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 1.0) {
-				speedyElevatorFeedForward = Math.copySign(0.2, (currentElevatorTarget - elevatorEncoder.getPosition()));
-			} else {
-				speedyElevatorFeedForward = 0.0;
+		if (!ElevatorConstants.KILL_IT_ALL) {
+			// Elevator
+			// current elevator target will be the reference set by the PID controller, based on what is currently safe
+			double currentElevatorTarget = elevatorTarget;
+			// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
+			// TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
+			if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
+				if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
+					currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
+				}
 			}
 			
-			double elevatorFeedFowardValue = getElevatorFeedforward().calculate(currentElevatorTarget, 0);
-			elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, speedyElevatorFeedForward + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
-			lastAcutalElevatorTarget = currentElevatorTarget;
+			/** this is a constant increase to make the elvator go faster */
+			if (currentElevatorTarget != lastAcutalElevatorTarget) {
+				double speedyElevatorFeedForward;
+				if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 1.0) {
+					speedyElevatorFeedForward = Math.copySign(0.2, (currentElevatorTarget - elevatorEncoder.getPosition()));
+				} else {
+					speedyElevatorFeedForward = 0.0;
+				}
+				
+				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(currentElevatorTarget, 0);
+				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, speedyElevatorFeedForward + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
+				lastAcutalElevatorTarget = currentElevatorTarget;
+			}
+			
+			motorTab.update();
 		}
-		
-		motorTab.update();
 	}
 	
 	// get info functions
