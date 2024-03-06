@@ -51,6 +51,8 @@ public class Drivetrain extends SubsystemBase {
 	private final Vision vision;
 
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
+
+	private Optional<EstimatedRobotPose> visionMeasurement;
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -259,7 +261,7 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-		Optional<EstimatedRobotPose> visionMeasurement = vision.updateOdometry();
+		visionMeasurement = vision.updateOdometry();
 		if (visionMeasurement.isPresent()) {
 			swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().timestampSeconds);
 		}
