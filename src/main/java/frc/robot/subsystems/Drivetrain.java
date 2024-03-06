@@ -16,6 +16,8 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,6 +38,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.shuffleboard.MotorTab;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -49,8 +53,10 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	private final SwerveDrive swerveDrive;
 	private final Vision vision;
-
+	
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
+	private AprilTagFieldLayout fieldLayout;
+	
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -71,21 +77,25 @@ public class Drivetrain extends SubsystemBase {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		
+		try {
+			fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+		} catch (IOException e) {
+			fieldLayout = null;
+		}
+		
 		swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot
 													// via angle.
-
-  
-	setupPathPlanner();
-	this.vision = vision;
-
-	for (int i = 0; i < 4; i++){
-		motorTab.addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
-		motorTab.addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
+		
+		setupPathPlanner();
+		this.vision = vision;
+		
+		for (int i = 0; i < 4; i++) {
+			motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
+			motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor() });
+		}
 	}
-  }
-
-
-
+	
 	/**
 	 * Setup AutoBuilder for PathPlanner.
 	 */
@@ -443,14 +453,20 @@ public class Drivetrain extends SubsystemBase {
 	public Rotation2d getPitch() {
 		return swerveDrive.getPitch();
 	}
-
+	
 	/**
-	 * Gets the current pitch angle of the robot, as reported by the imu.
+	 * Gets the current roll angle of the robot, as reported by the imu.
 	 *
 	 * @return The heading as a {@link Rotation2d} angle
 	 */
 	public Rotation2d getRoll() {
 		return swerveDrive.getRoll();
 	}
-
+	
+	public double getDistanceToSpeaker() {
+		if (DriverStation.getAlliance().orElseThrow() == Alliance.Red) {
+			return getPose().getTranslation().minus(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d()).getNorm();
+		}
+		return getPose().getTranslation().minus(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d()).getNorm();
+	}
 }
