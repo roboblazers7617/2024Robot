@@ -26,6 +26,8 @@ public final class Constants {
 
 	public final static double ENABLED_BATTERY_WARNING_VOLTAGE = 9.9;
 	public final static double DISABLED_BATTERY_WARNING_VOLTAGE = 12.2;
+	/** in meters */
+	public final static double PODIUM_DISTANCE = 5.0;
 
 	public static class TestNumber{
 		public static int number = 5;
@@ -50,6 +52,7 @@ public final class Constants {
 
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 1.5;
+		public static final double SOURCE_ANGLE = 45;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
