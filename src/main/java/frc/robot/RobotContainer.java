@@ -152,12 +152,15 @@ public class RobotContainer {
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
-		operatorController.a().whileTrue(head.StartIntake(false)).onFalse(head.StopIntake());
-		operatorController.b().whileTrue(head.StartIntake(true)).onFalse(head.StopIntake());
+		//operatorController.x().whileTrue(head.StartIntake(false)).onFalse(head.StopIntake());
+		//operatorController.y().whileTrue(head.StartIntake(true)).onFalse(head.StopIntake());
 		operatorController.y().whileTrue(head.OutakePiece()).onFalse(head.StopIntake());
-		operatorController.x().whileTrue(head.ShootInSpeaker()).onFalse(head.SpinDownShooter());
-		operatorController.leftTrigger().whileTrue(head.ShootInAmp()).onFalse(head.SpinDownShooter());
-		operatorController.rightTrigger().onTrue(head.Shoot());
+		operatorController.a().onTrue(head.IntakePiece(false));
+		operatorController.b().onTrue(head.IntakePiece(true));
+		operatorController.leftTrigger().onTrue(head.IdleShooter());
+		operatorController.rightTrigger().onTrue(head.ShootAtPosition(0));
+		operatorController.leftBumper().onTrue(head.ShootInAmp());
+		operatorController.rightBumper().onTrue(head.ShootAtPosition(0));
 		operatorController.start().whileTrue(head.StopIntake());
 		operatorController.back().onTrue(head.SpinDownShooter());
 

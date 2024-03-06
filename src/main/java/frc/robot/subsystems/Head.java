@@ -92,7 +92,6 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		
 		// Shooter interpolation map
-		shooterInterpolationMap.put(-1.0, 3000.0); // Amp
 		shooterInterpolationMap.put(0.0, 9000.0);
 	}
 	
@@ -225,43 +224,25 @@ public class Head extends SubsystemBase {
 		return shooterSetPoint;
 	}
 	
-	public Command SpinUpShooter(double positionMeters) {
+	public Command SpinUpShooter(double rpm) {
 		return Commands.runOnce(() -> {
 			shooterIdle = false;
-			setShooterSpeed(getShooterSpeedAtPosition(positionMeters));
+			setShooterSpeed(rpm);
 		}, this);
 	}
 	
-	public Command ShootInAmp() {
-		return Commands.runOnce(() -> {
-			shooterIdle = true;
-			setShooterSpeed(getShooterSpeedAtPosition(-1));
-		});
+	public Command SpinUpShooterAtPosition(double positionMeters) {
+		return SpinUpShooter(getShooterSpeedAtPosition(positionMeters));
 	}
 	
-	public Command ShootInSpeaker() {
-		return Commands.runOnce(() -> {
-			shooterIdle = true;
-			setShooterSpeed(12000);
-		});
+	public Command SpinUpShooterForAmp() {
+		return SpinUpShooter(ShooterConstants.AMP_SPEED);
 	}
 	
 	public Command IdleShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
 			setShooterSpeed(getShooterSpeedAtPosition(0));
-		});
-	}
-	
-	public Command StartShooterTest() {
-		return Commands.runOnce(() -> {
-			setShooterSpeed(9000);
-		});
-	}
-	
-	public Command StopShooterTest() {
-		return Commands.runOnce(() -> {
-			setShooterSpeed(0);
 		});
 	}
 	
@@ -284,9 +265,9 @@ public class Head extends SubsystemBase {
 		// @formatter:on
 	}
 	
-	public Command Shoot() {
-		// TODO: (Max) don't you need to command the shooter to spin up?
-		return Commands.waitUntil(() -> isReadyToShoot())
+	public Command Shoot(double rpm) {
+		return SpinUpShooter(rpm)
+				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
 				.andThen(Commands.runOnce(() -> {
 					setIntakeSpeeds(IntakeConstants.FEEDER_SPEED.get(), IntakeConstants.FEEDER_SPEED.get());
 				}))
@@ -298,6 +279,14 @@ public class Head extends SubsystemBase {
 					setIntakeSpeeds(0, 0);
 					SpinDownShooter();
 				});
+	}
+	
+	public Command ShootAtPosition(double position) {
+		return Shoot(getShooterSpeedAtPosition(position));
+	}
+	
+	public Command ShootInAmp() {
+		return Shoot(ShooterConstants.AMP_SPEED);
 	}
 	
 	public boolean isNoteWithinSensor() {
