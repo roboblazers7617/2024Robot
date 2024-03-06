@@ -81,6 +81,7 @@ public final class Constants {
 	}
 
 	public static class ElevatorConstants {
+		public static final boolean KILL_IT_ALL = false;
 		public static final int RIGHT_MOTOR_ID = 28;
 		public static final int LEFT_MOTOR_ID = 27;
 		public static final int MAX_AMPERAGE = 40;
