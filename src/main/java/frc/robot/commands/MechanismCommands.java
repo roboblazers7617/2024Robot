@@ -12,34 +12,41 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
-	public Command ShootAmp(Arm arm, Head head) {
-		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.MAX_ANGLE)).andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))).andThen(head.ShootInAmp());
+	public static Command ShootAmp(Arm arm, Head head) {
+		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.MAX_ANGLE))
+				.andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT)))
+				.andThen(head.ShootInAmp());
 	}
 	
-	public Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
+	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
 		double distance = drivetrain.getDistanceToSpeaker();
 		InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
 		map.put(0.0, 0.0);
-		return Commands.runOnce(() -> arm.setArmTarget(map.get(distance))).andThen(head.ShootAtPosition(distance));
+		return Commands.runOnce(() -> arm.setArmTarget(map.get(distance)))
+				.andThen(head.ShootAtPosition(distance));
 	}
 	
-	public Command ShootSpeakerSubwoofer(Arm arm, Head head) {
+	public static Command ShootSpeakerSubwoofer(Arm arm, Head head) {
 		InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
 		map.put(0.0, 0.0);
-		return Commands.runOnce(() -> arm.setArmTarget(map.get(0.0))).andThen(head.ShootAtPosition(0));
+		return Commands.runOnce(() -> arm.setArmTarget(map.get(0.0)))
+				.andThen(head.ShootAtPosition(0));
 	}
 	
-	public Command ShootSpeakerPodium(Arm arm, Head head) {
+	public static Command ShootSpeakerPodium(Arm arm, Head head) {
 		InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
 		map.put(0.0, 0.0);
-		return Commands.runOnce(() -> arm.setArmTarget(map.get(Constants.PODIUM_DISTANCE))).andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE));
+		return Commands.runOnce(() -> arm.setArmTarget(map.get(Constants.PODIUM_DISTANCE)))
+				.andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE));
 	}
 	
-	public Command IntakeSource(Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE)).andThen(head.IntakePiece(true));
+	public static Command IntakeSource(Arm arm, Head head) {
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
+				.andThen(head.IntakePiece());
 	}
 	
-	public Command IntakeGround(Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.MIN_ANGLE)).andThen(head.IntakePiece(false));
+	public static Command IntakeGround(Arm arm, Head head) {
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.MIN_ANGLE))
+				.andThen(head.IntakePiece());
 	}
 }

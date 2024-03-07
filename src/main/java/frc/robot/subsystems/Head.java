@@ -135,16 +135,10 @@ public class Head extends SubsystemBase {
 		setIntakeTopSpeed(intakeTopSpeed);
 	}
 	
-	public Command StartIntake(boolean isFromSource) {
-		if (isFromSource) {
-			return Commands.runOnce(() -> {
-				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, -IntakeConstants.INTAKE_SPEED);
-			}, this);
-		} else {
-			return Commands.runOnce(() -> {
-				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
-			}, this);
-		}
+	public Command StartIntake() {
+		return Commands.runOnce(() -> {
+			setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
+		}, this);
 	}
 	
 	public Command StartOutake() {
@@ -159,31 +153,15 @@ public class Head extends SubsystemBase {
 		}, this);
 	}
 	
-	public Command IntakePiece(boolean isFromSource) {
-		if (isFromSource) {
-			return Commands.runOnce(() -> {
-				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, -IntakeConstants.INTAKE_SPEED);
-			}, this)
-					.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-					.andThen(Commands.waitSeconds(0.5))
-					.andThen(Commands.runOnce(() -> {
-						setIntakeSpeeds(IntakeConstants.ALIGNMENT_SPEED, -IntakeConstants.ALIGNMENT_SPEED);
-					}))
-					.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
-					.finallyDo(() -> {
-						isNoteAcquired = true;
-						setIntakeSpeeds(0, 0);
-					});
-		} else {
-			return Commands.runOnce(() -> {
-				setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
-			}, this)
-					.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-					.finallyDo(() -> {
-						isNoteAcquired = true;
-						setIntakeSpeeds(0, 0);
-					});
-		}
+	public Command IntakePiece() {
+		return Commands.runOnce(() -> {
+			setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
+		}, this)
+				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
+				.finallyDo(() -> {
+					isNoteAcquired = true;
+					setIntakeSpeeds(0, 0);
+				});
 	}
 	
 	public Command OutakePiece() {

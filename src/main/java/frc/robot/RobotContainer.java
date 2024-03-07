@@ -32,6 +32,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SwerveControlRequestPar
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import frc.robot.commands.MechanismCommands;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -152,16 +153,14 @@ public class RobotContainer {
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
-		//operatorController.x().whileTrue(head.StartIntake(false)).onFalse(head.StopIntake());
-		//operatorController.y().whileTrue(head.StartIntake(true)).onFalse(head.StopIntake());
-		operatorController.y().whileTrue(head.OutakePiece()).onFalse(head.StopIntake());
-		operatorController.a().onTrue(head.IntakePiece(false));
-		operatorController.b().onTrue(head.IntakePiece(true));
+		operatorController.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
+		operatorController.a().onTrue(MechanismCommands.IntakeGround(arm, head));
+		operatorController.b().onTrue(MechanismCommands.IntakeSource(arm, head));
 		operatorController.leftTrigger().onTrue(head.IdleShooter());
-		operatorController.rightTrigger().onTrue(head.ShootAtPosition(0));
-		operatorController.leftBumper().onTrue(head.ShootInAmp());
-		operatorController.rightBumper().onTrue(head.ShootAtPosition(0));
-		operatorController.start().whileTrue(head.StopIntake());
+		operatorController.rightTrigger().onTrue(MechanismCommands.ShootSpeaker(arm, head, drivetrain));
+		operatorController.leftBumper().onTrue(MechanismCommands.ShootAmp(arm, head));
+		operatorController.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(arm, head));
+		operatorController.start().onTrue(head.StopIntake());
 		operatorController.back().onTrue(head.SpinDownShooter());
 
 		operatorController.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(.2, .2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));

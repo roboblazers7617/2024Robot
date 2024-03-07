@@ -95,10 +95,8 @@ public class HeadTab extends ShuffleboardTabBase {
 		intakeLayout.add("Note Within Sensor", false).withPosition(0, 0);
 		intakeLayout.add("Note Acquired", false).withPosition(0, 1);
 		
-		intakeLayout.add("Intake from Ground", head.IntakePiece(false)).withPosition(1, 0);
-		intakeLayout.add("Intake from Source", head.IntakePiece(true)).withPosition(2, 0);
-		intakeLayout.add("Manual Intake from Ground", head.StartIntake(false)).withPosition(1, 1);
-		intakeLayout.add("Manual Intake from Source", head.StartIntake(true)).withPosition(2, 1);
+		intakeLayout.add("Intake", head.IntakePiece()).withPosition(1, 0);
+		intakeLayout.add("Manual Intake", head.StartIntake()).withPosition(2, 0);
 		intakeLayout.add("Outake", head.OutakePiece()).withPosition(3, 0);
 		intakeLayout.add("Manual Outake", head.StartOutake()).withPosition(3, 1);
 		
