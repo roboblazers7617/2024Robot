@@ -2,25 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.33,
-      "y": 7.0
+      "x": 0.0,
+      "y": 0.0
     },
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "top angle start"
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SayHi"
+            "name": "turnToSpeaker"
           }
         }
       ]

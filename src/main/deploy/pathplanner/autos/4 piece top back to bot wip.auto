@@ -2,7 +2,7 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.33,
+      "x": 1.54,
       "y": 7.0
     },
     "rotation": 0
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "top start to top ring"
+            "pathName": "top back start to top ring"
           }
         },
         {

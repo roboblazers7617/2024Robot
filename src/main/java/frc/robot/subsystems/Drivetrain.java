@@ -56,7 +56,7 @@ public class Drivetrain extends SubsystemBase {
 	
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
-	
+	private Optional<EstimatedRobotPose> visionMeasurement;
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -110,7 +110,7 @@ public class Drivetrain extends SubsystemBase {
 						// Translation PID constants
 						new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p, swerveDrive.swerveController.config.headingPIDF.i, swerveDrive.swerveController.config.headingPIDF.d),
 						// Rotation PID constants
-						5,
+						10,
 						// Max module speed, in m/s
 						swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
 						// Drive base radius in meters. Distance from robot center to furthest module.
@@ -269,7 +269,7 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-		Optional<EstimatedRobotPose> visionMeasurement = vision.updateOdometry();
+		visionMeasurement = vision.updateOdometry();
 		if (visionMeasurement.isPresent()) {
 			swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().timestampSeconds);
 		}
