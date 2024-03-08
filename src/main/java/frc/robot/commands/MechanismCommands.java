@@ -20,22 +20,19 @@ public class MechanismCommands {
 	
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
 		double distance = drivetrain.getDistanceToSpeaker();
-		InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
-		map.put(0.0, 0.0);
+		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
 		return Commands.runOnce(() -> arm.setArmTarget(map.get(distance)))
 				.andThen(head.ShootAtPosition(distance));
 	}
 	
 	public static Command ShootSpeakerSubwoofer(Arm arm, Head head) {
-		InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
-		map.put(0.0, 0.0);
+		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
 		return Commands.runOnce(() -> arm.setArmTarget(map.get(0.0)))
 				.andThen(head.ShootAtPosition(0));
 	}
 	
 	public static Command ShootSpeakerPodium(Arm arm, Head head) {
-		InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
-		map.put(0.0, 0.0);
+		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
 		return Commands.runOnce(() -> arm.setArmTarget(map.get(Constants.PODIUM_DISTANCE)))
 				.andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE));
 	}

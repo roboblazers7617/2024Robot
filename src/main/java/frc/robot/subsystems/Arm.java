@@ -66,6 +66,8 @@ public class Arm extends SubsystemBase {
 	private double armTarget;
 	/** the last actual arm target */
 	private double lastAcutalArmTarget;
+	/** arm angle based on distance interpolation table */
+	public final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
 	
 	// Elevator
 	/** the right motor */
