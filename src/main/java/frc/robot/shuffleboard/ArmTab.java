@@ -53,6 +53,7 @@ public class ArmTab extends ShuffleboardTabBase {
 		// tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
 		// tab.add("foward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kForward));
 		// tab.add("backward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kReverse));
+		arm.getMotorTab().activateShuffleboard();
 	}
 	
 	@Override

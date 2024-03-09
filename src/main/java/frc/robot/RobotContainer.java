@@ -92,6 +92,8 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", turnTo0());
+		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
+		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeaker(arm, head, drivetrain));
 		
 		// Configure the trigger bindings
 		configureBindings();
