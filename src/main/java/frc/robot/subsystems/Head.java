@@ -43,8 +43,7 @@ public class Head extends SubsystemBase {
 	 * Two motor intake
 	 * Always spin bottom motor forward, but reverse top motor to intake from source.
 	 */
-	private final CANSparkMax intakeMotorBottom = new CANSparkMax(IntakeConstants.MOTOR_BOTTOM_CAN_ID, MotorType.kBrushless);
-	private final CANSparkMax intakeMotorTop = new CANSparkMax(IntakeConstants.MOTOR_TOP_CAN_ID, MotorType.kBrushless);
+	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private boolean isNoteAcquired = false; // Since none of the sensors will be active when a note is intaken and aligned, this boolean is necessary to know if the robot has a note.
 	
@@ -69,17 +68,10 @@ public class Head extends SubsystemBase {
 		shooterMotorTop.setSmartCurrentLimit(40);
 		
 		// Intake motor
-		intakeMotorBottom.restoreFactoryDefaults();
-		intakeMotorTop.restoreFactoryDefaults();
-		
-		intakeMotorBottom.setIdleMode(IdleMode.kBrake);
-		intakeMotorTop.setIdleMode(IdleMode.kBrake);
-		
-		intakeMotorBottom.setInverted(true);
-		intakeMotorTop.setInverted(false);
-		
-		intakeMotorBottom.setSmartCurrentLimit(20);
-		intakeMotorTop.setSmartCurrentLimit(20);
+		intakeMotor.restoreFactoryDefaults();
+		intakeMotor.setIdleMode(IdleMode.kBrake);
+		intakeMotor.setInverted(true);
+		intakeMotor.setSmartCurrentLimit(20);
 		
 		// Shooter controller
 		shooterControllerBottom.setP(ShooterConstants.kP);
@@ -99,19 +91,15 @@ public class Head extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		// Temperature alert
-		if ((intakeMotorBottom.getMotorTemperature() > MOTOR_OVERHEAT_TEMPERATURE) || (intakeMotorTop.getMotorTemperature() > MOTOR_OVERHEAT_TEMPERATURE)) {
+		if (intakeMotor.getMotorTemperature() > MOTOR_OVERHEAT_TEMPERATURE) {
 			motorTemperatureAlert.set(true);
 		} else {
 			motorTemperatureAlert.set(false);
 		}
 	}
 	
-	public Double getIntakeEncoderBottom() {
-		return intakeMotorBottom.getEncoder().getPosition();
-	}
-	
-	public Double getIntakeEncoderTop() {
-		return intakeMotorTop.getEncoder().getPosition();
+	public Double getIntakeEncoder() {
+		return intakeMotor.getEncoder().getPosition();
 	}
 	
 	public Double getShooterEncoderBottom() {
@@ -122,57 +110,48 @@ public class Head extends SubsystemBase {
 		return shooterMotorTop.getEncoder().getPosition();
 	}
 	
-	private void setIntakeBottomSpeed(double intakeSpeed) {
-		intakeMotorBottom.set(intakeSpeed);
-	}
-	
-	private void setIntakeTopSpeed(double intakeSpeed) {
-		intakeMotorTop.set(intakeSpeed);
-	}
-	
-	private void setIntakeSpeeds(double intakeBottomSpeed, double intakeTopSpeed) {
-		setIntakeBottomSpeed(intakeBottomSpeed);
-		setIntakeTopSpeed(intakeTopSpeed);
+	private void setIntakeSpeed(double intakeSpeed) {
+		intakeMotor.set(intakeSpeed);
 	}
 	
 	public Command StartIntake() {
 		return Commands.runOnce(() -> {
-			setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
+			setIntakeSpeed(IntakeConstants.INTAKE_SPEED);
 		}, this);
 	}
 	
 	public Command StartOutake() {
 		return Commands.runOnce(() -> {
-			setIntakeSpeeds(IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
+			setIntakeSpeed(IntakeConstants.OUTAKE_SPEED);
 		}, this);
 	}
 	
 	public Command StopIntake() {
 		return Commands.runOnce(() -> {
-			setIntakeSpeeds(0, 0);
+			setIntakeSpeed(0);
 		}, this);
 	}
 	
 	public Command IntakePiece() {
 		return Commands.runOnce(() -> {
-			setIntakeSpeeds(IntakeConstants.INTAKE_SPEED, IntakeConstants.INTAKE_SPEED);
+			setIntakeSpeed(IntakeConstants.INTAKE_SPEED);
 		}, this)
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.finallyDo(() -> {
 					isNoteAcquired = true;
-					setIntakeSpeeds(0, 0);
+					setIntakeSpeed(0);
 				});
 	}
 	
 	public Command OutakePiece() {
 		return Commands.runOnce(() -> {
-			setIntakeSpeeds(IntakeConstants.OUTAKE_SPEED, IntakeConstants.OUTAKE_SPEED);
+			setIntakeSpeed(IntakeConstants.OUTAKE_SPEED);
 		}, this)
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 				.andThen(Commands.waitSeconds(3))
 				.finallyDo(() -> {
 					isNoteAcquired = false;
-					setIntakeSpeeds(0, 0);
+					setIntakeSpeed(0);
 				});
 	}
 	
@@ -248,7 +227,7 @@ public class Head extends SubsystemBase {
 				.andThen(Commands.waitSeconds(4))
 				//.andThen(Commands.waitUntil(() -> isReadyToShoot()))
 				.andThen(Commands.runOnce(() -> {
-					setIntakeSpeeds(IntakeConstants.FEEDER_SPEED.get(), IntakeConstants.FEEDER_SPEED.get());
+					setIntakeSpeed(IntakeConstants.FEEDER_SPEED.get());
 				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
@@ -256,7 +235,7 @@ public class Head extends SubsystemBase {
 				.andThen(SpinDownShooter())
 				.finallyDo(() -> {
 					isNoteAcquired = false;
-					setIntakeSpeeds(0, 0);
+					setIntakeSpeed(0);
 				});
 	}
 	

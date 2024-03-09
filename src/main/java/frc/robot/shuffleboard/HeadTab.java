@@ -33,8 +33,7 @@ public class HeadTab extends ShuffleboardTabBase {
 	private final DoublePublisher shooterSpeedAtPositionPublisher;
 	private TunableNumber shootingPositionSpeedTuning;
 	
-	private final DoublePublisher intakeBottomEncoderPublisher;
-	private final DoublePublisher intakeTopEncoderPublisher;
+	private final DoublePublisher intakeEncoderPublisher;
 	private final DoublePublisher shooterBottomEncoderPublisher;
 	private final DoublePublisher shooterTopEncoderPublisher;
 	
@@ -61,8 +60,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		shootingPosition = new TunableNumber("Head/Shooter", "Position (tuning)", 0);
 		shootingPositionSpeedTuning = new TunableNumber("Head/Shooter", "Speed (tuning)", 0);
 		
-		intakeBottomEncoderPublisher = networkTable.getDoubleTopic("Intake Encoder Bottom").publish();
-		intakeTopEncoderPublisher = networkTable.getDoubleTopic("Intake Encoder Top").publish();
+		intakeEncoderPublisher = networkTable.getDoubleTopic("Intake Encoder").publish();
 		shooterBottomEncoderPublisher = networkTable.getDoubleTopic("Shooter Encoder Bottom").publish();
 		shooterTopEncoderPublisher = networkTable.getDoubleTopic("Shooter Encoder Top").publish();
 	}
@@ -81,8 +79,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		shooterSpeedAtPositionPublisher.set(head.getShooterSpeedAtPosition(shootingPosition.get()));
 		
-		intakeBottomEncoderPublisher.set(head.getIntakeEncoderBottom());
-		intakeTopEncoderPublisher.set(head.getIntakeEncoderTop());
+		intakeEncoderPublisher.set(head.getIntakeEncoder());
 		shooterBottomEncoderPublisher.set(head.getShooterEncoderBottom());
 		shooterTopEncoderPublisher.set(head.getShooterEncoderTop());
 	}

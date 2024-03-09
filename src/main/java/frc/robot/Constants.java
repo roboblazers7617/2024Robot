@@ -162,8 +162,7 @@ public final class Constants {
 	}
 	
 	public static class IntakeConstants {
-		public static final int MOTOR_BOTTOM_CAN_ID = 21;
-		public static final int MOTOR_TOP_CAN_ID = 20;
+		public static final int MOTOR_CAN_ID = 21;
 		
 		public static final int NOTE_SENSOR_DIO = 9;
 		
