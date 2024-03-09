@@ -92,7 +92,7 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 		
 		// Shooter interpolation map
-		shooterInterpolationMap.put(0.0, 9000.0);
+		shooterInterpolationMap.put(0.0, 12000.0);
 	}
 	
 	@Override
@@ -245,17 +245,18 @@ public class Head extends SubsystemBase {
 	
 	public Command Shoot(double rpm) {
 		return SpinUpShooter(rpm)
-				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
+				.andThen(Commands.waitSeconds(4))
+				//.andThen(Commands.waitUntil(() -> isReadyToShoot()))
 				.andThen(Commands.runOnce(() -> {
 					setIntakeSpeeds(IntakeConstants.FEEDER_SPEED.get(), IntakeConstants.FEEDER_SPEED.get());
 				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 				.andThen(Commands.waitSeconds(0.5))
+				.andThen(SpinDownShooter())
 				.finallyDo(() -> {
 					isNoteAcquired = false;
 					setIntakeSpeeds(0, 0);
-					SpinDownShooter();
 				});
 	}
 	
@@ -268,7 +269,7 @@ public class Head extends SubsystemBase {
 	}
 	
 	public boolean isNoteWithinSensor() {
-		return isNoteInSensor.get();
+		return !isNoteInSensor.get();
 	}
 	
 	// Does the intake have a note?

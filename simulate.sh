@@ -1,4 +1,4 @@
 start=$(date +%s)
 ./gradlew simulateJava &
-sleep 10
+sleep 15
 exit $(kill "$!")

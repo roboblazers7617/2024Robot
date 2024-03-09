@@ -52,7 +52,8 @@ public final class Constants {
 
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 1.5;
-		public static final double SOURCE_ANGLE = 45;
+		public static final double SOURCE_ANGLE = 61.5;
+		public static final double AMP_ANGLE = 80;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
@@ -76,7 +77,8 @@ public final class Constants {
 		public static final double GEAR_RATIO = 1/100.0;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
-		public static final double MAX_MANNUAL_ARM_SPEED = 45.0; 
+		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
+		public static final double SPEAKER_SUBWOOFER_ANGLE = 10; 
 
 
 		
@@ -198,8 +200,8 @@ public final class Constants {
 		public static final double IDLE_SPEED = 0.0;
 		public static final double AMP_SPEED = 3000.0;
 
-		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0);
-		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 0);
+		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0.2);
+		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 5.0);
 	}
 
 	public static class ClimberConstants {
@@ -217,7 +219,7 @@ public final class Constants {
 	public static final int NUMBER_OF_MOTORS = 10;
 	
 	public static class VisionConstants {
-		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(14.0 + 3.0 / 4.0), Units.inchesToMeters(0.0), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(-64.0), 0));
-		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(-Units.inchesToMeters(14.0 + 3.0 / 4.0), Units.inchesToMeters(0.0), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(58.0), Units.degreesToRadians(180.0)));
+		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(11), -Units.inchesToMeters(14-(15.0/8.0)), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(-40), 0));
+		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(-Units.inchesToMeters(12 + 3.0 / 4.0), Units.inchesToMeters(12 + 3.0/4.0), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(35), Units.degreesToRadians(-135.0)));
 	}
 }

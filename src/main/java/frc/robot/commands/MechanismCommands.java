@@ -13,7 +13,7 @@ import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
 	public static Command ShootAmp(Arm arm, Head head) {
-		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.MAX_ANGLE))
+		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
 				.andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT)))
 				.andThen(head.ShootInAmp());
 	}
@@ -21,18 +21,21 @@ public class MechanismCommands {
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
 		double distance = drivetrain.getDistanceToSpeaker();
 		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
+		map.put(0.0, 0.0);
 		return Commands.runOnce(() -> arm.setArmTarget(map.get(distance)))
 				.andThen(head.ShootAtPosition(distance));
 	}
 	
 	public static Command ShootSpeakerSubwoofer(Arm arm, Head head) {
 		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
-		return Commands.runOnce(() -> arm.setArmTarget(map.get(0.0)))
+		map.put(0.0, 0.0);
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_SUBWOOFER_ANGLE))
 				.andThen(head.ShootAtPosition(0));
 	}
 	
 	public static Command ShootSpeakerPodium(Arm arm, Head head) {
 		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
+		map.put(0.0, 0.0);
 		return Commands.runOnce(() -> arm.setArmTarget(map.get(Constants.PODIUM_DISTANCE)))
 				.andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE));
 	}

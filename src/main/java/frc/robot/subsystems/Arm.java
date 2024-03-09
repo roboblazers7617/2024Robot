@@ -257,7 +257,7 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to stow the arm and elevator
 	 */
-	public Command stow() {
+	public Command Stow() {
 		return this.runOnce(() -> {
 			setArmTarget(ArmConstants.MIN_ABOVE_PASS_ANGLE);
 			setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
@@ -421,7 +421,7 @@ public class Arm extends SubsystemBase {
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
 				double speedyElevatorFeedForward;
 				if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 1.0) {
-					speedyElevatorFeedForward = Math.copySign(0.2, (currentElevatorTarget - elevatorEncoder.getPosition()));
+					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
 				} else {
 					speedyElevatorFeedForward = 0.0;
 				}

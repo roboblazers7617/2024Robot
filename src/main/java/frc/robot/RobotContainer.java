@@ -99,7 +99,7 @@ public class RobotContainer {
 
 		//tabs.add(new LEDTab(led));
 
-		//tabs.add(new HeadTab(head));
+		tabs.add(new HeadTab(head));
 
 		//tabs.add(new ClimberTab(climber));
 		
@@ -153,6 +153,7 @@ public class RobotContainer {
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
+		operatorController.x().onTrue(arm.Stow());
 		operatorController.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
 		operatorController.a().onTrue(MechanismCommands.IntakeGround(arm, head));
 		operatorController.b().onTrue(MechanismCommands.IntakeSource(arm, head));

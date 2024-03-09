@@ -66,7 +66,7 @@ public class Drivetrain extends SubsystemBase {
 	public Drivetrain(Vision vision) {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
-		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
+		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
@@ -464,9 +464,12 @@ public class Drivetrain extends SubsystemBase {
 	}
 	
 	public double getDistanceToSpeaker() {
-		if (DriverStation.getAlliance().orElseThrow() == Alliance.Red) {
-			return getPose().getTranslation().minus(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d()).getNorm();
+		if (DriverStation.getAlliance().isPresent()) {
+			if (DriverStation.getAlliance().get() == Alliance.Red) {
+				return getPose().getTranslation().minus(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d()).getNorm();
+			}
+			return getPose().getTranslation().minus(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d()).getNorm();
 		}
-		return getPose().getTranslation().minus(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d()).getNorm();
+		return -1;
 	}
 }
