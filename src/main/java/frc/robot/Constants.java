@@ -193,14 +193,22 @@ public final class Constants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 23;
 		public static final int MOTOR_TOP_CAN_ID = 22;
 		
-		public static final double kP = 0.00005;
-		public static final double kI = 0;
-		public static final double kD = 0;
-		public static final double kMinOutput = -1;
-		public static final double kMaxOutput = 1;
+		public static final double BOTTOM_kP = 0.00026;
+		public static final double BOTTOM_kI = 0;
+		public static final double BOTTOM_kD = 0.0;
+		public static final double BOTTOM_kF = 0.004;
+		public static final double BOTTOM_kMinOutput = -1;
+		public static final double BOTTOM_kMaxOutput = 1;
+
+		public static final double TOP_kP = 0.00026;
+		public static final double TOP_kI = 0;
+		public static final double TOP_kD = 0.0;
+		public static final double TOP_kF = 0.004;
+		public static final double TOP_kMinOutput = -1;
+		public static final double TOP_kMaxOutput = 1;
 		
 		public static final double IDLE_SPEED = 0.0;
-		public static final double AMP_SPEED = 3000.0;
+		public static final double AMP_SPEED = 1000.0;
 
 		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0.2);
 		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 5.0);
