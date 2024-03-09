@@ -74,17 +74,17 @@ public class Head extends SubsystemBase {
 		intakeMotor.setSmartCurrentLimit(20);
 		
 		// Shooter controller
-		shooterControllerBottom.setP(ShooterConstants.kP);
-		shooterControllerTop.setP(ShooterConstants.kP);
-		shooterControllerBottom.setI(ShooterConstants.kI);
-		shooterControllerTop.setI(ShooterConstants.kI);
-		shooterControllerBottom.setD(ShooterConstants.kD);
-		shooterControllerTop.setD(ShooterConstants.kD);
-		shooterControllerBottom.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
-		shooterControllerTop.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+		shooterControllerBottom.setP(ShooterConstants.BOTTOM_kP);
+		shooterControllerTop.setP(ShooterConstants.TOP_kP);
+		shooterControllerBottom.setI(ShooterConstants.BOTTOM_kI);
+		shooterControllerTop.setI(ShooterConstants.TOP_kI);
+		shooterControllerBottom.setD(ShooterConstants.BOTTOM_kD);
+		shooterControllerTop.setD(ShooterConstants.TOP_kD);
+		shooterControllerBottom.setOutputRange(ShooterConstants.BOTTOM_kMinOutput, ShooterConstants.BOTTOM_kMaxOutput);
+		shooterControllerTop.setOutputRange(ShooterConstants.TOP_kMinOutput, ShooterConstants.TOP_kMaxOutput);
 		
 		// Shooter interpolation map
-		shooterInterpolationMap.put(0.0, 12000.0);
+		shooterInterpolationMap.put(0.0, 6000.0);
 	}
 	
 	@Override
@@ -206,7 +206,8 @@ public class Head extends SubsystemBase {
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
-			setShooterSpeed(ShooterConstants.IDLE_SPEED);
+			shooterMotorBottom.setVoltage(0);
+			shooterMotorTop.setVoltage(0);
 		}, this);
 	}
 	
@@ -224,8 +225,8 @@ public class Head extends SubsystemBase {
 	
 	public Command Shoot(double rpm) {
 		return SpinUpShooter(rpm)
-				.andThen(Commands.waitSeconds(4))
-				//.andThen(Commands.waitUntil(() -> isReadyToShoot()))
+				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
+				.andThen(Commands.waitSeconds(0.5))
 				.andThen(Commands.runOnce(() -> {
 					setIntakeSpeed(IntakeConstants.FEEDER_SPEED.get());
 				}))

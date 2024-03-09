@@ -67,7 +67,7 @@ public class Arm extends SubsystemBase {
 	/** the last actual arm target */
 	private double lastAcutalArmTarget;
 	/** arm angle based on distance interpolation table */
-	public final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
+	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
 	
 	// Elevator
 	/** the right motor */
@@ -148,6 +148,8 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setZeroOffset(171.7);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
+
+		armAngleBasedOnDistance.put(0.0, 0.0);
 		// System.out.println("arm: target: " + armTarget);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
@@ -225,6 +227,16 @@ public class Arm extends SubsystemBase {
 		
 		armTarget = targetDegrees;
 	}
+
+	/**
+	 * sets the arm target based on the distance to the speaker and the interpolation table
+	 * 
+	 * @param distance
+	 *            the distance to the speaker in meters
+	 */
+	public void setArmTargetByDistance(double distance) {
+		armTarget = MathUtil.clamp(armAngleBasedOnDistance.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
+	}
 	
 	/**
 	 * raises the arm to the maximum angle
@@ -259,7 +271,7 @@ public class Arm extends SubsystemBase {
 	 */
 	public Command Stow() {
 		return this.runOnce(() -> {
-			setArmTarget(ArmConstants.MIN_ABOVE_PASS_ANGLE);
+			setArmTarget(40);
 			setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
 		});
 	}
@@ -402,7 +414,7 @@ public class Arm extends SubsystemBase {
 			
 			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
 			
-			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
+			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue - 1, ArbFFUnits.kVoltage);
 			lastAcutalArmTarget = currentArmTarget;
 		}
 		if (!ElevatorConstants.KILL_IT_ALL) {
@@ -420,8 +432,8 @@ public class Arm extends SubsystemBase {
 			/** this is a constant increase to make the elvator go faster */
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
 				double speedyElevatorFeedForward;
-				if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 1.0) {
-					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
+				if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
+					speedyElevatorFeedForward = Math.copySign(4.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
 				} else {
 					speedyElevatorFeedForward = 0.0;
 				}
@@ -442,5 +454,27 @@ public class Arm extends SubsystemBase {
 	
 	public double getElevatorAbsoluteEncoderPosition() {
 		return elevatorEncoder.getPosition();
+	}
+
+	public MotorTab getMotorTab(){
+		return motorTab;
+	}
+
+	public Command WaitUntilArmAtTarget(){
+		return new Command() {
+			@Override
+			public boolean isFinished() {
+				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < 5;
+			}
+		};
+	}
+
+	public Command WaitUntilElevatorAtTarget(){
+		return new Command() {
+			@Override
+			public boolean isFinished() {
+				return Math.abs(elevatorTarget - elevatorEncoder.getPosition()) < 2;
+			}
+		};
 	}
 }

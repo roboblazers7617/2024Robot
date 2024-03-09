@@ -50,10 +50,11 @@ public final class Constants {
 
 
 
+		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 1.5;
-		public static final double SOURCE_ANGLE = 61.5;
-		public static final double AMP_ANGLE = 80;
+		public static final double SOURCE_ANGLE = 64;
+		public static final double AMP_ANGLE = 88;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
@@ -66,7 +67,7 @@ public final class Constants {
 		public static final double RETRACTED_KS = 0; //these values are based on calculator
 		public static final double RETRACTED_KG = 0.4;
 		public static final double RETRACTED_KV = 0.0;
-		public static final double KP = 0.025;
+		public static final double KP = 0.025; // oscilated at 0.07
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kMinOutput = -0.25;
@@ -78,7 +79,7 @@ public final class Constants {
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 10;
+		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
 		public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
 
@@ -111,7 +112,7 @@ public final class Constants {
 		/** the mininum height the elevator can be to safely reach over the bumper of the robot */
 		public static final double MIN_ABOVE_PASS_HEIGHT = 18;
 		/** the mininum height the elevator reaches when its retracted */
-		public static final double MIN_HEIGHT = 0;
+		public static final double MIN_HEIGHT = 1;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
 		public static final double MAX_BELOW_PASS_HEIGHT = 10; // REMOVE THIS, IT DOES NOT EXIST
 		public static final int RIGHT_POTIENTIOMETER_PORT = 3;
@@ -166,7 +167,7 @@ public final class Constants {
 		
 		public static final int NOTE_SENSOR_DIO = 9;
 		
-		public static final double INTAKE_SPEED = 1.0;
+		public static final double INTAKE_SPEED = 0.75;
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
@@ -191,14 +192,22 @@ public final class Constants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 23;
 		public static final int MOTOR_TOP_CAN_ID = 22;
 		
-		public static final double kP = 0.00005;
-		public static final double kI = 0;
-		public static final double kD = 0;
-		public static final double kMinOutput = -1;
-		public static final double kMaxOutput = 1;
+		public static final double BOTTOM_kP = 0.00026;
+		public static final double BOTTOM_kI = 0;
+		public static final double BOTTOM_kD = 0.0;
+		public static final double BOTTOM_kF = 0.004;
+		public static final double BOTTOM_kMinOutput = -1;
+		public static final double BOTTOM_kMaxOutput = 1;
+
+		public static final double TOP_kP = 0.00026;
+		public static final double TOP_kI = 0;
+		public static final double TOP_kD = 0.0;
+		public static final double TOP_kF = 0.004;
+		public static final double TOP_kMinOutput = -1;
+		public static final double TOP_kMaxOutput = 1;
 		
 		public static final double IDLE_SPEED = 0.0;
-		public static final double AMP_SPEED = 3000.0;
+		public static final double AMP_SPEED = 1500.0;
 
 		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0.2);
 		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 5.0);

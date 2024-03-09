@@ -12,9 +12,15 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeGround"
           }
         },
         {
@@ -24,9 +30,15 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeGround"
           }
         },
         {
@@ -42,9 +54,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "ShootSpeaker"
           }
         }
       ]
