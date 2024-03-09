@@ -246,8 +246,8 @@ public class Head extends SubsystemBase {
 	
 	public Command Shoot(double rpm) {
 		return SpinUpShooter(rpm)
-				.andThen(Commands.waitSeconds(4))
-				// .andThen(Commands.waitUntil(() -> isReadyToShoot()))
+				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
+				.andThen(Commands.waitSeconds(0.5))
 				.andThen(Commands.runOnce(() -> {
 					setIntakeSpeeds(IntakeConstants.FEEDER_SPEED.get(), IntakeConstants.FEEDER_SPEED.get());
 				}))
