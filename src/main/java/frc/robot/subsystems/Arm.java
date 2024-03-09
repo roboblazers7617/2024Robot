@@ -67,7 +67,7 @@ public class Arm extends SubsystemBase {
 	/** the last actual arm target */
 	private double lastAcutalArmTarget;
 	/** arm angle based on distance interpolation table */
-	public final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
+	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
 	
 	// Elevator
 	/** the right motor */
@@ -148,6 +148,8 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setZeroOffset(171.7);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
+
+		armAngleBasedOnDistance.put(0.0, 0.0);
 		// System.out.println("arm: target: " + armTarget);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
@@ -224,6 +226,16 @@ public class Arm extends SubsystemBase {
 		targetDegrees = MathUtil.clamp(targetDegrees, ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
 		
 		armTarget = targetDegrees;
+	}
+
+	/**
+	 * sets the arm target based on the distance to the speaker and the interpolation table
+	 * 
+	 * @param distance
+	 *            the distance to the speaker in meters
+	 */
+	public void setArmTargetByDistance(double distance) {
+		armTarget = MathUtil.clamp(armAngleBasedOnDistance.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
 	}
 	
 	/**
