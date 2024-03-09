@@ -259,7 +259,7 @@ public class Arm extends SubsystemBase {
 	 */
 	public Command Stow() {
 		return this.runOnce(() -> {
-			setArmTarget(ArmConstants.MIN_ABOVE_PASS_ANGLE);
+			setArmTarget(40);
 			setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
 		});
 	}

@@ -50,9 +50,10 @@ public final class Constants {
 
 
 
+		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 1.5;
-		public static final double SOURCE_ANGLE = 61.5;
+		public static final double SOURCE_ANGLE = 64;
 		public static final double AMP_ANGLE = 80;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
@@ -66,7 +67,7 @@ public final class Constants {
 		public static final double RETRACTED_KS = 0; //these values are based on calculator
 		public static final double RETRACTED_KG = 0.4;
 		public static final double RETRACTED_KV = 0.0;
-		public static final double KP = 0.025;
+		public static final double KP = 0.025; // oscilated at 0.07
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kMinOutput = -0.25;
@@ -167,7 +168,7 @@ public final class Constants {
 		
 		public static final int NOTE_SENSOR_DIO = 9;
 		
-		public static final double INTAKE_SPEED = 0.5;
+		public static final double INTAKE_SPEED = 0.75;
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
