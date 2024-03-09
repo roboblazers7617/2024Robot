@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,33 +19,29 @@ public class MechanismCommands {
 	
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
 		double distance = drivetrain.getDistanceToSpeaker();
-		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
-		map.put(0.0, 0.0);
-		return Commands.runOnce(() -> arm.setArmTarget(map.get(distance)))
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
 				.andThen(head.ShootAtPosition(distance));
 	}
 	
 	public static Command ShootSpeakerSubwoofer(Arm arm, Head head) {
-		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
-		map.put(0.0, 0.0);
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_SUBWOOFER_ANGLE))
 				.andThen(head.ShootAtPosition(0));
 	}
 	
 	public static Command ShootSpeakerPodium(Arm arm, Head head) {
-		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
-		map.put(0.0, 0.0);
-		return Commands.runOnce(() -> arm.setArmTarget(map.get(Constants.PODIUM_DISTANCE)))
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE))
 				.andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE));
 	}
 	
 	public static Command IntakeSource(Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece());
 	}
 	
 	public static Command IntakeGround(Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.MIN_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece());
 	}
 }
