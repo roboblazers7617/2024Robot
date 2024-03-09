@@ -41,6 +41,7 @@ import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -79,6 +80,8 @@ public class RobotContainer {
 	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> processJoystickAngular(driverController.getRightX()), () -> processJoystickAngular(driverController.getRightY()));
 	
 	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> processJoystickVelocity(driverController.getRightX()));
+
+	private final DigitalInput brakeToggleButton = new DigitalInput(ArmConstants.BRAKE_TOGGLE_BUTTON_DIO);
 	
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -171,6 +174,9 @@ public class RobotContainer {
 
 		operatorController.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(.2, .2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorController.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-.2, -.2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+
+		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
+		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {

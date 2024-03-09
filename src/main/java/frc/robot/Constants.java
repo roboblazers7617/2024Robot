@@ -78,7 +78,8 @@ public final class Constants {
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 10; 
+		public static final double SPEAKER_SUBWOOFER_ANGLE = 10;
+		public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
 
 		
