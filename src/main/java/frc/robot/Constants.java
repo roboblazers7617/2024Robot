@@ -54,7 +54,7 @@ public final class Constants {
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 1.5;
 		public static final double SOURCE_ANGLE = 64;
-		public static final double AMP_ANGLE = 80;
+		public static final double AMP_ANGLE = 88;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
@@ -79,7 +79,7 @@ public final class Constants {
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 10;
+		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
 		public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
 
@@ -208,7 +208,7 @@ public final class Constants {
 		public static final double TOP_kMaxOutput = 1;
 		
 		public static final double IDLE_SPEED = 0.0;
-		public static final double AMP_SPEED = 1000.0;
+		public static final double AMP_SPEED = 1500.0;
 
 		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0.2);
 		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 5.0);

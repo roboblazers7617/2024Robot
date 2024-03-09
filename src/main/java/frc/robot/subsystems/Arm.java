@@ -443,4 +443,22 @@ public class Arm extends SubsystemBase {
 	public double getElevatorAbsoluteEncoderPosition() {
 		return elevatorEncoder.getPosition();
 	}
+
+	public Command WaitUntilArmAtTarget(){
+		return new Command() {
+			@Override
+			public boolean isFinished() {
+				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < 5;
+			}
+		};
+	}
+
+	public Command WaitUntilElevatorAtTarget(){
+		return new Command() {
+			@Override
+			public boolean isFinished() {
+				return Math.abs(elevatorTarget - elevatorEncoder.getPosition()) < 2;
+			}
+		};
+	}
 }

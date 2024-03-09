@@ -15,7 +15,7 @@ public class MechanismCommands {
 	public static Command ShootAmp(Arm arm, Head head) {
 		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
 				.andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT)))
-				.andThen(head.ShootInAmp());
+				.andThen(head.SpinUpShooterForAmp());
 	}
 	
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
@@ -30,6 +30,10 @@ public class MechanismCommands {
 		InterpolatingDoubleTreeMap map = arm.armAngleBasedOnDistance;
 		map.put(0.0, 0.0);
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_SUBWOOFER_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(head.SpinUpShooterAtPosition(0))
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(head.ShootAtPosition(0));
 	}
 	

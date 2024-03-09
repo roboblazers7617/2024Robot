@@ -167,15 +167,17 @@ public class RobotContainer {
 		operatorController.b().onTrue(MechanismCommands.IntakeSource(arm, head));
 		operatorController.leftTrigger().onTrue(head.IdleShooter());
 		operatorController.rightTrigger().onTrue(MechanismCommands.ShootSpeaker(arm, head, drivetrain));
-		operatorController.leftBumper().onTrue(MechanismCommands.ShootAmp(arm, head));
+		operatorController.leftBumper().onTrue(MechanismCommands.ShootAmp(arm, head)).onFalse(head.ShootInAmp());
 		operatorController.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(arm, head));
-		operatorController.start().onTrue(head.StopIntake());
-		operatorController.back().onTrue(head.SpinDownShooter());
+		operatorController.povLeft().onTrue(
+					head.StopIntake()
+						.andThen(head.SpinDownShooter())
+				);
 
 		operatorController.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(.2, .2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorController.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-.2, -.2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
-		operatorController.povLeft().onTrue(head.IntakePiece());
-		operatorController.povRight().onTrue(head.ShootAtPosition(0));
+		operatorController.start().onTrue(head.IntakePiece());
+		operatorController.back().onTrue(head.ShootAtPosition(0));
 
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
