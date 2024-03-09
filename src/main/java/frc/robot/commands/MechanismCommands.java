@@ -47,6 +47,7 @@ public class MechanismCommands {
 	
 	public static Command IntakeGround(Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.MIN_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece());
 	}
 }

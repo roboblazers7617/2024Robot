@@ -89,6 +89,10 @@ public class MotorTab{
 		numberOfMotors += newMotors.length;
 
 	}
+
+	public void activateShuffleboard(){
+		
+	}
 	/** this MUST be called in periodic() */
 	public void update() {
 		for (int i = 0; i < numberOfMotors; i++) {

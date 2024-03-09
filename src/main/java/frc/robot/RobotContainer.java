@@ -171,6 +171,7 @@ public class RobotContainer {
 
 		operatorController.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(.2, .2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorController.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-.2, -.2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		operatorController.povLeft().onTrue(head.IntakePiece());
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {

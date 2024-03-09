@@ -110,7 +110,7 @@ public final class Constants {
 		/** the mininum height the elevator can be to safely reach over the bumper of the robot */
 		public static final double MIN_ABOVE_PASS_HEIGHT = 18;
 		/** the mininum height the elevator reaches when its retracted */
-		public static final double MIN_HEIGHT = 0;
+		public static final double MIN_HEIGHT = 1;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
 		public static final double MAX_BELOW_PASS_HEIGHT = 10; // REMOVE THIS, IT DOES NOT EXIST
 		public static final int RIGHT_POTIENTIOMETER_PORT = 3;
@@ -166,7 +166,7 @@ public final class Constants {
 		
 		public static final int NOTE_SENSOR_DIO = 9;
 		
-		public static final double INTAKE_SPEED = 1.0;
+		public static final double INTAKE_SPEED = 0.5;
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
