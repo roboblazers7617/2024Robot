@@ -455,4 +455,8 @@ public class Arm extends SubsystemBase {
 	public double getElevatorAbsoluteEncoderPosition() {
 		return elevatorEncoder.getPosition();
 	}
+
+	public MotorTab getMotorTab(){
+		return motorTab;
+	}
 }
