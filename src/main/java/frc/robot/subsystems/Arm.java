@@ -145,11 +145,13 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
 		armAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
 		armAbsoluteEncoder.setInverted(true);
-		armAbsoluteEncoder.setZeroOffset(171.7);
+		armAbsoluteEncoder.setZeroOffset(168.7);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
 
-		armAngleBasedOnDistance.put(0.0, 0.0);
+		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
+		armAngleBasedOnDistance.put(3.05, 27.0 /*30.0*/);
+		armAngleBasedOnDistance.put(4.27, 37.0 /*40.0*/);
 		// System.out.println("arm: target: " + armTarget);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);

@@ -19,12 +19,23 @@ public class MechanismCommands {
 	
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
 		double distance = drivetrain.getDistanceToSpeaker();
+		return ShootSpeaker(arm, head, distance);
+	}
+
+	/**
+	 * 
+	 * @param arm
+	 * @param head
+	 * @param distance in meters
+	 * @return
+	 */
+	public static Command ShootSpeaker(Arm arm, Head head, double distance){
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
 				.andThen(head.ShootAtPosition(distance));
 	}
 	
 	public static Command ShootSpeakerSubwoofer(Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_SUBWOOFER_ANGLE))
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(1.27))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.SpinUpShooterAtPosition(0))
 				.andThen(arm.WaitUntilArmAtTarget())
@@ -44,7 +55,7 @@ public class MechanismCommands {
 	}
 	
 	public static Command IntakeGround(Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.MIN_ANGLE))
+		return Commands.runOnce(() -> arm.setArmTarget(5.))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece());
 	}

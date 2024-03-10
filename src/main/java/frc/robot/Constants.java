@@ -52,8 +52,8 @@ public final class Constants {
 
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 1.5;
-		public static final double SOURCE_ANGLE = 64;
+		public static final double MIN_ANGLE = 3.5;
+		public static final double SOURCE_ANGLE = 61.5; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 88;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
@@ -79,7 +79,7 @@ public final class Constants {
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
+		public static final double SPEAKER_SUBWOOFER_ANGLE = 12 /*15*/;
 		public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
 
