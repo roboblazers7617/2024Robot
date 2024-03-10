@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -11,10 +13,12 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
-	public static Command ShootAmp(Arm arm, Head head) {
+	public static Command ShootAmp(XboxController operatorController, Arm arm, Head head) {
 		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
 				.andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT)))
-				.andThen(head.SpinUpShooterForAmp());
+				.andThen(head.SpinUpShooterForAmp())
+				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
+				.andThen(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3));
 	}
 	
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {

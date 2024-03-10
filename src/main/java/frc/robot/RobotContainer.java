@@ -44,6 +44,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -71,15 +72,17 @@ public class RobotContainer {
 	private final Climber climber = new Climber();
 	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
-	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
-	private final CommandXboxController operatorController = new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
+	private final CommandXboxController driverControllerCommands = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
+	private final CommandXboxController operatorControllerCommands = new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
+	private final XboxController driverController = driverControllerCommands.getHID();
+	private final XboxController operatorController = operatorControllerCommands.getHID();
 	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
 	private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(vision);
 	
-	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> processJoystickAngular(driverController.getRightX()), () -> processJoystickAngular(driverController.getRightY()));
+	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngular(driverControllerCommands.getRightX()), () -> processJoystickAngular(driverControllerCommands.getRightY()));
 	
-	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> processJoystickVelocity(driverController.getRightX()));
+	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickVelocity(driverControllerCommands.getRightX()));
 
 	private final DigitalInput brakeToggleButton = new DigitalInput(ArmConstants.BRAKE_TOGGLE_BUTTON_DIO);
 	
@@ -137,49 +140,49 @@ public class RobotContainer {
 		// the joysticks do not correctly drive the robot forward. Everything is reversed.
 		drivetrain.setDefaultCommand(absoluteDrive);
 		
-		driverController.povRight().toggleOnTrue(new LockWheelsState(drivetrain));
+		driverControllerCommands.povRight().toggleOnTrue(new LockWheelsState(drivetrain));
 		
-		driverController.leftBumper()
+		driverControllerCommands.leftBumper()
 				.onTrue(new ScheduleCommand(rotationDrive))
 				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
-		driverController.rightBumper()
+		driverControllerCommands.rightBumper()
 				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.SLOW_SPEED_DECREMENT)))
 				.onFalse(Commands.runOnce(() -> speedMultiplier += SwerveConstants.SLOW_SPEED_DECREMENT));
-		driverController.rightTrigger()
+		driverControllerCommands.rightTrigger()
 				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.FAST_SPEED_INCREMENT)))
 				.onFalse(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.FAST_SPEED_INCREMENT));
 		
 		// TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
 		// the source for pickup so they do not need to manually do this
-		driverController.povLeft()
+		driverControllerCommands.povLeft()
 				.and(() -> checkAllianceColors(Alliance.Red))
-				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> Math.cos(Units.degreesToRadians(-30)), () -> Math.sin(Units.degreesToRadians(-30))));
+				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(-30)), () -> Math.sin(Units.degreesToRadians(-30))));
 		
-		driverController.povLeft()
+		driverControllerCommands.povLeft()
 				.and(() -> checkAllianceColors(Alliance.Blue))
-				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> Math.cos(Units.degreesToRadians(150)), () -> Math.sin(Units.degreesToRadians(150))));
+				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(150)), () -> Math.sin(Units.degreesToRadians(150))));
 		
-		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
-		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
-		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
+		driverControllerCommands.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
+		driverControllerCommands.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
+		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorControllerCommands.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorControllerCommands.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorControllerCommands.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorControllerCommands.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
-		operatorController.x().onTrue(arm.Stow());
-		operatorController.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
-		operatorController.a().onTrue(MechanismCommands.IntakeGround(arm, head));
-		operatorController.b().onTrue(MechanismCommands.IntakeSource(arm, head));
-		operatorController.leftTrigger().onTrue(head.IdleShooter());
-		operatorController.rightTrigger().onTrue(MechanismCommands.ShootSpeaker(arm, head, drivetrain));
-		operatorController.leftBumper().onTrue(MechanismCommands.ShootAmp(arm, head)).onFalse(head.ShootInAmp());
-		operatorController.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(arm, head));
-		operatorController.povLeft().onTrue(
+		operatorControllerCommands.x().onTrue(arm.Stow());
+		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
+		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(arm, head));
+		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(arm, head));
+		operatorControllerCommands.leftTrigger().onTrue(head.IdleShooter());
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.ShootSpeaker(arm, head, drivetrain));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(operatorController, arm, head)).onFalse(head.ShootInAmp());
+		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(arm, head));
+		operatorControllerCommands.povLeft().onTrue(
 					head.StopIntake()
 						.andThen(head.SpinDownShooter())
 				);
 
-		operatorController.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(.2, .2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
-		operatorController.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-.2, -.2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
-		operatorController.start().onTrue(head.IntakePiece());
-		operatorController.back().onTrue(head.ShootAtPosition(0));
+		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(.2, .2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-.2, -.2), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		operatorControllerCommands.start().onTrue(head.IntakePiece());
+		operatorControllerCommands.back().onTrue(head.ShootAtPosition(0));
 
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
