@@ -102,7 +102,7 @@ public final class Constants {
 		public static final double kMinOutput = -1;
 		public static final double kMaxOutput = 1;
 		public static final double minVel = 0;
-		public static final double GEAR_RATIO = 1/12;
+		public static final double GEAR_RATIO = 1.0/12;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 
