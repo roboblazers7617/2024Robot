@@ -21,6 +21,7 @@ public class HapticCommands {
 	public static Command HapticTap(XboxController controller, RumbleType type, double strength, double length) {
 		return Commands.runOnce(() -> controller.setRumble(type, strength))
 				.andThen(Commands.waitSeconds(length))
-				.andThen(Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0)));
+				.finallyDo(() -> controller.setRumble(RumbleType.kBothRumble, 0))
+				.ignoringDisable(true);
 	}
 }
