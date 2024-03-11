@@ -18,15 +18,15 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "turnTo0"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "turnTo0"
+            "name": "IntakeGround"
           }
         },
         {
@@ -42,9 +42,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "ShootSpeaker"
           }
         },
         {
@@ -54,15 +54,27 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeGround"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "top ring to mid ring"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeGround"
           }
         },
         {
@@ -78,9 +90,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "ShootSpeaker"
           }
         }
       ]

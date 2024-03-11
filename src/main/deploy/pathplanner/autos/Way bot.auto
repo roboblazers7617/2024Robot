@@ -12,6 +12,30 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "turnToSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeGround"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "near way bot to far midbot"
@@ -32,7 +56,19 @@
         {
           "type": "named",
           "data": {
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "turnTo0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeGround"
           }
         },
         {
@@ -51,6 +87,12 @@
           "type": "named",
           "data": {
             "name": "turnToSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeaker"
           }
         }
       ]
