@@ -413,7 +413,7 @@ public class Arm extends SubsystemBase {
 				currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
-		// if (lastAcutalArmTarget != currentArmTarget) {
+		if (lastAcutalArmTarget != currentArmTarget) {
 			ArmFeedforward armFeedFoward = getArmFeedforward();
 			double velocity = 0;
 			if (Math.abs(currentArmTarget - armAbsoluteEncoder.getPosition()) > 2){
@@ -424,7 +424,7 @@ public class Arm extends SubsystemBase {
 			
 			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
 			lastAcutalArmTarget = currentArmTarget;
-		// }
+		}
 		if (!ElevatorConstants.KILL_IT_ALL) {
 			// Elevator
 			// current elevator target will be the reference set by the PID controller, based on what is currently safe
@@ -446,7 +446,7 @@ public class Arm extends SubsystemBase {
 					speedyElevatorFeedForward = 0.0;
 				}
 				
-				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(currentElevatorTarget, 0);
+				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(elevatorEncoder.getVelocity());
 				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, speedyElevatorFeedForward + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
 				lastAcutalElevatorTarget = currentElevatorTarget;
 			}

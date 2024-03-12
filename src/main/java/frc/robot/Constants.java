@@ -92,12 +92,12 @@ public final class Constants {
 	}
 
 	public static class ElevatorConstants {
-		public static final boolean KILL_IT_ALL = true;
+		public static final boolean KILL_IT_ALL = false;
 		public static final int RIGHT_MOTOR_ID = 28;
 		public static final int LEFT_MOTOR_ID = 27;
 		public static final int MAX_AMPERAGE = 40;
-		public static final double KS = 0;
-		public static final double KG = 0.0;
+		public static final double KS = 0.1;
+		public static final double KG = 0.1;
 		public static final double KV = 0.0;
 		public static final double KP = 1.5; // was .2
 		public static final double KI = 0;
@@ -176,21 +176,7 @@ public final class Constants {
 		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
 	}
-	public static class PivotConstants {
-		public enum PivotPosition {
-			STOWED(0);
-			
-			PivotPosition(double angle) {
-				this.angle = angle;
-			}
-			
-			private final double angle;
-			
-			public double angle() {
-				return angle;
-			}
-		}
-	}
+
 	
 	public static class ShooterConstants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 23;
