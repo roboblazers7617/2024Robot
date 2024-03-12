@@ -139,7 +139,7 @@ public class Arm extends SubsystemBase {
 		armPIDController.setD(ArmConstants.KD);
 		armPIDController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 		armPIDController.setFeedbackDevice(armAbsoluteEncoder);
-		armPIDController.setPositionPIDWrappingEnabled(true);
+		armPIDController.setPositionPIDWrappingEnabled(false);
 		
 		// setup the arm encoder
 		armAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
