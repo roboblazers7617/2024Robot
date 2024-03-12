@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
 	// of the arm so the arm doesn't try to move on boot-up
 	private double armTarget;
 	/** the last actual arm target */
-	private double lastAcutalArmTarget;
+	private double lastAcutalArmTarget = armTarget;
 	/** arm angle based on distance interpolation table */
 	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
 	
@@ -145,9 +145,10 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
 		armAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
 		armAbsoluteEncoder.setInverted(true);
-		armAbsoluteEncoder.setZeroOffset(168.7);
+		armAbsoluteEncoder.setZeroOffset(ArmConstants.ARM_OFFSET);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
+		lastAcutalArmTarget = armTarget;
 
 		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
 		armAngleBasedOnDistance.put(3.05, 27.0 /*30.0*/);
@@ -271,7 +272,8 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to stow the arm and elevator
 	 */
-	public Command Stow() {
+	public Command 
+	Stow() {
 		return this.runOnce(() -> {
 			setArmTarget(40);
 			setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
@@ -411,14 +413,18 @@ public class Arm extends SubsystemBase {
 				currentArmTarget = ArmConstants.MIN_ABOVE_PASS_ANGLE;
 			}
 		}
-		if (lastAcutalArmTarget != currentArmTarget) {
+		// if (lastAcutalArmTarget != currentArmTarget) {
 			ArmFeedforward armFeedFoward = getArmFeedforward();
+			double velocity = 0;
+			if (Math.abs(currentArmTarget - armAbsoluteEncoder.getPosition()) > 2){
+				velocity = armAbsoluteEncoder.getVelocity();
+			}
+			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), velocity);
+			// System.out.println("arm feed foward: " + armFeedFowardValue);
 			
-			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
-			
-			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue - 1, ArbFFUnits.kVoltage);
+			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
 			lastAcutalArmTarget = currentArmTarget;
-		}
+		// }
 		if (!ElevatorConstants.KILL_IT_ALL) {
 			// Elevator
 			// current elevator target will be the reference set by the PID controller, based on what is currently safe

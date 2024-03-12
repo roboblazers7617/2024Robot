@@ -37,6 +37,7 @@ public final class Constants {
 		public static final int RIGHT_MOTOR_ID = 25; 
 		public static final int LEFT_MOTOR_ID = 26;
 		public static final int MAX_AMPERAGE = 40;
+		public static final double ARM_OFFSET = 161.8;
 
 		// Some relavant numbers
 		// arm mass: 35-40 lbs
@@ -52,25 +53,28 @@ public final class Constants {
 
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 4.0;
-		public static final double SOURCE_ANGLE = 64; //64 to compensate for change of ABEncoder offset hack;
+		public static final double MIN_ANGLE = 4.7;
+		public static final double SOURCE_ANGLE = 63.7; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 88;
+		public static final double FLOOR_PICKUP = 5.7;
+		public static final double STOW_ANGLE = 24.7;
+		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
 		// Constants for extended state
-		public static final double EXTENDED_KS = 0; //these values are based on the test arm
-		public static final double EXTENDED_KG = 0.5; // .5 while extended
+		public static final double EXTENDED_KS = 0.17; //these values are based on the test arm
+		public static final double EXTENDED_KG = 0.35; // .5 while extended
 		public static final double EXTENDED_KV = 0.0;
 	
 		// Constants for retracted state
 		public static final double RETRACTED_KS = 0; //these values are based on calculator
 		public static final double RETRACTED_KG = 0.4;
 		public static final double RETRACTED_KV = 0.0;
-		public static final double KP = 0.015;// Monday night 0.025; // oscilated at 0.07
+		public static final double KP = 0.014; // was 0.015
 		public static final double KI = 0;
 		public static final double KD = 0;
-		public static final double kMinOutput = -0.75;
+		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1;
 		public static final double minVel = 0;
 		// public static final double POSITION_CONVERSION_FACTOR = 16;
@@ -79,7 +83,7 @@ public final class Constants {
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
+		
 		public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
 
@@ -88,7 +92,7 @@ public final class Constants {
 	}
 
 	public static class ElevatorConstants {
-		public static final boolean KILL_IT_ALL = false;
+		public static final boolean KILL_IT_ALL = true;
 		public static final int RIGHT_MOTOR_ID = 28;
 		public static final int LEFT_MOTOR_ID = 27;
 		public static final int MAX_AMPERAGE = 40;
