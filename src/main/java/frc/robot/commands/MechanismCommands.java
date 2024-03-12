@@ -17,13 +17,20 @@ public class MechanismCommands {
 				.andThen(head.SpinUpShooterForAmp());
 	}
 	
+	/**
+	 * will wait until finished shooting to finish command
+	 * @param arm
+	 * @param head
+	 * @param drivetrain subsystem
+	 * @return
+	 */
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
 		double distance = drivetrain.getDistanceToSpeaker();
 		return ShootSpeaker(arm, head, distance);
 	}
 
 	/**
-	 * 
+	 * will wait until finished shooting to finish command
 	 * @param arm
 	 * @param head
 	 * @param distance in meters
@@ -34,6 +41,12 @@ public class MechanismCommands {
 				.andThen(head.ShootAtPosition(distance));
 	}
 	
+	/** will finish after piece has been shot
+	 * 
+	 * @param arm subsystem
+	 * @param head subsystem
+	 * @return Command
+	 */
 	public static Command ShootSpeakerSubwoofer(Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(1.27))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
@@ -43,16 +56,29 @@ public class MechanismCommands {
 				.andThen(head.ShootAtPosition(0));
 	}
 	
+	/** will finish after piece has been shot
+	 * 
+	 * @param arm subsystem
+	 * @param head subsystem
+	 * @return Command
+	 */
 	public static Command ShootSpeakerPodium(Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE))
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE)) // todo where should elevator be?
 				.andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE));
 	}
 	
+	/** will finish after piece has been intaken
+	 * 
+	 * @param arm subsystem
+	 * @param head subsystem
+	 * @return Command
+	 */
 	public static Command IntakeSource(Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece());
 	}
+	
 	
 	public static Command IntakeGround(Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(5.))
