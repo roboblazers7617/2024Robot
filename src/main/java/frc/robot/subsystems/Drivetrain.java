@@ -57,6 +57,9 @@ public class Drivetrain extends SubsystemBase {
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
 	private Optional<EstimatedRobotPose> visionMeasurement;
+	
+	private boolean doVisionUpdates = true;
+	
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -261,7 +264,9 @@ public class Drivetrain extends SubsystemBase {
 	
 	@Override
 	public void periodic() {
-		processVision();
+		if (doVisionUpdates) {
+			processVision();
+		}
 		motorTab.update();
 	}
 	
@@ -344,6 +349,10 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public void zeroGyro() {
 		swerveDrive.zeroGyro();
+	}
+	
+	public void disableVisionUpdates() {
+		doVisionUpdates = false;
 	}
 	
 	/**

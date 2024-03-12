@@ -149,8 +149,6 @@ public class RobotContainer {
 				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.FAST_SPEED_INCREMENT)))
 				.onFalse(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.FAST_SPEED_INCREMENT));
 		
-		// TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
-		// the source for pickup so they do not need to manually do this
 		driverController.povLeft()
 				.and(() -> checkAllianceColors(Alliance.Red))
 				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX()), () -> Math.cos(Units.degreesToRadians(-30)), () -> Math.sin(Units.degreesToRadians(-30))));
@@ -161,6 +159,10 @@ public class RobotContainer {
 		
 		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
+
+		driverController.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
+		driverController.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
+
 		//driverController.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
 		//driverController.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
 
