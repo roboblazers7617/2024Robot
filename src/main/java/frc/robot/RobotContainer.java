@@ -95,8 +95,8 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", turnTo0());
-		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
-		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeaker(arm, head, drivetrain));
+		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
+		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeaker(driverController, operatorController, arm, head, drivetrain));
 		
 		// Configure the trigger bindings
 		configureBindings();
@@ -168,12 +168,12 @@ public class RobotContainer {
 
 		operatorControllerCommands.x().onTrue(arm.Stow());
 		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
-		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(arm, head));
-		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(arm, head));
+		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
+		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		operatorControllerCommands.leftTrigger().onTrue(head.IdleShooter());
-		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.ShootSpeaker(arm, head, drivetrain));
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.ShootSpeaker(driverController, operatorController, arm, head, drivetrain));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(operatorController, arm, head)).onFalse(head.ShootInAmp());
-		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(arm, head));
+		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		operatorControllerCommands.povLeft().onTrue(
 					head.StopIntake()
 						.andThen(head.SpinDownShooter())
