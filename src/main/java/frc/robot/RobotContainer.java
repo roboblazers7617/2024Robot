@@ -152,8 +152,6 @@ public class RobotContainer {
 				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.FAST_SPEED_INCREMENT)))
 				.onFalse(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.FAST_SPEED_INCREMENT));
 		
-		// TODO: (Lukas) Drivers would like a button that when pressed rotates the robot to face
-		// the source for pickup so they do not need to manually do this
 		driverControllerCommands.povLeft()
 				.and(() -> checkAllianceColors(Alliance.Red))
 				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(-30)), () -> Math.sin(Units.degreesToRadians(-30))));
@@ -164,7 +162,14 @@ public class RobotContainer {
 		
 		driverControllerCommands.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
 		driverControllerCommands.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
-		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorControllerCommands.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorControllerCommands.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorControllerCommands.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorControllerCommands.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
+
+		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
+		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
+
+		//driverControllerCommands.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
+		//driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
+
+		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
 		operatorControllerCommands.x().onTrue(arm.Stow());
 		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());

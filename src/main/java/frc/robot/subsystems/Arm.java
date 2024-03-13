@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
 	// of the arm so the arm doesn't try to move on boot-up
 	private double armTarget;
 	/** the last actual arm target */
-	private double lastAcutalArmTarget;
+	private double lastAcutalArmTarget = armTarget;
 	/** arm angle based on distance interpolation table */
 	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
 	
@@ -139,17 +139,20 @@ public class Arm extends SubsystemBase {
 		armPIDController.setD(ArmConstants.KD);
 		armPIDController.setOutputRange(ArmConstants.kMinOutput, ArmConstants.kMaxOutput);
 		armPIDController.setFeedbackDevice(armAbsoluteEncoder);
-		armPIDController.setPositionPIDWrappingEnabled(true);
+		armPIDController.setPositionPIDWrappingEnabled(false);
 		
 		// setup the arm encoder
 		armAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_POSITION_CONVERSION_FACTOR);
 		armAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_VELOCITY_CONVERSION_FACTOR);
 		armAbsoluteEncoder.setInverted(true);
-		armAbsoluteEncoder.setZeroOffset(171.7);
+		armAbsoluteEncoder.setZeroOffset(ArmConstants.ARM_OFFSET);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
+		lastAcutalArmTarget = armTarget;
 
-		armAngleBasedOnDistance.put(0.0, 0.0);
+		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
+		armAngleBasedOnDistance.put(3.05, 27.0 /*30.0*/);
+		armAngleBasedOnDistance.put(4.27, 37.0 /*40.0*/);
 		// System.out.println("arm: target: " + armTarget);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
@@ -269,7 +272,8 @@ public class Arm extends SubsystemBase {
 	 * 
 	 * @return a command to stow the arm and elevator
 	 */
-	public Command Stow() {
+	public Command 
+	Stow() {
 		return this.runOnce(() -> {
 			setArmTarget(40);
 			setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
@@ -411,10 +415,14 @@ public class Arm extends SubsystemBase {
 		}
 		if (lastAcutalArmTarget != currentArmTarget) {
 			ArmFeedforward armFeedFoward = getArmFeedforward();
+			double velocity = 0;
+			if (Math.abs(currentArmTarget - armAbsoluteEncoder.getPosition()) > 2){
+				velocity = armAbsoluteEncoder.getVelocity();
+			}
+			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), velocity);
+			// System.out.println("arm feed foward: " + armFeedFowardValue);
 			
-			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), 0);
-			
-			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue - 1, ArbFFUnits.kVoltage);
+			armPIDController.setReference(currentArmTarget, CANSparkMax.ControlType.kPosition, 0, armFeedFowardValue, ArbFFUnits.kVoltage);
 			lastAcutalArmTarget = currentArmTarget;
 		}
 		if (!ElevatorConstants.KILL_IT_ALL) {
@@ -432,14 +440,16 @@ public class Arm extends SubsystemBase {
 			/** this is a constant increase to make the elvator go faster */
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
 				double speedyElevatorFeedForward;
-				if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
-					speedyElevatorFeedForward = Math.copySign(4.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
+				if (Math.abs(currentElevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
+					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
+					// System.out.println("speedy is " + speedyElevatorFeedForward);
+					// System.out.println("Diff is " + (currentElevatorTarget - elevatorEncoder.getPosition()));
 				} else {
 					speedyElevatorFeedForward = 0.0;
 				}
 				
-				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(currentElevatorTarget, 0);
-				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, speedyElevatorFeedForward + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
+				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(elevatorEncoder.getVelocity());
+				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, /*speedyElevatorFeedForward*/ + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
 				lastAcutalElevatorTarget = currentElevatorTarget;
 			}
 			

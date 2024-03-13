@@ -22,16 +22,53 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
+	/**
+	 * will wait until finished shooting to finish command
+	 * 
+	 * @param driverController
+	 * @param operatorController
+	 * @param arm
+	 * @param head
+	 * @param drivetrain
+	 *            subsystem
+	 * @return
+	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
 		double distance = drivetrain.getDistanceToSpeaker();
+		return ShootSpeaker(driverController, operatorController, arm, head, distance);
+	}
+	
+	/**
+	 * will wait until finished shooting to finish command
+	 * 
+	 * @param driverController
+	 * @param operatorController
+	 * @param arm
+	 * @param head
+	 * @param distance
+	 *            in meters
+	 * @return
+	 */
+	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, double distance) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
 				.andThen(head.ShootAtPosition(distance))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
+	/**
+	 * will finish after piece has been shot
+	 * 
+	 * @param driverController
+	 * @param operatorController
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @return Command
+	 */
 	public static Command ShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_SUBWOOFER_ANGLE))
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(1.27))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.SpinUpShooterAtPosition(0))
 				.andThen(arm.WaitUntilArmAtTarget())
@@ -41,13 +78,35 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
+	/**
+	 * will finish after piece has been shot
+	 * 
+	 * @param driverController
+	 * @param operatorController
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @return Command
+	 */
 	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE))
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE)) // todo where should elevator be?
 				.andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
+	/**
+	 * will finish after piece has been intaken
+	 * 
+	 * @param driverController
+	 * @param operatorController
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @return Command
+	 */
 	public static Command IntakeSource(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
@@ -57,7 +116,7 @@ public class MechanismCommands {
 	}
 	
 	public static Command IntakeGround(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.MIN_ANGLE))
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))

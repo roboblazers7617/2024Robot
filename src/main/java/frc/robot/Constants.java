@@ -37,6 +37,7 @@ public final class Constants {
 		public static final int RIGHT_MOTOR_ID = 25; 
 		public static final int LEFT_MOTOR_ID = 26;
 		public static final int MAX_AMPERAGE = 40;
+		public static final double ARM_OFFSET = 183.6;
 
 		// Some relavant numbers
 		// arm mass: 35-40 lbs
@@ -52,25 +53,28 @@ public final class Constants {
 
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 1.5;
-		public static final double SOURCE_ANGLE = 64;
+		public static final double MIN_ANGLE = 4.7;
+		public static final double SOURCE_ANGLE = 63.7; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 88;
+		public static final double FLOOR_PICKUP = 7.5;
+		public static final double STOW_ANGLE = 24.7;
+		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
 		// Constants for extended state
-		public static final double EXTENDED_KS = 0; //these values are based on the test arm
-		public static final double EXTENDED_KG = 0.5; // .5 while extended
+		public static final double EXTENDED_KS = 0.17; //these values are based on the test arm
+		public static final double EXTENDED_KG = 0.35; // .5 while extended
 		public static final double EXTENDED_KV = 0.0;
 	
 		// Constants for retracted state
 		public static final double RETRACTED_KS = 0; //these values are based on calculator
 		public static final double RETRACTED_KG = 0.4;
 		public static final double RETRACTED_KV = 0.0;
-		public static final double KP = 0.025; // oscilated at 0.07
+		public static final double KP = 0.014; // was 0.015
 		public static final double KI = 0;
 		public static final double KD = 0;
-		public static final double kMinOutput = -0.25;
+		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1;
 		public static final double minVel = 0;
 		// public static final double POSITION_CONVERSION_FACTOR = 16;
@@ -79,7 +83,7 @@ public final class Constants {
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
+		
 		public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
 
@@ -92,17 +96,17 @@ public final class Constants {
 		public static final int RIGHT_MOTOR_ID = 28;
 		public static final int LEFT_MOTOR_ID = 27;
 		public static final int MAX_AMPERAGE = 40;
-		public static final double KS = 0;
-		public static final double KG = 0.0;
+		public static final double KS = 0.0; // 0.2
+		public static final double KG = 0.0; // 0.1
 		public static final double KV = 0.0;
-		public static final double KP = 1.5; // was .2
+		public static final double KP = 0.3; // was .2 more recently 1.9
 		public static final double KI = 0;
-		public static final double KD = 0;
+		public static final double KD = 0.0;
 		public static final double kIz = 0; //izone
 		public static final double kMinOutput = -1;
 		public static final double kMaxOutput = 1;
 		public static final double minVel = 0;
-		public static final double GEAR_RATIO = 1/12;
+		public static final double GEAR_RATIO = 1.0/12;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 
@@ -167,26 +171,12 @@ public final class Constants {
 		
 		public static final int NOTE_SENSOR_DIO = 9;
 		
-		public static final double INTAKE_SPEED = 0.75;
+		public static final double INTAKE_SPEED = 1.0;
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
 	}
-	public static class PivotConstants {
-		public enum PivotPosition {
-			STOWED(0);
-			
-			PivotPosition(double angle) {
-				this.angle = angle;
-			}
-			
-			private final double angle;
-			
-			public double angle() {
-				return angle;
-			}
-		}
-	}
+
 	
 	public static class ShooterConstants {
 		public static final int MOTOR_BOTTOM_CAN_ID = 23;
