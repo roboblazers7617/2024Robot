@@ -58,7 +58,7 @@ public class Drivetrain extends SubsystemBase {
 	private AprilTagFieldLayout fieldLayout;
 	private Optional<EstimatedRobotPose> visionMeasurement;
 	
-	private boolean doVisionUpdates = true;
+	private boolean doVisionUpdates = false;
 	
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.

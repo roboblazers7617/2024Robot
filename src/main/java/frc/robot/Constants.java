@@ -219,7 +219,7 @@ public final class Constants {
 	public static final int NUMBER_OF_MOTORS = 10;
 	
 	public static class VisionConstants {
-		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(11), -Units.inchesToMeters(14-(15.0/8.0)), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(-40), 0));
-		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(-Units.inchesToMeters(12 + 3.0 / 4.0), Units.inchesToMeters(12 + 3.0/4.0), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(35), Units.degreesToRadians(-135.0)));
+		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(10.0 + 5.0 / 8.0), -Units.inchesToMeters(-(11.0 + 3.0/6.0)), Units.inchesToMeters(9.0 + 1.0 / 4.0), new Rotation3d(0, Units.degreesToRadians(-45), 0));
+		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(-Units.inchesToMeters(-(10.0 + 5.0 / 8.0)), Units.inchesToMeters(11.0 + 3.0/6.0), Units.inchesToMeters(9.0 + 1.0 / 4.0), new Rotation3d(0, Units.degreesToRadians(45), Units.degreesToRadians(180)));
 	}
 }
