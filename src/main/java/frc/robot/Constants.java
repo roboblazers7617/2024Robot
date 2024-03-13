@@ -54,11 +54,12 @@ public final class Constants {
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 4.7;
-		public static final double SOURCE_ANGLE = 63.7; //64 to compensate for change of ABEncoder offset hack;
-		public static final double AMP_ANGLE = 88;
-		public static final double FLOOR_PICKUP = 7.5;
-		public static final double STOW_ANGLE = 24.7;
+		public static final double SOURCE_ANGLE = 64; //64 to compensate for change of ABEncoder offset hack;
+		public static final double AMP_ANGLE = 85.5;
+		public static final double FLOOR_PICKUP = 6.5;
+		public static final double STOW_ANGLE = 32.0;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
+		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 

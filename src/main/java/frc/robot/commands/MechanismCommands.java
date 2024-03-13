@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,8 +27,7 @@ public class MechanismCommands {
 	 * @return
 	 */
 	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
-		double distance = drivetrain.getDistanceToSpeaker();
-		return ShootSpeaker(arm, head, distance);
+		return ShootSpeaker(arm, head, () -> drivetrain.getDistanceToSpeaker());
 	}
 
 	/**
@@ -36,9 +37,9 @@ public class MechanismCommands {
 	 * @param distance in meters
 	 * @return
 	 */
-	public static Command ShootSpeaker(Arm arm, Head head, double distance){
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
-				.andThen(head.ShootAtPosition(distance));
+	public static Command ShootSpeaker(Arm arm, Head head, Supplier<Double> distance){
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
+				.andThen(head.ShootAtPosition(distance.get()));
 	}
 	
 	/** will finish after piece has been shot

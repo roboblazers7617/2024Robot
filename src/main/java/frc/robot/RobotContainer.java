@@ -137,7 +137,7 @@ public class RobotContainer {
 		// the joysticks do not correctly drive the robot forward. Everything is reversed.
 		drivetrain.setDefaultCommand(absoluteDrive);
 		
-		driverController.povRight().toggleOnTrue(new LockWheelsState(drivetrain));
+		driverController.povRight().toggleOnTrue(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-15)));
 		
 		driverController.leftBumper()
 				.onTrue(new ScheduleCommand(rotationDrive))
