@@ -4,6 +4,8 @@
 
 package frc.robot.shuffleboard;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -13,7 +15,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.RobotContainer;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 
@@ -25,8 +30,12 @@ public class DriverStationTab extends ShuffleboardTabBase {
 	private final BooleanPublisher isDriverStationConnected;
 	private final BooleanPublisher isBrownedOut;
 	private Alert alert = new Alert("something is wrong", AlertType.ERROR);
+	private SendableChooser<Command> autoChooser = new SendableChooser<>();
 	
-	public DriverStationTab() {
+	
+	public DriverStationTab(SendableChooser<Command> autoChooser) {
+		this.autoChooser = autoChooser;
+
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
@@ -53,6 +62,7 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		tab.add("activate tabs", new ActivateTabs());
 		tab.add("start alert", new InstantCommand(() -> alert.set(true)).ignoringDisable(true));
 		tab.add("end alert", new InstantCommand(() -> alert.set(false)).ignoringDisable(true));
+		tab.add("Auto Path", autoChooser);
 	}
 	
 	@Override

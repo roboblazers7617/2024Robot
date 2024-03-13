@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.photonvision.PhotonUtils;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SwerveControlRequestParameters;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -42,6 +43,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -68,6 +70,8 @@ public class RobotContainer {
 	LED led = new LED(SerialPort.Port.kMXP, intake, shooter);
 	private final Arm arm = new Arm();
 	private final Climber climber = new Climber();
+	public final SendableChooser<Command> autoChooser;
+
 	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
@@ -90,7 +94,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", turnTo0());
 		
-
+		autoChooser = AutoBuilder.buildAutoChooser();
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -98,7 +102,7 @@ public class RobotContainer {
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
-		tabs.add(new DriverStationTab());
+		tabs.add(new DriverStationTab(autoChooser));
 		
 		tabs.add(new ArmTab(arm));
 		
@@ -181,7 +185,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("4 piece top front to bot wip");
+		return autoChooser.getSelected();
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
