@@ -5,7 +5,7 @@
       "x": 1.54,
       "y": 7.0
     },
-    "rotation": 0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -20,19 +20,32 @@
         {
           "type": "named",
           "data": {
-            "name": "turnTo0"
+            "name": "ShootSpeaker"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeGround"
+            "name": "turnTo0"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "top front start to top ring"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top front start to top ring"
+                }
+              }
+            ]
           }
         },
         {
@@ -54,15 +67,34 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top ring to top far "
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "top ring to mid ring"
+            "pathName": "top far to top ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnToSpeaker"
           }
         },
         {
@@ -74,13 +106,32 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeGround"
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top ring to topmid far"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "mid ring to bot ring"
+            "pathName": "topmid far to top ring"
           }
         },
         {

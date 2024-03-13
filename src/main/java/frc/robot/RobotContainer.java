@@ -11,6 +11,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.shuffleboard.ArmTab;
+import frc.robot.shuffleboard.ClimberTab;
 import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.LEDTab;
@@ -26,12 +27,14 @@ import java.util.Optional;
 import org.photonvision.PhotonUtils;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SwerveControlRequestParameters;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.commands.TempHead;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Intake;
@@ -40,6 +43,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -65,6 +69,9 @@ public class RobotContainer {
 	Shooter shooter = new Shooter();
 	LED led = new LED(SerialPort.Port.kMXP, intake, shooter);
 	private final Arm arm = new Arm();
+	private final Climber climber = new Climber();
+	public final SendableChooser<Command> autoChooser;
+
 	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
@@ -87,7 +94,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", turnTo0());
 		
-
+		autoChooser = AutoBuilder.buildAutoChooser();
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -95,13 +102,15 @@ public class RobotContainer {
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
-		tabs.add(new DriverStationTab());
+		tabs.add(new DriverStationTab(autoChooser));
 		
 		tabs.add(new ArmTab(arm));
 		
 		tabs.add(new SwerveTab(drivetrain));
 		
 		tabs.add(new LEDTab(led, intake, shooter));
+
+		tabs.add(new ClimberTab(climber));
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
@@ -151,10 +160,7 @@ public class RobotContainer {
 		
 		driverController.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
 		driverController.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
-		// arm.setDefaultCommand(Commands.run(() -> arm.setArmVelocity(Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0), arm));
-		arm.setDefaultCommand(Commands.run(() -> arm.setElevatorVelocity(Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ElevatorConstants.MAX_MANUAL_SPEED : 0), arm));
-
-
+		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
@@ -179,7 +185,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return new PathPlannerAuto("4 piece top front to bot wip");
+		return autoChooser.getSelected();
 	}
 	
 	public void setMotorBrake(boolean isBraked) {
@@ -193,7 +199,7 @@ public class RobotContainer {
 			return new TurnToTag(drivetrain, 7,true);
 	}
 	public void teleopInit(){
-		arm.teleopInit();
+		// arm.teleopInit();
 	}
 	/**
 	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
