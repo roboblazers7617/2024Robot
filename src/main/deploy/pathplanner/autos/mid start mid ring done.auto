@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.0,
-      "y": 7.0
+      "x": 1.54,
+      "y": 5.55
     },
     "rotation": 0
   },
@@ -12,45 +12,39 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "test path forward"
+            "name": "ShootSpeaker"
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "turnToSpeaker"
+                  "pathName": "mid start to mid ring"
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 10.0
+                  "name": "IntakeGround"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "test path back"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "turnTo0"
+            "name": "ShootSpeaker"
           }
         }
       ]
     }
   },
-  "folder": "auto test",
+  "folder": null,
   "choreoAuto": false
 }
