@@ -30,15 +30,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "top front start to top ring"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top front start to top ring"
+                }
+              }
+            ]
           }
         },
         {
@@ -60,15 +67,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "top ring to top far "
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top ring to top far "
+                }
+              }
+            ]
           }
         },
         {
@@ -96,15 +110,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "top ring to topmid far"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top ring to topmid far"
+                }
+              }
+            ]
           }
         },
         {

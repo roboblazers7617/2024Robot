@@ -30,15 +30,35 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "near way bot to far midbot"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeGround"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "near way bot to far midbot"
+                }
+              }
+            ]
           }
         },
         {
@@ -66,15 +86,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "shoot to far bot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "shoot to far bot"
+                }
+              }
+            ]
           }
         },
         {

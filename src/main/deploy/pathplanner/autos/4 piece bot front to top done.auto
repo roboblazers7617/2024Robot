@@ -30,15 +30,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "bot front start to bot ring"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bot front start to bot ring"
+                }
+              }
+            ]
           }
         },
         {
@@ -60,15 +67,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "bot ring to mid ring"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bot ring to mid ring"
+                }
+              }
+            ]
           }
         },
         {
@@ -78,15 +92,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "IntakeGround"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "mid ring to top ring"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "mid ring to top ring"
+                }
+              }
+            ]
           }
         },
         {
