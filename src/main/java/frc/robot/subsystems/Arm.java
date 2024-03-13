@@ -440,14 +440,16 @@ public class Arm extends SubsystemBase {
 			/** this is a constant increase to make the elvator go faster */
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
 				double speedyElevatorFeedForward;
-				if (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
-					speedyElevatorFeedForward = Math.copySign(4.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
+				if (Math.abs(currentElevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
+					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
+					System.out.println("speedy is " + speedyElevatorFeedForward);
+					System.out.println("Diff is " + (currentElevatorTarget - elevatorEncoder.getPosition()));
 				} else {
 					speedyElevatorFeedForward = 0.0;
 				}
 				
 				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(elevatorEncoder.getVelocity());
-				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, speedyElevatorFeedForward + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
+				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, /*speedyElevatorFeedForward*/ + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
 				lastAcutalElevatorTarget = currentElevatorTarget;
 			}
 			

@@ -37,7 +37,7 @@ public final class Constants {
 		public static final int RIGHT_MOTOR_ID = 25; 
 		public static final int LEFT_MOTOR_ID = 26;
 		public static final int MAX_AMPERAGE = 40;
-		public static final double ARM_OFFSET = 161.8;
+		public static final double ARM_OFFSET = 183.6;
 
 		// Some relavant numbers
 		// arm mass: 35-40 lbs
@@ -56,7 +56,7 @@ public final class Constants {
 		public static final double MIN_ANGLE = 4.7;
 		public static final double SOURCE_ANGLE = 63.7; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 88;
-		public static final double FLOOR_PICKUP = 5.7;
+		public static final double FLOOR_PICKUP = 7.5;
 		public static final double STOW_ANGLE = 24.7;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
@@ -96,12 +96,12 @@ public final class Constants {
 		public static final int RIGHT_MOTOR_ID = 28;
 		public static final int LEFT_MOTOR_ID = 27;
 		public static final int MAX_AMPERAGE = 40;
-		public static final double KS = 0.1;
-		public static final double KG = 0.1;
+		public static final double KS = 0.0; // 0.2
+		public static final double KG = 0.0; // 0.1
 		public static final double KV = 0.0;
-		public static final double KP = 1.5; // was .2
+		public static final double KP = 0.3; // was .2 more recently 1.9
 		public static final double KI = 0;
-		public static final double KD = 0;
+		public static final double KD = 0.0;
 		public static final double kIz = 0; //izone
 		public static final double kMinOutput = -1;
 		public static final double kMaxOutput = 1;
