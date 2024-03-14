@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -264,5 +265,15 @@ public class Head extends SubsystemBase {
 	// Does the intake have a note?
 	public boolean isNoteAcquired() {
 		return isNoteAcquired;
+	}
+	
+	public Command ToggleBreakModes() {
+		return new InstantCommand(() -> {
+			if (intakeMotor.getIdleMode() == IdleMode.kBrake) {
+				intakeMotor.setIdleMode(IdleMode.kCoast);
+			} else {
+				intakeMotor.setIdleMode(IdleMode.kBrake);
+			}
+		});
 	}
 }

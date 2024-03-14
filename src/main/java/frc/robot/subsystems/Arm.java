@@ -151,8 +151,8 @@ public class Arm extends SubsystemBase {
 		lastAcutalArmTarget = armTarget;
 
 		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
-		armAngleBasedOnDistance.put(3.05, 27.0 /*30.0*/);
-		armAngleBasedOnDistance.put(4.27, 37.0 /*40.0*/);
+		armAngleBasedOnDistance.put(2.7, 34.0);
+		armAngleBasedOnDistance.put(3.24, 37.0);
 		// System.out.println("arm: target: " + armTarget);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
@@ -442,8 +442,7 @@ public class Arm extends SubsystemBase {
 				double speedyElevatorFeedForward;
 				if (Math.abs(currentElevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
 					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
-					System.out.println("speedy is " + speedyElevatorFeedForward);
-					System.out.println("Diff is " + (currentElevatorTarget - elevatorEncoder.getPosition()));
+				
 				} else {
 					speedyElevatorFeedForward = 0.0;
 				}
