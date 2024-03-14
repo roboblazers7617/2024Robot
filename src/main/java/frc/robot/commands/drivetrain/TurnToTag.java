@@ -52,12 +52,9 @@ public class TurnToTag extends Command {
 	public void execute() {
 		if(invertFacing){
 			drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));	
-			System.out.println("angle is " + tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180)));
-			System.out.println("Looking for tag " + tagID);
 		}
 		else{
 		drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
-		System.out.println("angle is " +  tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle());
 		
 		}
 	
