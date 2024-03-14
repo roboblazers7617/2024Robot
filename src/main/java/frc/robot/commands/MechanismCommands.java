@@ -39,6 +39,9 @@ public class MechanismCommands {
 	 */
 	public static Command ShootSpeaker(Arm arm, Head head, Supplier<Double> distance){
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(arm.WaitUntilElevatorAtTarget())
+				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(head.ShootAtPosition(distance.get()));
 	}
 	

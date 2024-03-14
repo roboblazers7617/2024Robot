@@ -99,7 +99,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeaker(arm, head, drivetrain));
 		
-		autoChooser = AutoBuilder.buildAutoChooser();
+		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -194,6 +194,7 @@ public class RobotContainer {
 
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
+		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {

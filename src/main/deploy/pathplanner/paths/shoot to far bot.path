@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 0.75,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 120.0
   },

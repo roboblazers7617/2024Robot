@@ -104,7 +104,7 @@ public final class Constants {
 		public static final double KI = 0;
 		public static final double KD = 0.0;
 		public static final double kIz = 0; //izone
-		public static final double kMinOutput = -1;
+		public static final double kMinOutput = -.65;
 		public static final double kMaxOutput = 1;
 		public static final double minVel = 0;
 		public static final double GEAR_RATIO = 1.0/12;
