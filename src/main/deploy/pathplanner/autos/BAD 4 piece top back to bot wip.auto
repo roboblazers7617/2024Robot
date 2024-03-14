@@ -30,35 +30,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeGround"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "top front start to top ring"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "name": "IntakeGround"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "top back start to top ring"
           }
         },
         {
@@ -80,22 +60,33 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeGround"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top ring to mid ring"
-                }
-              }
-            ]
+            "name": "IntakeGround"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "top ring to mid ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeGround"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid ring to bot ring"
           }
         },
         {

@@ -102,7 +102,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeaker(driverController, operatorController, arm, head, drivetrain));
 		
-		autoChooser = AutoBuilder.buildAutoChooser();
+		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 
 		// Configure the trigger bindings
 		configureBindings();
@@ -175,7 +175,7 @@ public class RobotContainer {
 		//driverControllerCommands.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
 		//driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
 
-		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
+		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
 		operatorControllerCommands.x().onTrue(arm.Stow());
 		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
@@ -197,6 +197,7 @@ public class RobotContainer {
 
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
+		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
@@ -207,11 +208,11 @@ public class RobotContainer {
 	}
 	
 	private double processJoystickVelocity(double joystickInput) {
-		return /* checkAllianceColors(Alliance.Blue) ? */ (-MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND)) * speedMultiplier; // : MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND) * speedMultiplier;
+		return /* checkAllianceColors(Alliance.Blue) ? */ (-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND)) * speedMultiplier; // : MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND) * speedMultiplier;
 	}
 	
 	private double processJoystickAngular(double joystickInput) {
-		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND), 3) : Math.pow(MathUtil.applyDeadband(joystickInput, OperatorConstants.JOYSTICK_DEADBAND), 3);
+		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
 	}
 	
 	/**

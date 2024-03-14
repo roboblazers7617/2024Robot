@@ -20,6 +20,7 @@ public class TurnToTag extends Command {
 	private final Drivetrain drivetrain;
 	private final PIDController controller;
 	private AprilTagFieldLayout fieldLayout;
+	private final int tagID;
 	private boolean invertFacing = false;
 	
 	public TurnToTag(Drivetrain drivetrain, int tagID) {
@@ -28,6 +29,7 @@ public class TurnToTag extends Command {
 		this.drivetrain = drivetrain;
 		this.controller = new PIDController(drivetrain.getSwerveController().config.headingPIDF.p, drivetrain.getSwerveController().config.headingPIDF.i, drivetrain.getSwerveController().config.headingPIDF.d);
 		controller.setSetpoint(0);
+		this.tagID = tagID;
 		
 		try {
 			fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
@@ -49,11 +51,16 @@ public class TurnToTag extends Command {
 	@Override
 	public void execute() {
 		if(invertFacing){
-			drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));
+			drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));	
+			System.out.println("angle is " + tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180)));
+			System.out.println("Looking for tag " + tagID);
 		}
 		else{
 		drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
+		System.out.println("angle is " +  tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle());
+		
 		}
+	
 	}
 	
 	// Called once the command ends or is interrupted.

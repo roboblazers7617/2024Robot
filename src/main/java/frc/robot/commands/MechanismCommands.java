@@ -26,6 +26,34 @@ public class MechanismCommands {
 	
 	/**
 	 * will wait until finished shooting to finish command
+<<<<<<< HEAD
+=======
+	 * @param arm
+	 * @param head
+	 * @param drivetrain subsystem
+	 * @return
+	 */
+	public static Command ShootSpeaker(Arm arm, Head head, Drivetrain drivetrain) {
+		return ShootSpeaker(arm, head, () -> drivetrain.getDistanceToSpeaker());
+	}
+
+	/**
+	 * will wait until finished shooting to finish command
+	 * @param arm
+	 * @param head
+	 * @param distance in meters
+	 * @return
+	 */
+	public static Command ShootSpeaker(Arm arm, Head head, Supplier<Double> distance){
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(arm.WaitUntilElevatorAtTarget())
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(head.ShootAtPosition(distance.get()));
+	}
+	
+	/** will finish after piece has been shot
+>>>>>>> Mechanisms
 	 * 
 	 * @param driverController
 	 * @param operatorController
