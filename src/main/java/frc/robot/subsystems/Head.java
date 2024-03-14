@@ -16,6 +16,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -86,6 +87,14 @@ public class Head extends SubsystemBase {
 		
 		// Shooter interpolation map
 		shooterInterpolationMap.put(0.0, 6000.0);
+		
+		// Burn motor controller configuration to flash
+		Timer.delay(0.005);
+		intakeMotor.burnFlash();
+		Timer.delay(0.005);
+		shooterMotorBottom.burnFlash();
+		Timer.delay(0.005);
+		shooterMotorTop.burnFlash();
 	}
 	
 	@Override
