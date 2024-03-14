@@ -54,6 +54,12 @@
           "data": {
             "name": "ShootSpeaker"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
         }
       ]
     }

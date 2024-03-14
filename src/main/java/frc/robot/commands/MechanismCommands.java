@@ -28,6 +28,7 @@ public class MechanismCommands {
 		return arm.WaitUntilArmAtTarget()
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(head.ShootInAmp())
+				.andThen(arm.Stow())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}

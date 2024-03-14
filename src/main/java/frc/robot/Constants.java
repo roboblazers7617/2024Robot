@@ -54,9 +54,9 @@ public final class Constants {
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 4.7;
-		public static final double SOURCE_ANGLE = 64; //64 to compensate for change of ABEncoder offset hack;
+		public static final double SOURCE_ANGLE = 70; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 85.5;
-		public static final double FLOOR_PICKUP = 6.5;
+		public static final double FLOOR_PICKUP = 5.5;
 		public static final double STOW_ANGLE = 32.0;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
 		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
@@ -104,8 +104,8 @@ public final class Constants {
 		public static final double KI = 0;
 		public static final double KD = 0.0;
 		public static final double kIz = 0; //izone
-		public static final double kMinOutput = -.65;
-		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = -.35;
+		public static final double kMaxOutput = 0.85;
 		public static final double minVel = 0;
 		public static final double GEAR_RATIO = 1.0/12;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
@@ -213,7 +213,7 @@ public final class Constants {
 		public static final double BALANCE_KI = 0;
 		public static final double BALANCE_KD = 0;
 		public static final double CLIMB_HEIGHT = 60;
-		public static final double CLIMB_RATE = 0;
+		public static final double CLIMB_RATE = .6;
 	}
 
 	public static final double BATTERY_WARNING_VOLTAGE = 11;

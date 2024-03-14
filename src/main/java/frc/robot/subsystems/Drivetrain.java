@@ -70,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
 	public Drivetrain(Vision vision) {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
-		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
@@ -150,7 +150,7 @@ public class Drivetrain extends SubsystemBase {
 		
 		// Create a path following command using AutoBuilder. This will also trigger
 		// event markers.
-		return AutoBuilder.followPath(path);
+		return AutoBuilder.followPath(path).andThen(Commands.runOnce(() -> swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians()));
 	}
 	
 	/**
