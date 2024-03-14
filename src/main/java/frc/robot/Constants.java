@@ -54,11 +54,12 @@ public final class Constants {
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 4.7;
-		public static final double SOURCE_ANGLE = 63.7; //64 to compensate for change of ABEncoder offset hack;
-		public static final double AMP_ANGLE = 88;
-		public static final double FLOOR_PICKUP = 7.5;
-		public static final double STOW_ANGLE = 24.7;
+		public static final double SOURCE_ANGLE = 64; //64 to compensate for change of ABEncoder offset hack;
+		public static final double AMP_ANGLE = 85.5;
+		public static final double FLOOR_PICKUP = 6.5;
+		public static final double STOW_ANGLE = 32.0;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
+		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 25;
 
@@ -218,7 +219,7 @@ public final class Constants {
 	public static final int NUMBER_OF_MOTORS = 10;
 	
 	public static class VisionConstants {
-		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(11), -Units.inchesToMeters(14-(15.0/8.0)), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(-40), 0));
-		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(-Units.inchesToMeters(12 + 3.0 / 4.0), Units.inchesToMeters(12 + 3.0/4.0), Units.inchesToMeters(6.0 + 7.0 / 16.0), new Rotation3d(0, Units.degreesToRadians(35), Units.degreesToRadians(-135.0)));
+		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(10.0 + 5.0 / 8.0), -Units.inchesToMeters(-(11.0 + 3.0/6.0)), Units.inchesToMeters(9.0 + 1.0 / 4.0), new Rotation3d(0, Units.degreesToRadians(-45), 0));
+		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(-Units.inchesToMeters(-(10.0 + 5.0 / 8.0)), Units.inchesToMeters(11.0 + 3.0/6.0), Units.inchesToMeters(9.0 + 1.0 / 4.0), new Rotation3d(0, Units.degreesToRadians(45), Units.degreesToRadians(180)));
 	}
 }

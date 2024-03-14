@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -30,12 +32,11 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param drivetrain
-	 *            subsystem
+	 *                subsystem
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
-		double distance = drivetrain.getDistanceToSpeaker();
-		return ShootSpeaker(driverController, operatorController, arm, head, distance);
+		return ShootSpeaker(driverController, operatorController, arm, head, () -> drivetrain.getDistanceToSpeaker());
 	}
 	
 	/**
@@ -46,7 +47,25 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param distance
-	 *            in meters
+	 *                in meters
+	 * @return
+	 */
+	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
+				.andThen(head.ShootAtPosition(distance.get()))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+	
+	/**
+	 * will wait until finished shooting to finish command
+	 * 
+	 * @param driverController
+	 * @param operatorController
+	 * @param arm
+	 * @param head
+	 * @param distance
+	 *                in meters
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, double distance) {
@@ -62,9 +81,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *            subsystem
+	 *                subsystem
 	 * @param head
-	 *            subsystem
+	 *                subsystem
 	 * @return Command
 	 */
 	public static Command ShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
@@ -84,9 +103,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *            subsystem
+	 *                subsystem
 	 * @param head
-	 *            subsystem
+	 *                subsystem
 	 * @return Command
 	 */
 	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
@@ -102,9 +121,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *            subsystem
+	 *                subsystem
 	 * @param head
-	 *            subsystem
+	 *                subsystem
 	 * @return Command
 	 */
 	public static Command IntakeSource(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
