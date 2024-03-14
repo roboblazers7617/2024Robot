@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,6 +46,17 @@ public class Climber extends SubsystemBase {
 		rightClimberEncoder.setPosition(0.0);
 		
 		balanceController.setSetpoint(0);
+
+		burnFlash();
+	}
+
+	private void burnFlash(){
+		Timer.delay(0.005);
+		leftClimber.burnFlash();
+		Timer.delay(0.005);
+		rightClimber.burnFlash();
+		Timer.delay(0.005);
+		
 	}
 	
 	public void setSpeed(double leftSpeed, double rightSpeed) {

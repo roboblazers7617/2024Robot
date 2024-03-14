@@ -189,12 +189,26 @@ public class Arm extends SubsystemBase {
 		
 		time.reset();
 		time.start();
+
+		burnFlash();
 		
 		// teleopEnabled = new Trigger(() -> DriverStation.isTeleopEnabled());
 		// teleopEnabled.onTrue(this.runOnce(() -> {
 		// elevatorTarget = elevatorEncoder.getPosition();
 		// armTarget = armAbsoluteEncoder.getPosition();
 		// }));
+	}
+
+	private void burnFlash(){
+		Timer.delay(0.005);
+		leaderArmMotor.burnFlash();
+		Timer.delay(0.005);
+		followerArmMotor.burnFlash();
+		Timer.delay(0.005);
+		leaderElevatorMotor.burnFlash();
+		Timer.delay(0.005);
+		followerElevatorMotor.burnFlash();
+		Timer.delay(0.005);
 	}
 	
 	private ElevatorFeedforward getElevatorFeedforward() {
