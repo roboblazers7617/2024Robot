@@ -37,7 +37,7 @@ public final class Constants {
 		public static final int RIGHT_MOTOR_ID = 25; 
 		public static final int LEFT_MOTOR_ID = 26;
 		public static final int MAX_AMPERAGE = 40;
-		public static final double ARM_OFFSET = 183.6;
+		public static final double ARM_OFFSET = 238.04;
 
 		// Some relavant numbers
 		// arm mass: 35-40 lbs
@@ -129,7 +129,8 @@ public final class Constants {
 	}
 
 	public static class OperatorConstants {
-		public static final double JOYSTICK_DEADBAND = 0.075;
+		public static final double DRIVER_JOYSTICK_DEADBAND = 0.075;
+		public static final double OPERATOR_JOYSTICK_DEADBAND = 0.125;
 		public static final int DRIVER_CONTROLLER_PORT = 0;
 		public static final int OPERATOR_CONTROLLER_PORT = 1;
 		public static final double ROTATION_RATE = 2;
