@@ -183,7 +183,7 @@ public class RobotContainer {
 		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		operatorControllerCommands.leftTrigger().onTrue(head.IdleShooter());
 		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.ShootSpeaker(driverController, operatorController, arm, head, drivetrain));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(operatorController, arm, head)).onFalse(head.ShootInAmp());
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head)).onFalse(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		operatorControllerCommands.povLeft().onTrue(
 					head.StopIntake()
