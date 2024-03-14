@@ -456,7 +456,6 @@ public class Arm extends SubsystemBase {
 				double speedyElevatorFeedForward;
 				if (Math.abs(currentElevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
 					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
-				
 				} else {
 					speedyElevatorFeedForward = 0.0;
 				}
