@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.shuffleboard.MotorTab;
-import frc.robot.util.TunableNumber;
+// import frc.robot.util.TunableNumber;
 
 public class Arm extends SubsystemBase {
 	// Arm
@@ -54,12 +54,12 @@ public class Arm extends SubsystemBase {
 	private ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
 	// private ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
 	
-	private final TunableNumber extendedArmKS = new TunableNumber("arm", "Extended Arm KS", ArmConstants.EXTENDED_KS);
-	private final TunableNumber extendedArmKG = new TunableNumber("arm", "Extended Arm KG", ArmConstants.EXTENDED_KG);
-	private final TunableNumber extendedArmKV = new TunableNumber("arm", "Extended Arm KV", ArmConstants.EXTENDED_KV);
-	private final TunableNumber retractedArmKS = new TunableNumber("arm", "Retracted Arm KS", ArmConstants.RETRACTED_KS);
-	private final TunableNumber retractedArmKG = new TunableNumber("arm", "Retracted Arm KG", ArmConstants.RETRACTED_KG);
-	private final TunableNumber retractedArmKV = new TunableNumber("arm", "Retracted Arm KV", ArmConstants.RETRACTED_KV);
+	// private final TunableNumber extendedArmKS = new TunableNumber("arm", "Extended Arm KS", ArmConstants.EXTENDED_KS);
+	// private final TunableNumber extendedArmKG = new TunableNumber("arm", "Extended Arm KG", ArmConstants.EXTENDED_KG);
+	// private final TunableNumber extendedArmKV = new TunableNumber("arm", "Extended Arm KV", ArmConstants.EXTENDED_KV);
+	// private final TunableNumber retractedArmKS = new TunableNumber("arm", "Retracted Arm KS", ArmConstants.RETRACTED_KS);
+	// private final TunableNumber retractedArmKG = new TunableNumber("arm", "Retracted Arm KG", ArmConstants.RETRACTED_KG);
+	// private final TunableNumber retractedArmKV = new TunableNumber("arm", "Retracted Arm KV", ArmConstants.RETRACTED_KV);
 	
 	/** the current target for the arm, in degrees, it is within the total bounds of the arm but may not be a currently safe move */
 	// of the arm so the arm doesn't try to move on boot-up
@@ -86,9 +86,9 @@ public class Arm extends SubsystemBase {
 	InterpolatingDoubleTreeMap elevatorKGTable = new InterpolatingDoubleTreeMap();
 	InterpolatingDoubleTreeMap elevatorKVTable = new InterpolatingDoubleTreeMap();
 	
-	private final TunableNumber elevatorKS = new TunableNumber("arm", "Elevator KS", ElevatorConstants.KS);
-	private final TunableNumber elevatorKG = new TunableNumber("arm", "Elevator KG", ElevatorConstants.KG);
-	private final TunableNumber elevatorKV = new TunableNumber("arm", "Elevator KV", ElevatorConstants.KV);
+	// private final TunableNumber elevatorKS = new TunableNumber("arm", "Elevator KS", ElevatorConstants.KS);
+	// private final TunableNumber elevatorKG = new TunableNumber("arm", "Elevator KG", ElevatorConstants.KG);
+	// private final TunableNumber elevatorKV = new TunableNumber("arm", "Elevator KV", ElevatorConstants.KV);
 	
 	private ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
 	
@@ -295,22 +295,22 @@ public class Arm extends SubsystemBase {
 		});
 	}
 	
-	public Command addElevatorFeedFowardValuesCommand() {
-		return this.runOnce(() -> addElevatorFeedFowardValues(elevatorKS.get(), elevatorKG.get(), elevatorKV.get()));
-	}
+	// public Command addElevatorFeedFowardValuesCommand() {
+	// 	return this.runOnce(() -> addElevatorFeedFowardValues(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV));
+	// }
 	
-	public Command generateNewArmFeedFoward() {
-		return this.runOnce(() -> {
-			extendedArmFeedForward = new ArmFeedforward(extendedArmKS.get(), extendedArmKG.get(), extendedArmKV.get());
-			// retractedArmFeedForward = new ArmFeedforward(retractedArmKS.get(), retractedArmKG.get(), retractedArmKV.get());
-		});
-	}
+	// public Command generateNewArmFeedFoward() {
+	// 	return this.runOnce(() -> {
+	// 		extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
+	// 		// retractedArmFeedForward = new ArmFeedforward(retractedArmKS.get(), retractedArmKG.get(), retractedArmKV.get());
+	// 	});
+	// }
 	
-	public Command generateNewElevatorFeedFoward() {
-		return this.runOnce(() -> {
-			elevatorFeedforward = new ElevatorFeedforward(elevatorKS.get(), elevatorKG.get(), elevatorKV.get());
-		});
-	}
+	// public Command generateNewElevatorFeedFoward() {
+	// 	return this.runOnce(() -> {
+	// 		elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
+	// 	});
+	// }
 	
 	/**
 	 * sets the velocity for the arm by moving a position setpoint
