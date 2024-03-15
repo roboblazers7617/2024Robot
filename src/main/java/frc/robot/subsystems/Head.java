@@ -95,18 +95,6 @@ public class Head extends SubsystemBase {
 		// This method will be called once per scheduler run
 	}
 	
-	public Double getIntakeEncoder() {
-		return intakeMotor.getEncoder().getPosition();
-	}
-	
-	public Double getShooterEncoderBottom() {
-		return shooterMotorBottom.getEncoder().getPosition();
-	}
-	
-	public Double getShooterEncoderTop() {
-		return shooterMotorTop.getEncoder().getPosition();
-	}
-	
 	private void setIntakeSpeed(double intakeSpeed) {
 		intakeMotor.set(intakeSpeed);
 	}
