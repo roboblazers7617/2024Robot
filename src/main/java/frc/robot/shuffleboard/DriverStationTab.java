@@ -48,7 +48,7 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		voltagePublisher = networkTable.getDoubleTopic("Battery Voltage").publish();
 		isDriverStationConnected = networkTable.getBooleanTopic("Is Driver Station Connected").publish();
 		isBrownedOut = networkTable.getBooleanTopic("Is Browned Out").publish();
-		
+		 
 		camera = CameraServer.startAutomaticCapture();
 		if (camera.isConnected()) {
 			camera.setResolution(480, 320);
