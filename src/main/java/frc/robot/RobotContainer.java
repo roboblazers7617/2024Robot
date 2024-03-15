@@ -182,8 +182,8 @@ public class RobotContainer {
 		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
 		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head));/* .andThen(arm.Stow()));*/
 		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
-		operatorControllerCommands.leftTrigger().onTrue(head.IdleShooter());
-		operatorControllerCommands.rightTrigger().onTrue(arm.Stow().andThen(arm.WaitUntilArmAtTarget()).andThen(arm.WaitUntilElevatorAtTarget()).andThen(head.ShootAtPosition(0.0)));
+		operatorControllerCommands.leftTrigger().onTrue(head.SpinUpShooterForSpeaker());
+		operatorControllerCommands.rightTrigger().onTrue(arm.Stow().andThen(arm.WaitUntilArmAtTarget()).andThen(arm.WaitUntilElevatorAtTarget()).andThen(head.ShootInSpeaker()));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head)).onFalse(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		operatorControllerCommands.povLeft().onTrue(
@@ -194,7 +194,7 @@ public class RobotContainer {
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.start().onTrue(head.IntakePiece());
-		operatorControllerCommands.back().onTrue(head.ShootAtPosition(0));
+		operatorControllerCommands.back().onTrue(head.ShootInSpeaker());
 
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());

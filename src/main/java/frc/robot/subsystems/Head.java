@@ -14,7 +14,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,14 +31,7 @@ public class Head extends SubsystemBase {
 	private final RelativeEncoder shooterEncoderTop = shooterMotorTop.getEncoder();
 	private final SparkPIDController shooterControllerBottom = shooterMotorBottom.getPIDController();
 	private final SparkPIDController shooterControllerTop = shooterMotorTop.getPIDController();
-	// private final DigitalInput isNoteInShooter = new
-	// DigitalInput(ShooterConstants.NOTE_SHOT_SENSOR_DIO);
-	private final InterpolatingDoubleTreeMap shooterInterpolationMap = new InterpolatingDoubleTreeMap();
 	
-	/*
-	 * Two motor intake
-	 * Always spin bottom motor forward, but reverse top motor to intake from source.
-	 */
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private boolean isNoteAcquired = false; // Since none of the sensors will be active when a note is intaken and aligned, this boolean is necessary to know if the robot has a note.
@@ -77,9 +69,6 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setD(ShooterConstants.TOP_kD);
 		shooterControllerBottom.setOutputRange(ShooterConstants.BOTTOM_kMinOutput, ShooterConstants.BOTTOM_kMaxOutput);
 		shooterControllerTop.setOutputRange(ShooterConstants.TOP_kMinOutput, ShooterConstants.TOP_kMaxOutput);
-		
-		// Shooter interpolation map
-		shooterInterpolationMap.put(0.0, 6000.0);
 		
 		// Burn motor controller configuration to flash
 		Timer.delay(0.005);
@@ -140,14 +129,6 @@ public class Head extends SubsystemBase {
 				});
 	}
 	
-	public double getShooterSpeedAtPosition(double positionMeters) {
-		return shooterInterpolationMap.get(positionMeters);
-	}
-	
-	public void setShooterSpeedAtPosition(double positionMeters, double rpm) {
-		shooterInterpolationMap.put(positionMeters, rpm);
-	}
-	
 	private void setShooterSpeed(double rpm) {
 		shooterSetPoint = rpm;
 		shooterControllerBottom.setReference(shooterSetPoint, ControlType.kVelocity);
@@ -173,19 +154,12 @@ public class Head extends SubsystemBase {
 		}, this);
 	}
 	
-	public Command SpinUpShooterAtPosition(double positionMeters) {
-		return SpinUpShooter(getShooterSpeedAtPosition(positionMeters));
+	public Command SpinUpShooterForSpeaker() {
+		return SpinUpShooter(ShooterConstants.SPEAKER_SPEED);
 	}
 	
 	public Command SpinUpShooterForAmp() {
 		return SpinUpShooter(ShooterConstants.AMP_SPEED);
-	}
-	
-	public Command IdleShooter() {
-		return Commands.runOnce(() -> {
-			shooterIdle = true;
-			setShooterSpeed(getShooterSpeedAtPosition(0));
-		});
 	}
 	
 	public Command SpinDownShooter() {
@@ -225,8 +199,8 @@ public class Head extends SubsystemBase {
 				});
 	}
 	
-	public Command ShootAtPosition(double position) {
-		return Shoot(getShooterSpeedAtPosition(position));
+	public Command ShootInSpeaker() {
+		return Shoot(ShooterConstants.SPEAKER_SPEED);
 	}
 	
 	public Command ShootInAmp() {
