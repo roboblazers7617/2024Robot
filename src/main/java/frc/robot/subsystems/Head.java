@@ -23,13 +23,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.util.Alert;
-import frc.robot.util.Alert.AlertType;
 
 public class Head extends SubsystemBase {
-	// Temperature at which the overheat alert should be triggered
-	private static final double MOTOR_OVERHEAT_TEMPERATURE = 85;
-	
 	// Shooter
 	private final CANSparkMax shooterMotorBottom = new CANSparkMax(ShooterConstants.MOTOR_BOTTOM_CAN_ID, MotorType.kBrushless);
 	private final CANSparkMax shooterMotorTop = new CANSparkMax(ShooterConstants.MOTOR_TOP_CAN_ID, MotorType.kBrushless);
@@ -51,8 +46,6 @@ public class Head extends SubsystemBase {
 	
 	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
-	
-	private final Alert motorTemperatureAlert = new Alert("Intake motor too hot!", AlertType.ERROR);
 	
 	/** Creates a new Head. */
 	public Head() {
@@ -100,12 +93,6 @@ public class Head extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		// Temperature alert
-		if (intakeMotor.getMotorTemperature() > MOTOR_OVERHEAT_TEMPERATURE) {
-			motorTemperatureAlert.set(true);
-		} else {
-			motorTemperatureAlert.set(false);
-		}
 	}
 	
 	public Double getIntakeEncoder() {
