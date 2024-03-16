@@ -185,8 +185,8 @@ public class Arm extends SubsystemBase {
 		
 		// TODO: (Brandon) The subsystems shouldn't know about the Shuffleboard tabs.
 		// Only the Shuffleboard tabs should know about the subsystems
-		motorTab
-				.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor, leaderElevatorMotor });
+		// motorTab
+		// 		.addMotor(new CANSparkMax[] { followerArmMotor, leaderArmMotor, followerElevatorMotor, leaderElevatorMotor });
 		
 		time.reset();
 		time.start();

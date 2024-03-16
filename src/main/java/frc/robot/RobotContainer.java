@@ -113,7 +113,7 @@ public class RobotContainer {
 		// \/ \/ \/
 		tabs.add(new DriverStationTab(autoChooser));
 		
-		//tabs.add(new ArmTab(arm));
+		tabs.add(new ArmTab(arm));
 		
 		//tabs.add(new SwerveTab(drivetrain));
 
@@ -180,7 +180,7 @@ public class RobotContainer {
 
 		operatorControllerCommands.x().onTrue(arm.Stow());
 		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
-		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head));/* .andThen(arm.Stow()));*/
+		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
 		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		operatorControllerCommands.leftTrigger().onTrue(head.IdleShooter());
 		operatorControllerCommands.rightTrigger().onTrue(arm.Stow().andThen(arm.WaitUntilArmAtTarget()).andThen(arm.WaitUntilElevatorAtTarget()).andThen(head.ShootAtPosition(0.0)));

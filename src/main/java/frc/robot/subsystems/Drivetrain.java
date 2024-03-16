@@ -94,10 +94,10 @@ public class Drivetrain extends SubsystemBase {
 		setupPathPlanner();
 		this.vision = vision;
 		
-		for (int i = 0; i < 4; i++) {
-			motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
-			motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor() });
-		}
+		// for (int i = 0; i < 4; i++) {
+		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
+		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor() });
+		// }
 	}
 	
 	/**
