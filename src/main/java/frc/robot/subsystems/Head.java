@@ -173,11 +173,11 @@ public class Head extends SubsystemBase {
 	public boolean isReadyToShoot() {
 		// @formatter:off
 		return (
-				(getShooterBottomSpeed() >= (shooterSetPoint * ShooterConstants.VELOCITY_MINIMUM.get())) &&
-				(getShooterBottomSpeed() <= (shooterSetPoint * ShooterConstants.VELOCITY_MAXIMUM.get()))
+				(getShooterBottomSpeed() >= (shooterSetPoint * ShooterConstants.VELOCITY_MINIMUM)) &&
+				(getShooterBottomSpeed() <= (shooterSetPoint * ShooterConstants.VELOCITY_MAXIMUM))
 			) && (
-				(getShooterTopSpeed() >= (shooterSetPoint * ShooterConstants.VELOCITY_MINIMUM.get())) &&
-				(getShooterTopSpeed() <= (shooterSetPoint * ShooterConstants.VELOCITY_MAXIMUM.get()))
+				(getShooterTopSpeed() >= (shooterSetPoint * ShooterConstants.VELOCITY_MINIMUM)) &&
+				(getShooterTopSpeed() <= (shooterSetPoint * ShooterConstants.VELOCITY_MAXIMUM))
 			) && !shooterIdle;
 		// @formatter:on
 	}
@@ -187,7 +187,7 @@ public class Head extends SubsystemBase {
 				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
 				.andThen(Commands.waitSeconds(0.5))
 				.andThen(Commands.runOnce(() -> {
-					setIntakeSpeed(IntakeConstants.FEEDER_SPEED.get());
+					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
 				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))

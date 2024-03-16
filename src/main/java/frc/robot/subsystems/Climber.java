@@ -37,6 +37,7 @@ public class Climber extends SubsystemBase {
 		leftClimber.restoreFactoryDefaults();
 		
 		rightClimber.setIdleMode(IdleMode.kBrake);
+		rightClimber.setInverted(true);
 		
 		leftClimber.setIdleMode(IdleMode.kBrake);
 		
@@ -97,6 +98,11 @@ public class Climber extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
+		//TODO UNTESTED
+		if(getPositionRightMotor() < 1 && getSpeedRight() < 0)
+			setSpeedRight(0);
+		if(getPositionLeftMotor() < 1 && getSpeedLeft() < 0)
+			setSpeedLeft(0);
 	}
 	
 	public Command balanceClimb(Drivetrain drivetrain) {

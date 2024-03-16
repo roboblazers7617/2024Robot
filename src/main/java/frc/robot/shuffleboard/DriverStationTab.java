@@ -45,11 +45,13 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		isDriverStationConnected = networkTable.getBooleanTopic("Is Driver Station Connected").publish();
 		isBrownedOut = networkTable.getBooleanTopic("Is Browned Out").publish();
 		 
-		camera = CameraServer.startAutomaticCapture();
-		if (camera.isConnected()) {
-			camera.setResolution(480, 320);
-			camera.setFPS(10);
-		}
+		// camera = CameraServer.startAutomaticCapture();
+		/*
+		 * if (camera.isConnected()) {
+		 * camera.setResolution(480, 320);
+		 * camera.setFPS(10);
+		 * }
+		 */
 	}
 	
 	@Override

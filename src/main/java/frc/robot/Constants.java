@@ -53,7 +53,7 @@ public final class Constants {
 
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 4.0;
+		public static final double MIN_ANGLE = 2.0;
 		public static final double SOURCE_ANGLE = 67.5; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 85.5;
 		public static final double FLOOR_PICKUP = 5.4;
@@ -175,7 +175,7 @@ public final class Constants {
 		
 		public static final double INTAKE_SPEED = 1.0;
 		public static final double OUTAKE_SPEED = -0.25;
-		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
+		public static final double FEEDER_SPEED = 1; // What speed should a note be fed into the shooter at?
 	}
 
 	
@@ -201,8 +201,8 @@ public final class Constants {
 		public static final double AMP_SPEED = 1500.0;
 		public static final double SPEAKER_SPEED = 6000.0;
 
-		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0.2);
-		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 5.0);
+		public static final double VELOCITY_MINIMUM = 0.2;
+		public static final double VELOCITY_MAXIMUM = 5.0;
 	}
 
 	public static class ClimberConstants {

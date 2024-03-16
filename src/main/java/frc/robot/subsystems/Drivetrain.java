@@ -53,7 +53,7 @@ public class Drivetrain extends SubsystemBase {
 	 * Swerve drive object.
 	 */
 	private final SwerveDrive swerveDrive;
-	private final Vision vision;
+	//private final Vision vision;
 	
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
@@ -67,7 +67,7 @@ public class Drivetrain extends SubsystemBase {
 	 * @param directory
 	 *            Directory of swerve drive config files.
 	 */
-	public Drivetrain(Vision vision) {
+	public Drivetrain(/*Vision vision*/) {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
 		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
@@ -92,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
 													// via angle.
 		
 		setupPathPlanner();
-		this.vision = vision;
+		//this.vision = vision;
 		
 		// for (int i = 0; i < 4; i++) {
 		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
@@ -150,7 +150,7 @@ public class Drivetrain extends SubsystemBase {
 		
 		// Create a path following command using AutoBuilder. This will also trigger
 		// event markers.
-		return AutoBuilder.followPath(path).andThen(Commands.runOnce(() -> swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians()));
+		return AutoBuilder.followPath(path);
 	}
 	
 	/**
@@ -275,10 +275,10 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-		visionMeasurement = vision.updateOdometry();
-		if (visionMeasurement.isPresent()) {
-			swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().timestampSeconds);
-		}
+		//visionMeasurement = vision.updateOdometry();
+		//if (visionMeasurement.isPresent()) {
+		//	swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().//timestampSeconds);
+		//}
 	}
 	
 	/**

@@ -82,8 +82,8 @@ public class RobotContainer {
 	private final XboxController driverController = driverControllerCommands.getHID();
 	private final XboxController operatorController = operatorControllerCommands.getHID();
 	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
-	private final Vision vision = new Vision();
-	private final Drivetrain drivetrain = new Drivetrain(vision);
+	//private final Vision vision = new Vision();
+	private final Drivetrain drivetrain = new Drivetrain(/*vision*/);
 	
 	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngular(driverControllerCommands.getRightX()), () -> processJoystickAngular(driverControllerCommands.getRightY()));
 	
@@ -193,6 +193,7 @@ public class RobotContainer {
 
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		/*operatorControllerCommands.povRight().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, 0), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));*/
 		operatorControllerCommands.start().onTrue(head.IntakePiece());
 		operatorControllerCommands.back().onTrue(head.ShootInSpeaker());
 
@@ -213,7 +214,7 @@ public class RobotContainer {
 	}
 	
 	private double processJoystickAngular(double joystickInput) {
-		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
+		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
 	}
 	
 	/**
