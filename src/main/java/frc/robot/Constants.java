@@ -175,7 +175,6 @@ public final class Constants {
 		
 		public static final double INTAKE_SPEED = 1.0;
 		public static final double OUTAKE_SPEED = -0.25;
-		public static final double ALIGNMENT_SPEED = 0.1; // What speed should the intake spin to align the note?
 		public static final TunableNumber FEEDER_SPEED = new TunableNumber("Head/Intake", "Feeder Speed", 1); // What speed should a note be fed into the shooter at?
 	}
 
@@ -200,6 +199,7 @@ public final class Constants {
 		
 		public static final double IDLE_SPEED = 0.0;
 		public static final double AMP_SPEED = 1500.0;
+		public static final double SPEAKER_SPEED = 6000.0;
 
 		public static final TunableNumber VELOCITY_MINIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Minimum", 0.2);
 		public static final TunableNumber VELOCITY_MAXIMUM = new TunableNumber("Head/Shooter", "Velocity Threshold Maximum", 5.0);

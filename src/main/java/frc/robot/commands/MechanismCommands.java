@@ -64,7 +64,7 @@ public class MechanismCommands {
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.ShootAtPosition(distance.get()))
+				.andThen(head.ShootInSpeaker())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
@@ -85,7 +85,7 @@ public class MechanismCommands {
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.ShootAtPosition(distance))
+				.andThen(head.ShootInSpeaker())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
@@ -104,10 +104,10 @@ public class MechanismCommands {
 	public static Command ShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(1.27))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(head.SpinUpShooterAtPosition(0))
+				.andThen(head.SpinUpShooterForSpeaker())
 				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.ShootAtPosition(0))
+				.andThen(head.ShootInSpeaker())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
@@ -125,7 +125,7 @@ public class MechanismCommands {
 	 */
 	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE)) // todo where should elevator be?
-				.andThen(head.ShootAtPosition(Constants.PODIUM_DISTANCE))
+				.andThen(head.ShootInSpeaker())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}

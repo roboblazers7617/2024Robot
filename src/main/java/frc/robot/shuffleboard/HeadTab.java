@@ -29,14 +29,6 @@ public class HeadTab extends ShuffleboardTabBase {
 	
 	private final BooleanPublisher readyToShootPublisher;
 	
-	private TunableNumber shootingPosition;
-	private final DoublePublisher shooterSpeedAtPositionPublisher;
-	private TunableNumber shootingPositionSpeedTuning;
-	
-	private final DoublePublisher intakeEncoderPublisher;
-	private final DoublePublisher shooterBottomEncoderPublisher;
-	private final DoublePublisher shooterTopEncoderPublisher;
-	
 	public HeadTab(Head head) {
 		this.head = head;
 		
@@ -54,15 +46,6 @@ public class HeadTab extends ShuffleboardTabBase {
 		shooterSetPointPublisher = shooterNetworkTable.getDoubleTopic("Setpoint").publish();
 		
 		readyToShootPublisher = shooterNetworkTable.getBooleanTopic("Ready to Shoot").publish();
-		
-		shooterSpeedAtPositionPublisher = shooterNetworkTable.getDoubleTopic("Speed at Position").publish();
-		
-		shootingPosition = new TunableNumber("Head/Shooter", "Position (tuning)", 0);
-		shootingPositionSpeedTuning = new TunableNumber("Head/Shooter", "Speed (tuning)", 0);
-		
-		intakeEncoderPublisher = networkTable.getDoubleTopic("Intake Encoder").publish();
-		shooterBottomEncoderPublisher = networkTable.getDoubleTopic("Shooter Encoder Bottom").publish();
-		shooterTopEncoderPublisher = networkTable.getDoubleTopic("Shooter Encoder Top").publish();
 	}
 	
 	@Override
@@ -76,12 +59,6 @@ public class HeadTab extends ShuffleboardTabBase {
 		shooterSetPointPublisher.set(head.getShooterSetPoint());
 		
 		readyToShootPublisher.set(head.isReadyToShoot());
-		
-		shooterSpeedAtPositionPublisher.set(head.getShooterSpeedAtPosition(shootingPosition.get()));
-		
-		intakeEncoderPublisher.set(head.getIntakeEncoder());
-		shooterBottomEncoderPublisher.set(head.getShooterEncoderBottom());
-		shooterTopEncoderPublisher.set(head.getShooterEncoderTop());
 	}
 	
 	@Override
@@ -109,15 +86,9 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		shooterLayout.add("Ready to Shoot", false).withPosition(1, 0);
 		
-		shooterLayout.add("Spin Up", head.SpinUpShooterAtPosition(shootingPosition.get())).withPosition(2, 0);
+		shooterLayout.add("Spin Up (speaker)", head.SpinUpShooterForSpeaker()).withPosition(2, 0);
 		shooterLayout.add("Spin Down", head.SpinDownShooter()).withPosition(2, 1);
-		shooterLayout.add("Shoot", head.ShootAtPosition(shootingPosition.get())).withPosition(2, 2);
-		
-		shooterLayout.add("Position (tuning)", 0.0).withPosition(3, 0);
-		shooterLayout.add("Speed at Position", 0.0).withPosition(3, 1);
-		
-		shooterLayout.add("Speed (tuning)", 0.0).withPosition(4, 0);
-		shooterLayout.add("Write Speed (tuning)", new InstantCommand(() -> head.setShooterSpeedAtPosition(shootingPosition.get(), shootingPositionSpeedTuning.get()))).withPosition(4, 1);
+		shooterLayout.add("Shoot (speaker)", head.ShootInSpeaker()).withPosition(2, 2);
 	}
 	
 	@Override
