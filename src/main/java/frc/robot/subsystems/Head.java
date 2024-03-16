@@ -58,7 +58,7 @@ public class Head extends SubsystemBase {
 		intakeMotor.restoreFactoryDefaults();
 		intakeMotor.setIdleMode(IdleMode.kBrake);
 		intakeMotor.setInverted(true);
-		intakeMotor.setSmartCurrentLimit(20);
+		intakeMotor.setSmartCurrentLimit(40);
 		
 		// Shooter controller
 		shooterControllerBottom.setP(ShooterConstants.BOTTOM_kP);
