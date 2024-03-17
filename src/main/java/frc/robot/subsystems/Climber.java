@@ -46,7 +46,7 @@ public class Climber extends SubsystemBase {
 		leftClimberEncoder.setPosition(0.0);
 		rightClimberEncoder.setPosition(0.0);
 		
-		balanceController.setSetpoint(0);
+		// balanceController.setSetpoint(0.0);
 
 		burnFlash();
 	}
@@ -82,10 +82,10 @@ public class Climber extends SubsystemBase {
 		rightClimber.set(rightSpeed);
 	}
 	
-	public void resetClimberEncoders() {
-		leftClimberEncoder.setPosition(0.0);
-		rightClimberEncoder.setPosition(0.0);
-	}
+	// public void resetClimberEncoders() {
+	// 	leftClimberEncoder.setPosition(0.0);
+	// 	rightClimberEncoder.setPosition(0.0);
+	// }
 	
 	public double getPositionRightMotor() {
 		return rightClimberEncoder.getPosition();
@@ -99,24 +99,24 @@ public class Climber extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		//TODO UNTESTED
-		if(getPositionRightMotor() < 1 && getSpeedRight() < 0)
-			setSpeedRight(0);
-		if(getPositionLeftMotor() < 1 && getSpeedLeft() < 0)
-			setSpeedLeft(0);
+		if(getPositionRightMotor() < 1.0 && getSpeedRight() < 0.0)
+			setSpeedRight(0.0);
+		if(getPositionLeftMotor() < 1.0 && getSpeedLeft() < 0.0)
+			setSpeedLeft(0.0);
 	}
 	
-	public Command balanceClimb(Drivetrain drivetrain) {
-		return Commands.run(() -> {
-			setSpeedLeft(balanceController.calculate(drivetrain.getRoll().getDegrees()));
-			setSpeedRight(-balanceController.calculate(drivetrain.getRoll().getDegrees()));
-		}, this);
-	}
+	// public Command balanceClimb(Drivetrain drivetrain) {
+	// 	return Commands.run(() -> {
+	// 		setSpeedLeft(balanceController.calculate(drivetrain.getRoll().getDegrees()));
+	// 		setSpeedRight(-balanceController.calculate(drivetrain.getRoll().getDegrees()));
+	// 	}, this);
+	// }
 	
-	public Command climb() {
-		return Commands.deadline(Commands.waitUntil(() -> (getPositionLeftMotor() > ClimberConstants.CLIMB_HEIGHT && getPositionRightMotor() > ClimberConstants.CLIMB_HEIGHT)), Commands.run(() -> {
-			setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE);
-		})).finallyDo(() -> setSpeed(0, 0));
-	}
+	// public Command climb() {
+	// 	return Commands.deadline(Commands.waitUntil(() -> (getPositionLeftMotor() > ClimberConstants.CLIMB_HEIGHT && getPositionRightMotor() > ClimberConstants.CLIMB_HEIGHT)), Commands.run(() -> {
+	// 		setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE);
+	// 	})).finallyDo(() -> setSpeed(0, 0));
+	// }
 
 	public CANSparkMax[] getMotors(){
 		return new CANSparkMax[] {leftClimber, rightClimber};
