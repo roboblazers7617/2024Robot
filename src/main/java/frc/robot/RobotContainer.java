@@ -15,31 +15,23 @@ import frc.robot.shuffleboard.ArmTab;
 
 import frc.robot.shuffleboard.ClimberTab;
 import frc.robot.shuffleboard.DriverStationTab;
-import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.LEDTab;
 import frc.robot.shuffleboard.ShuffleboardInfo;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
 import frc.robot.shuffleboard.HeadTab;
 import frc.robot.subsystems.Arm;
-import frc.robot.util.TunableNumber;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
-import org.photonvision.PhotonUtils;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SwerveControlRequestParameters;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.commands.MechanismCommands;
-import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -51,14 +43,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -114,17 +102,17 @@ public class RobotContainer {
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
-		tabs.add(new DriverStationTab(autoChooser));
+		tabs.add(new DriverStationTab(autoChooser, brakeToggleButton));
 		
 		tabs.add(new ArmTab(arm));
 		
-		//tabs.add(new SwerveTab(drivetrain));
+		tabs.add(new SwerveTab(drivetrain));
 
-		//tabs.add(new LEDTab(led));
+		tabs.add(new LEDTab(led));
 
-		//tabs.add(new HeadTab(head));
+		tabs.add(new HeadTab(head));
 
-		//tabs.add(new ClimberTab(climber));
+		tabs.add(new ClimberTab(climber));
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
@@ -256,4 +244,6 @@ public class RobotContainer {
 		}
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
 	}
+
+	
 }
