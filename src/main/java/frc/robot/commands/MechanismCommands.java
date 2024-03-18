@@ -49,7 +49,7 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param drivetrain
-	 *                subsystem
+	 *            subsystem
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
@@ -64,7 +64,7 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param distance
-	 *                in meters
+	 *            in meters
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
@@ -85,7 +85,7 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param distance
-	 *                in meters
+	 *            in meters
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, double distance) {
@@ -104,9 +104,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *                subsystem
+	 *            subsystem
 	 * @param head
-	 *                subsystem
+	 *            subsystem
 	 * @return Command
 	 */
 	public static Command ShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
@@ -126,9 +126,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *                subsystem
+	 *            subsystem
 	 * @param head
-	 *                subsystem
+	 *            subsystem
 	 * @return Command
 	 */
 	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
@@ -144,13 +144,14 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *                subsystem
+	 *            subsystem
 	 * @param head
-	 *                subsystem
+	 *            subsystem
 	 * @return Command
 	 */
 	public static Command IntakeSource(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
+		return head.SpinDownShooter()
+				.andThen(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
@@ -158,7 +159,8 @@ public class MechanismCommands {
 	}
 	
 	public static Command IntakeGround(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
+		return head.SpinDownShooter()
+				.andThen(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))

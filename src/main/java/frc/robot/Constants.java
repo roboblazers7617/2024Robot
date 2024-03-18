@@ -65,14 +65,14 @@ public final class Constants {
 
 		// Constants for extended state
 		public static final double EXTENDED_KS = 0.17; //these values are based on the test arm
-		public static final double EXTENDED_KG = 0.35; // .5 while extended
+		public static final double EXTENDED_KG = 0.3; // .5 while extended
 		public static final double EXTENDED_KV = 0.0;
 	
 		// Constants for retracted state
-		public static final double RETRACTED_KS = 0; //these values are based on calculator
-		public static final double RETRACTED_KG = 0.4;
-		public static final double RETRACTED_KV = 0.0;
-		public static final double KP = 0.014; // was 0.015
+		// public static final double RETRACTED_KS = 0; //these values are based on calculator
+		// public static final double RETRACTED_KG = 0.4;
+		// public static final double RETRACTED_KV = 0.0;
+		public static final double KP = 0.017; // was 0.015
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kMinOutput = -1.0;

@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
 	// of the arm so the arm doesn't try to move on boot-up
 	private double armTarget;
 	/** the last actual arm target */
-	private double lastAcutalArmTarget = armTarget;
+	private double lastAcutalArmTarget;
 	/** arm angle based on distance interpolation table */
 	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
 	
@@ -148,7 +148,7 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setZeroOffset(ArmConstants.ARM_OFFSET);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
-		lastAcutalArmTarget = armTarget;
+		// lastAcutalArmTarget = armTarget;
 
 		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
 		armAngleBasedOnDistance.put(2.7, 34.0);
