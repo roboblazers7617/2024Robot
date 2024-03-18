@@ -17,15 +17,17 @@ import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
 	public static Command PrepareShootAmp(XboxController operatorController, Arm arm, Head head) {
-		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
-				.andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT)))
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.SpinUpShooterForAmp())
 				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-
+	
 	public static Command ShootAmp(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return arm.WaitUntilArmAtTarget()
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(head.ShootInAmp())
 				.andThen(arm.Stow())
@@ -41,7 +43,7 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param drivetrain
-	 *            subsystem
+	 *                subsystem
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
@@ -56,7 +58,7 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param distance
-	 *            in meters
+	 *                in meters
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
@@ -77,7 +79,7 @@ public class MechanismCommands {
 	 * @param arm
 	 * @param head
 	 * @param distance
-	 *            in meters
+	 *                in meters
 	 * @return
 	 */
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, double distance) {
@@ -96,9 +98,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *            subsystem
+	 *                subsystem
 	 * @param head
-	 *            subsystem
+	 *                subsystem
 	 * @return Command
 	 */
 	public static Command ShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
@@ -118,9 +120,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *            subsystem
+	 *                subsystem
 	 * @param head
-	 *            subsystem
+	 *                subsystem
 	 * @return Command
 	 */
 	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
@@ -136,9 +138,9 @@ public class MechanismCommands {
 	 * @param driverController
 	 * @param operatorController
 	 * @param arm
-	 *            subsystem
+	 *                subsystem
 	 * @param head
-	 *            subsystem
+	 *                subsystem
 	 * @return Command
 	 */
 	public static Command IntakeSource(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
