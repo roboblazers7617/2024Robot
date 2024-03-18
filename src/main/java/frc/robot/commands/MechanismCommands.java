@@ -16,6 +16,12 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
+	public static Command Stow(Arm arm, Head head) {
+		return arm.Stow()
+				.andThen(head.StopIntake())
+				.andThen(head.SpinDownShooter());
+	}
+	
 	public static Command PrepareShootAmp(XboxController operatorController, Arm arm, Head head) {
 		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
 				.andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT)))
@@ -23,7 +29,7 @@ public class MechanismCommands {
 				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-
+	
 	public static Command ShootAmp(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return arm.WaitUntilArmAtTarget()
 				.andThen(arm.WaitUntilElevatorAtTarget())
