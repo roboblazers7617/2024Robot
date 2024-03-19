@@ -18,16 +18,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.shuffleboard.MotorTab;
@@ -224,12 +220,12 @@ public class Arm extends SubsystemBase {
 		return extendedArmFeedForward;
 	}
 	
-	/** adds feedfoward values to the interpolation table */
-	private void addElevatorFeedFowardValues(double ks, double kg, double kv) {
-		elevatorKSTable.put(armAbsoluteEncoder.getPosition(), ks);
-		elevatorKGTable.put(armAbsoluteEncoder.getPosition(), kg);
-		elevatorKVTable.put(armAbsoluteEncoder.getPosition(), kv);
-	}
+	// /** adds feedfoward values to the interpolation table */
+	// private void addElevatorFeedFowardValues(double ks, double kg, double kv) {
+	// 	elevatorKSTable.put(armAbsoluteEncoder.getPosition(), ks);
+	// 	elevatorKGTable.put(armAbsoluteEncoder.getPosition(), kg);
+	// 	elevatorKVTable.put(armAbsoluteEncoder.getPosition(), kv);
+	// }
 	
 	// do something functions
 	
@@ -454,13 +450,6 @@ public class Arm extends SubsystemBase {
 			
 			/** this is a constant increase to make the elvator go faster */
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
-				double speedyElevatorFeedForward;
-				if (Math.abs(currentElevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
-					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
-				} else {
-					speedyElevatorFeedForward = 0.0;
-				}
-				
 				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(elevatorEncoder.getVelocity());
 				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, /*speedyElevatorFeedForward*/ + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
 				lastAcutalElevatorTarget = currentElevatorTarget;
