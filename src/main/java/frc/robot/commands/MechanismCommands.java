@@ -131,8 +131,9 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE)) // todo where should elevator be?
-				.andThen(head.ShootInSpeaker())
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)) // todo where should elevator be?
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(head.ShootPodium())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}

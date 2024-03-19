@@ -53,26 +53,26 @@ public final class Constants {
 
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 2.0;
+		public static final double MIN_ANGLE = 3.5;
 		public static final double SOURCE_ANGLE = 64.5; //64 to compensate for change of ABEncoder offset hack;
-		public static final double AMP_ANGLE = 85.5;
-		public static final double FLOOR_PICKUP = 2.4;
-		public static final double STOW_ANGLE = 32.0;
+		public static final double AMP_ANGLE = 84.5;
+		public static final double FLOOR_PICKUP = 4.5;
+		public static final double STOW_ANGLE = 20.0;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 15;
-		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
+		public static final double SPEAKER_PODIUM_ANGLE = 28.0;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
-		public static final double MIN_ABOVE_PASS_ANGLE = 25;
+		public static final double MIN_ABOVE_PASS_ANGLE = 20;
 
 		// Constants for extended state
 		public static final double EXTENDED_KS = 0.17; //these values are based on the test arm
-		public static final double EXTENDED_KG = 0.3; // .5 while extended
-		public static final double EXTENDED_KV = 0.0;
+		public static final double EXTENDED_KG = 0.28; // .5 while extended
+		public static final double EXTENDED_KV = 0.2;
 	
 		// Constants for retracted state
-		// public static final double RETRACTED_KS = 0; //these values are based on calculator
-		// public static final double RETRACTED_KG = 0.4;
-		// public static final double RETRACTED_KV = 0.0;
-		public static final double KP = 0.017; // was 0.015
+		public static final double RETRACTED_KS = 0.17; //these values are based on calculator
+		public static final double RETRACTED_KG = 0.3;
+		public static final double RETRACTED_KV = 0.1;
+		public static final double KP = 0.028; // was 0.015
 		public static final double KI = 0;
 		public static final double KD = 0;
 		public static final double kMinOutput = -1.0;
@@ -119,7 +119,7 @@ public final class Constants {
 		/** the mininum height the elevator reaches when its retracted */
 		public static final double MIN_HEIGHT = 1;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
-		public static final double MAX_BELOW_PASS_HEIGHT = 10; // REMOVE THIS, IT DOES NOT EXIST
+		// public static final double MAX_BELOW_PASS_HEIGHT = 10; // REMOVE THIS, IT DOES NOT EXIST
 		public static final int RIGHT_POTIENTIOMETER_PORT = 3;
 		// public static final int LEFT_POTIENTIOMETER_PORT = 45;
 		public static final double MAX_MANUAL_SPEED = 20;
@@ -173,9 +173,9 @@ public final class Constants {
 		
 		public static final int NOTE_SENSOR_DIO = 9;
 		
-		public static final double INTAKE_SPEED = 1.0;
+		public static final double INTAKE_SPEED = 0.5;
 		public static final double OUTAKE_SPEED = -0.25;
-		public static final double FEEDER_SPEED = 1; // What speed should a note be fed into the shooter at?
+		public static final double FEEDER_SPEED = 0.25; // What speed should a note be fed into the shooter at?
 	}
 
 	
@@ -199,7 +199,8 @@ public final class Constants {
 		
 		public static final double IDLE_SPEED = 0.0;
 		public static final double AMP_SPEED = 1500.0;
-		public static final double SPEAKER_SPEED = 6000.0;
+		public static final double SPEAKER_SPEED = 5000.0;
+		public static final double PODIUM_SPEED = 6000.0;
 
 		public static final double VELOCITY_MINIMUM = 0.2;
 		public static final double VELOCITY_MAXIMUM = 5.0;

@@ -174,7 +174,7 @@ public class RobotContainer {
 		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
 		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		operatorControllerCommands.leftTrigger().onTrue(head.SpinUpShooterForSpeaker());
-		operatorControllerCommands.rightTrigger().onTrue(arm.Stow().andThen(arm.WaitUntilArmAtTarget()).andThen(arm.WaitUntilElevatorAtTarget()).andThen(head.ShootInSpeaker()));
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head)).onFalse(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		operatorControllerCommands.povLeft().onTrue(

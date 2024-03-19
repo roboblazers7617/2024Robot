@@ -48,7 +48,7 @@ public class Arm extends SubsystemBase {
 	// private final TunableNumber retractedArmKD = new TunableNumber("arm", "Retracted Arm KD", ArmConstants.KD);
 	
 	private ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
-	// private ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
+	private ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
 	
 	// private final TunableNumber extendedArmKS = new TunableNumber("arm", "Extended Arm KS", ArmConstants.EXTENDED_KS);
 	// private final TunableNumber extendedArmKG = new TunableNumber("arm", "Extended Arm KG", ArmConstants.EXTENDED_KG);
@@ -215,9 +215,9 @@ public class Arm extends SubsystemBase {
 	}
 	
 	private ArmFeedforward getArmFeedforward() {
-		// return potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
+		return elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
 		// use just one feedforward for now, if we need 2, use line above
-		return extendedArmFeedForward;
+		// return extendedArmFeedForward;
 	}
 	
 	// /** adds feedfoward values to the interpolation table */
@@ -427,7 +427,7 @@ public class Arm extends SubsystemBase {
 		if (lastAcutalArmTarget != currentArmTarget) {
 			ArmFeedforward armFeedFoward = getArmFeedforward();
 			double velocity = 0;
-			if (Math.abs(currentArmTarget - armAbsoluteEncoder.getPosition()) > 2){
+			if (Math.abs(currentArmTarget - armAbsoluteEncoder.getPosition()) > 0.75){
 				velocity = armAbsoluteEncoder.getVelocity();
 			}
 			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), velocity);
@@ -476,7 +476,7 @@ public class Arm extends SubsystemBase {
 		return new Command() {
 			@Override
 			public boolean isFinished() {
-				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < 5;
+				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < 1.5;
 			}
 		};
 	}
