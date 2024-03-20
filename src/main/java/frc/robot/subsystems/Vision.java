@@ -16,6 +16,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
@@ -56,24 +58,26 @@ public class Vision extends SubsystemBase {
 		if(intakeBestTag != null){
 			if(shooterBestTag != null){
 				if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < shooterBestTag.getBestCameraToTarget().getTranslation().getNorm()){
-					if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
+					if((intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4) && intakeBestTag.getPoseAmbiguity() < .2){
 						return intakeEstimator.update();}
 					else
 						return Optional.empty();
 				}
 				else{
-					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
+					if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4 && shooterBestTag.getPoseAmbiguity() < .2){
 						return shooterEstimator.update();
 					}
 					else
 						return Optional.empty();
 				}
 			}
-			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
+			if(intakeBestTag.getBestCameraToTarget().getTranslation().getNorm() < 15){
+				// System.out.println("Intake");
 				return intakeEstimator.update();}
 		}
 		else if(shooterBestTag != null){
-			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 4){
+			if(shooterBestTag.getBestCameraToTarget().getTranslation().getNorm() < 15){
+				// System.out.println("Shooter");
 				return shooterEstimator.update();}
 			}
 			return Optional.empty();

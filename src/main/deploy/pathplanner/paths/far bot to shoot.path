@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.2891653743251,
+        "y": 0.7670095635136396
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.289165374325101,
+        "y": 0.7670095635136397
+      },
+      "isLocked": false,
+      "linkedName": "far bot"
+    },
+    {
+      "anchor": {
+        "x": 4.147790496116358,
+        "y": 1.9867228632307663
+      },
+      "prevControl": {
+        "x": 5.147790496116358,
+        "y": 1.9867228632307663
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "way bot shoot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.5,
+    "maxAcceleration": 0.75,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

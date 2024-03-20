@@ -37,9 +37,9 @@ public class Robot extends TimedRobot {
 		// Instantiate our RobotContainer. This will perform all our button bindings,
 		// and put our
 		// autonomous chooser on the dashboard.
-		DataLogManager.start();
+		//DataLogManager.start();
 
-		DriverStation.startDataLog(DataLogManager.getLog());
+		//DriverStation.startDataLog(DataLogManager.getLog());
 		m_robotContainer = new RobotContainer();
 
 		// Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
@@ -79,11 +79,12 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		if (disabledTimer.hasElapsed(Constants.SwerveConstants.BRAKE_TIMER_DURATION))
+	/* 	if (disabledTimer.hasElapsed(Constants.SwerveConstants.BRAKE_TIMER_DURATION))
 		{
 		  m_robotContainer.setMotorBrake(false);
 		  disabledTimer.stop();
 		}
+		*/
 	}
 
 	/**
@@ -118,6 +119,7 @@ public class Robot extends TimedRobot {
 		}
 
 		m_robotContainer.setMotorBrake(true);
+		// m_robotContainer.teleopInit();
 
 	}
 

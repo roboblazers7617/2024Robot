@@ -10,16 +10,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LED extends SubsystemBase {
 	private final SerialPort serial;
-	private final Intake intake;
-	private final Shooter shooter;
+	private final Head head;
 
-	public LED(SerialPort.Port port, Intake intake, Shooter shooter) {
+	public LED(SerialPort.Port port, Head head) {
 		serial = new SerialPort(9600, port);
 
 		serial.setWriteBufferMode(SerialPort.WriteBufferMode.kFlushOnAccess);
 
-		this.intake = intake;
-		this.shooter = shooter;
+		this.head = head;
 	}
 
 	@Override
@@ -33,9 +31,9 @@ public class LED extends SubsystemBase {
 			setAutoDisabledAnimation();
 		} else if (DriverStation.isTeleop() && DriverStation.isDisabled()) {
 			setTeleopDisabledAnimation();
-		} else if (shooter.isReadyToShoot()) {
+		} else if (head.isReadyToShoot()) {
 			setReadyToShootAnimation();
-		} else if (intake.isNoteAcquired()) {
+		} else if (head.isNoteAcquired()) {
 			setHoldingNoteAnimation();
 		} else if (DriverStation.isAutonomous() && DriverStation.isEnabled()) {
 			setAutoEnabledAnimation();

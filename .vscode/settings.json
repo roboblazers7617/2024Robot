@@ -7,6 +7,10 @@
 	"[java]": {
 		"editor.defaultFormatter": "redhat.java"
 	},
+	"[github-actions-workflow]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2
+	},
 	"editor.wordWrap": "on",
 	"editor.wrappingIndent": "indent"
 }
