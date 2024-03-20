@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
-import org.photonvision.EstimatedRobotPose;
+import frc.robot.util.LimelightHelpers;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -57,9 +58,10 @@ public class Drivetrain extends SubsystemBase {
 	
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
-	private Optional<EstimatedRobotPose> visionMeasurement;
 	
 	private boolean doVisionUpdates = false;
+
+	private Timer timer = new Timer();
 	
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
@@ -67,7 +69,7 @@ public class Drivetrain extends SubsystemBase {
 	 * @param directory
 	 *            Directory of swerve drive config files.
 	 */
-	public Drivetrain(/*Vision vision*/) {
+	public Drivetrain() {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
 		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
@@ -92,7 +94,7 @@ public class Drivetrain extends SubsystemBase {
 													// via angle.
 		
 		setupPathPlanner();
-		//this.vision = vision;
+		timer.start();
 		
 		// for (int i = 0; i < 4; i++) {
 		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
@@ -275,10 +277,46 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-		//visionMeasurement = vision.updateOdometry();
-		//if (visionMeasurement.isPresent()) {
-		//	swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().//timestampSeconds);
-		//}
+		
+		getOdo
+			PoseLatency visionBotPose = m_visionSystem.getPoseLatency();
+			// invalid LL data
+			if (visionBotPose.pose2d.getX() == 0.0) {
+			  return;
+			}
+		
+			// distance from current pose to vision estimated pose
+			double poseDifference = m_poseEstimator.getEstimatedPosition().getTranslation()
+				.getDistance(visionBotPose.pose2d.getTranslation());
+		
+			if (m_visionSystem.areAnyTargetsValid()) {
+			  double xyStds;
+			  double degStds;
+			  // multiple targets detected
+			  if (m_visionSystem.getNumberOfTargetsVisible() >= 2) {
+				xyStds = 0.5;
+				degStds = 6;
+			  }
+			  // 1 target with large area and close to estimated pose
+			  else if (m_visionSystem.getBestTargetArea() > 0.8 && poseDifference < 0.5) {
+				xyStds = 1.0;
+				degStds = 12;
+			  }
+			  // 1 target farther away and estimated pose is close
+			  else if (LimelightHelpers. > 0.1 && poseDifference < 0.3) {
+				xyStds = 2.0;
+				degStds = 30;
+			  }
+			  // conditions don't match to add a vision measurement
+			  else {
+				return;
+			  }
+		
+			  m_poseEstimator.setVisionMeasurementStdDevs(
+				  VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+			  m_poseEstimator.addVisionMeasurement(visionBotPose.pose2d,
+				  Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline("") - LimelightHelpers.getLatency_Capture(""));
+			}
 	}
 	
 	/**
