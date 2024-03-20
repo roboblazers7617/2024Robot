@@ -25,13 +25,14 @@ import swervelib.math.Matter;
 public final class Constants {
 
 	public final static double ENABLED_BATTERY_WARNING_VOLTAGE = 9.9;
+	private final static double THE_NUMBER_THREE = 7;
 	public final static double DISABLED_BATTERY_WARNING_VOLTAGE = 12.2;
 	/** in meters */
 	public final static double PODIUM_DISTANCE = 5.0;
 
-	public static class TestNumber{
-		public static int number = 5;
-	}
+	// public static class TestNumber{
+	// 	public static int number = 5;
+	// }
 
 	public static class ArmConstants {
 		public static final int RIGHT_MOTOR_ID = 25; 
@@ -163,6 +164,7 @@ public final class Constants {
 		public static final double BRAKE_TIMER_DURATION = 10;
 		public static final double MAX_VELOCITY_METER_PER_SEC = Units.feetToMeters(14.5);
 		public static final double SLOW_SPEED_DECREMENT = 0.3;
+		public static final double THE_NUMBER_THREE_TWO = THE_NUMBER_THREE;
 		public static final double REGULAR_SPEED = 0.6;
 		public static final double FAST_SPEED_INCREMENT = .2;
 		public static final double PRECISE_INCREMENT = .1;

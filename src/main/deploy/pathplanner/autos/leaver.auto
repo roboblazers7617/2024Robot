@@ -5,7 +5,7 @@
       "x": 0.5,
       "y": 7.7
     },
-    "rotation": 0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
@@ -21,6 +21,12 @@
           "type": "path",
           "data": {
             "pathName": "bot leave"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
           }
         }
       ]

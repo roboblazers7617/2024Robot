@@ -95,6 +95,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("turnTo0", turnTo0());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeaker(driverController, operatorController, arm, head, drivetrain));
+		NamedCommands.registerCommand("shootAmp", MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
