@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.4338935382153173,
-        "y": 7.6
+        "y": 7.3
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.5338935382153174,
-        "y": 7.6
+        "y": 7.3
       },
       "isLocked": false,
       "linkedName": "Side Amp Start"
