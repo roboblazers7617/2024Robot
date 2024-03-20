@@ -108,15 +108,6 @@ public class RobotContainer {
 		
 		tabs.add(new ArmTab(arm));
 		
-<<<<<<< HEAD
-		// tabs.add(new SwerveTab(drivetrain));
-		
-		// tabs.add(new LEDTab(led));
-		
-		// tabs.add(new HeadTab(head));
-		
-		// tabs.add(new ClimberTab(climber));
-=======
 		tabs.add(new SwerveTab(drivetrain));
 		
 		tabs.add(new LEDTab(led));
@@ -124,7 +115,6 @@ public class RobotContainer {
 		tabs.add(new HeadTab(head));
 		
 		tabs.add(new ClimberTab(climber));
->>>>>>> main
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
@@ -181,7 +171,6 @@ public class RobotContainer {
 		
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 		
-<<<<<<< HEAD
 		operatorControllerCommands.x().and(() -> !isClimbMode).onTrue(arm.Stow());
 		operatorControllerCommands.y().and(() -> !isClimbMode).whileTrue(head.StartOutake()).onFalse(head.StopIntake());
 		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
@@ -190,13 +179,12 @@ public class RobotContainer {
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.rightTrigger().onTrue(arm.Stow().andThen(head.SpinUpShooterForSpeaker())).onFalse(arm.WaitUntilArmAtTarget().andThen(arm.WaitUntilElevatorAtTarget()).andThen(head.ShootInSpeaker()));
+		operatorControllerCommands.rightTrigger().onTrue(Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)).andThen(Commands.runOnce(() ->arm.setElevatorTarget(ElevatorConstants.MIN_HEIGHT))).andThen(head.SpinUpShooterForSpeaker())).onFalse(arm.WaitUntilArmAtTarget().andThen(arm.WaitUntilElevatorAtTarget()).andThen(head.ShootInSpeaker()));
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShootSpeakerSubwoofer(driverController, operatorController, arm, head)).onFalse(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.povLeft()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.StopIntake()
-						.andThen(head.SpinDownShooter()));
+				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
 				.onTrue(head.ShootInSpeaker());
@@ -225,27 +213,6 @@ public class RobotContainer {
 		operatorControllerCommands.back().onTrue(Commands.runOnce(() -> {
 			isClimbMode = !isClimbMode;
 		}));
-=======
-		operatorControllerCommands.x().onTrue(MechanismCommands.Stow(arm, head));
-		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
-		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
-		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
-		operatorControllerCommands.leftTrigger().onTrue(head.SpinUpShooterForSpeaker());
-		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
-		
-		operatorControllerCommands.leftBumper().and(operatorControllerCommands.povLeft().negate()).onFalse(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
-		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
-		operatorControllerCommands.povLeft()
-				.whileTrue(new RepeatCommand(head.StopIntake()
-						.andThen(head.SpinDownShooter())));
-		
-		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
-		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
-		/* operatorControllerCommands.povRight().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, 0), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber)); */
-		operatorControllerCommands.start().onTrue(head.IntakePiece());
-		operatorControllerCommands.back().onTrue(head.ShootInSpeaker());
->>>>>>> main
 		
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
