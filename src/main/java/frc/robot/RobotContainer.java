@@ -15,31 +15,22 @@ import frc.robot.shuffleboard.ArmTab;
 
 import frc.robot.shuffleboard.ClimberTab;
 import frc.robot.shuffleboard.DriverStationTab;
-import frc.robot.shuffleboard.MotorTab;
 import frc.robot.shuffleboard.LEDTab;
 import frc.robot.shuffleboard.ShuffleboardInfo;
 import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
 import frc.robot.shuffleboard.HeadTab;
 import frc.robot.subsystems.Arm;
-import frc.robot.util.TunableNumber;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
-import org.photonvision.PhotonUtils;
-
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SwerveControlRequestParameters;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.commands.MechanismCommands;
-import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -51,14 +42,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -116,10 +104,11 @@ public class RobotContainer {
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
 		// \/ \/ \/
-		tabs.add(new DriverStationTab(autoChooser));
+		tabs.add(new DriverStationTab(autoChooser, brakeToggleButton));
 		
 		tabs.add(new ArmTab(arm));
 		
+<<<<<<< HEAD
 		// tabs.add(new SwerveTab(drivetrain));
 		
 		// tabs.add(new LEDTab(led));
@@ -127,6 +116,15 @@ public class RobotContainer {
 		// tabs.add(new HeadTab(head));
 		
 		// tabs.add(new ClimberTab(climber));
+=======
+		tabs.add(new SwerveTab(drivetrain));
+		
+		tabs.add(new LEDTab(led));
+		
+		tabs.add(new HeadTab(head));
+		
+		tabs.add(new ClimberTab(climber));
+>>>>>>> main
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
@@ -183,6 +181,7 @@ public class RobotContainer {
 		
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 		
+<<<<<<< HEAD
 		operatorControllerCommands.x().and(() -> !isClimbMode).onTrue(arm.Stow());
 		operatorControllerCommands.y().and(() -> !isClimbMode).whileTrue(head.StartOutake()).onFalse(head.StopIntake());
 		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
@@ -226,6 +225,27 @@ public class RobotContainer {
 		operatorControllerCommands.back().onTrue(Commands.runOnce(() -> {
 			isClimbMode = !isClimbMode;
 		}));
+=======
+		operatorControllerCommands.x().onTrue(MechanismCommands.Stow(arm, head));
+		operatorControllerCommands.y().whileTrue(head.StartOutake()).onFalse(head.StopIntake());
+		operatorControllerCommands.a().onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
+		operatorControllerCommands.b().onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
+		operatorControllerCommands.leftTrigger().onTrue(head.SpinUpShooterForSpeaker());
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
+		
+		operatorControllerCommands.leftBumper().and(operatorControllerCommands.povLeft().negate()).onFalse(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
+		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
+		operatorControllerCommands.povLeft()
+				.whileTrue(new RepeatCommand(head.StopIntake()
+						.andThen(head.SpinDownShooter())));
+		
+		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		/* operatorControllerCommands.povRight().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, 0), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber)); */
+		operatorControllerCommands.start().onTrue(head.IntakePiece());
+		operatorControllerCommands.back().onTrue(head.ShootInSpeaker());
+>>>>>>> main
 		
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());

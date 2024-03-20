@@ -185,7 +185,7 @@ public class Head extends SubsystemBase {
 	public Command Shoot(double rpm) {
 		return SpinUpShooter(rpm)
 				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
-				.andThen(Commands.waitSeconds(0.5))
+				.andThen(Commands.waitSeconds(0.1))
 				.andThen(Commands.runOnce(() -> {
 					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
 				}))
@@ -201,6 +201,10 @@ public class Head extends SubsystemBase {
 	
 	public Command ShootInSpeaker() {
 		return Shoot(ShooterConstants.SPEAKER_SPEED);
+	}
+
+	public Command ShootPodium() {
+		return Shoot(ShooterConstants.PODIUM_SPEED);
 	}
 	
 	public Command ShootInAmp() {

@@ -18,16 +18,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.shuffleboard.MotorTab;
@@ -52,7 +48,7 @@ public class Arm extends SubsystemBase {
 	// private final TunableNumber retractedArmKD = new TunableNumber("arm", "Retracted Arm KD", ArmConstants.KD);
 	
 	private ArmFeedforward extendedArmFeedForward = new ArmFeedforward(ArmConstants.EXTENDED_KS, ArmConstants.EXTENDED_KG, ArmConstants.EXTENDED_KV);
-	// private ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
+	private ArmFeedforward retractedArmFeedForward = new ArmFeedforward(ArmConstants.RETRACTED_KS, ArmConstants.RETRACTED_KG, ArmConstants.RETRACTED_KV);
 	
 	// private final TunableNumber extendedArmKS = new TunableNumber("arm", "Extended Arm KS", ArmConstants.EXTENDED_KS);
 	// private final TunableNumber extendedArmKG = new TunableNumber("arm", "Extended Arm KG", ArmConstants.EXTENDED_KG);
@@ -65,7 +61,7 @@ public class Arm extends SubsystemBase {
 	// of the arm so the arm doesn't try to move on boot-up
 	private double armTarget;
 	/** the last actual arm target */
-	private double lastAcutalArmTarget = armTarget;
+	private double lastAcutalArmTarget;
 	/** arm angle based on distance interpolation table */
 	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
 	
@@ -148,7 +144,7 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setZeroOffset(ArmConstants.ARM_OFFSET);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
-		lastAcutalArmTarget = armTarget;
+		// lastAcutalArmTarget = armTarget;
 
 		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
 		armAngleBasedOnDistance.put(2.7, 34.0);
@@ -219,17 +215,17 @@ public class Arm extends SubsystemBase {
 	}
 	
 	private ArmFeedforward getArmFeedforward() {
-		// return potentiometer.get() > ElevatorConstants.MAX_BELOW_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
+		return elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT ? extendedArmFeedForward : retractedArmFeedForward;
 		// use just one feedforward for now, if we need 2, use line above
-		return extendedArmFeedForward;
+		// return extendedArmFeedForward;
 	}
 	
-	/** adds feedfoward values to the interpolation table */
-	private void addElevatorFeedFowardValues(double ks, double kg, double kv) {
-		elevatorKSTable.put(armAbsoluteEncoder.getPosition(), ks);
-		elevatorKGTable.put(armAbsoluteEncoder.getPosition(), kg);
-		elevatorKVTable.put(armAbsoluteEncoder.getPosition(), kv);
-	}
+	// /** adds feedfoward values to the interpolation table */
+	// private void addElevatorFeedFowardValues(double ks, double kg, double kv) {
+	// 	elevatorKSTable.put(armAbsoluteEncoder.getPosition(), ks);
+	// 	elevatorKGTable.put(armAbsoluteEncoder.getPosition(), kg);
+	// 	elevatorKVTable.put(armAbsoluteEncoder.getPosition(), kv);
+	// }
 	
 	// do something functions
 	
@@ -431,7 +427,7 @@ public class Arm extends SubsystemBase {
 		if (lastAcutalArmTarget != currentArmTarget) {
 			ArmFeedforward armFeedFoward = getArmFeedforward();
 			double velocity = 0;
-			if (Math.abs(currentArmTarget - armAbsoluteEncoder.getPosition()) > 2){
+			if (Math.abs(currentArmTarget - armAbsoluteEncoder.getPosition()) > 0.75){
 				velocity = armAbsoluteEncoder.getVelocity();
 			}
 			double armFeedFowardValue = armFeedFoward.calculate(Units.degreesToRadians(currentArmTarget), velocity);
@@ -454,13 +450,6 @@ public class Arm extends SubsystemBase {
 			
 			/** this is a constant increase to make the elvator go faster */
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
-				double speedyElevatorFeedForward;
-				if (Math.abs(currentElevatorTarget - elevatorEncoder.getPosition()) > 5.0) {
-					speedyElevatorFeedForward = Math.copySign(2.0, (currentElevatorTarget - elevatorEncoder.getPosition()));
-				} else {
-					speedyElevatorFeedForward = 0.0;
-				}
-				
 				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(elevatorEncoder.getVelocity());
 				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, /*speedyElevatorFeedForward*/ + elevatorFeedFowardValue, ArbFFUnits.kVoltage);
 				lastAcutalElevatorTarget = currentElevatorTarget;
@@ -487,7 +476,7 @@ public class Arm extends SubsystemBase {
 		return new Command() {
 			@Override
 			public boolean isFinished() {
-				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < 5;
+				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < 1.5;
 			}
 		};
 	}

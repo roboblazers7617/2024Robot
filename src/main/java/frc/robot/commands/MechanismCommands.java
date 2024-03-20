@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -16,16 +15,24 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
+	public static Command Stow(Arm arm, Head head) {
+		return arm.Stow()
+				.andThen(head.StopIntake())
+				.andThen(head.SpinDownShooter());
+	}
+	
 	public static Command PrepareShootAmp(XboxController operatorController, Arm arm, Head head) {
-		return new InstantCommand(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
-				.andThen(new InstantCommand(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT)))
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.SpinUpShooterForAmp())
 				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	public static Command ShootAmp(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return arm.WaitUntilArmAtTarget()
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(head.ShootInAmp())
 				.andThen(arm.Stow())
@@ -130,8 +137,9 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(Constants.PODIUM_DISTANCE)) // todo where should elevator be?
-				.andThen(head.ShootInSpeaker())
+		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)) // todo where should elevator be?
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(head.ShootPodium())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
@@ -148,7 +156,8 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command IntakeSource(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
+		return head.SpinDownShooter()
+				.andThen(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
@@ -156,7 +165,8 @@ public class MechanismCommands {
 	}
 	
 	public static Command IntakeGround(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
+		return head.SpinDownShooter()
+				.andThen(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
