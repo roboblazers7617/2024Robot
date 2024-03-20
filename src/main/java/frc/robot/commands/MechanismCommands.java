@@ -23,7 +23,7 @@ public class MechanismCommands {
 				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-
+	
 	public static Command ShootAmp(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return arm.WaitUntilArmAtTarget()
 				.andThen(arm.WaitUntilElevatorAtTarget())
@@ -110,6 +110,12 @@ public class MechanismCommands {
 				.andThen(head.ShootInSpeaker())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+	
+	public static Command PrepareShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(1.27))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(head.SpinUpShooterForSpeaker());
 	}
 	
 	/**
