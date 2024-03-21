@@ -448,7 +448,6 @@ public class Arm extends SubsystemBase {
 				}
 			}
 			
-			/** this is a constant increase to make the elvator go faster */
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
 				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(elevatorEncoder.getVelocity());
 				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, /*speedyElevatorFeedForward*/ + elevatorFeedFowardValue, ArbFFUnits.kVoltage);

@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.util.TunableNumber;
 import swervelib.math.Matter;
 
 /**
@@ -219,7 +218,6 @@ public final class Constants {
 		public static final double CLIMB_RATE = .6;
 	}
 
-	public static final double BATTERY_WARNING_VOLTAGE = 11;
 	public static final int NUMBER_OF_MOTORS = 10;
 	
 	public static class VisionConstants {
