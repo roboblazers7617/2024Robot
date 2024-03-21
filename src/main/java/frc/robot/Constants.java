@@ -61,6 +61,7 @@ public final class Constants {
 		public static final double STOW_ANGLE = 20.0;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 14;
 		public static final double SPEAKER_PODIUM_ANGLE = 28.0;
+		public static final double DBOT_ANGLE = 32;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 20;
 
@@ -203,9 +204,11 @@ public final class Constants {
 		public static final double AMP_SPEED = 1500.0;
 		public static final double SPEAKER_SPEED = 5000.0;
 		public static final double PODIUM_SPEED = 6000.0;
+		public static final double DBOT_SPEED = 8000.0;
 
 		public static final double VELOCITY_MINIMUM = 0.5;
 		public static final double VELOCITY_MAXIMUM = 2.0;
+		public static final double AUTO_SPEED = 6000;
 	}
 
 	public static class ClimberConstants {

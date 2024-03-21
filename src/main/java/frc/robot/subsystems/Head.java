@@ -203,6 +203,14 @@ public class Head extends SubsystemBase {
 		return Shoot(ShooterConstants.SPEAKER_SPEED);
 	}
 
+	public Command ShootInSpeakerAuto(){
+		return Shoot(ShooterConstants.AUTO_SPEED);
+	}
+
+	public Command ShootOverDBot(){
+		return Shoot(ShooterConstants.DBOT_SPEED);
+	}
+
 	public Command ShootPodium() {
 		return Shoot(ShooterConstants.PODIUM_SPEED);
 	}

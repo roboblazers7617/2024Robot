@@ -147,8 +147,9 @@ public class Arm extends SubsystemBase {
 		// lastAcutalArmTarget = armTarget;
 
 		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
-		armAngleBasedOnDistance.put(2.7, 34.0);
-		armAngleBasedOnDistance.put(3.24, 37.0);
+		armAngleBasedOnDistance.put(2.7, 31.25);
+		armAngleBasedOnDistance.put(3.24, 35.25);
+		//armAngleBasedOnDistance.put(3.25, 39.6);
 		// System.out.println("arm: target: " + armTarget);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
