@@ -5,6 +5,8 @@
 package frc.robot.commands.drivetrain;
 
 import java.io.IOException;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -22,6 +24,9 @@ public class TurnToTag extends Command {
 	private AprilTagFieldLayout fieldLayout;
 	private final int tagID;
 	private boolean invertFacing = false;
+
+	private final Supplier<Double> xMovement;
+	private final Supplier<Double> yMovement;
 	
 	public TurnToTag(Drivetrain drivetrain, int tagID) {
 		// Use addRequirements() here to declare subsystem dependencies.
@@ -37,9 +42,34 @@ public class TurnToTag extends Command {
 			fieldLayout = null;
 		}
 		tagPose = fieldLayout.getTagPose(tagID).get().toPose2d();
+		xMovement = () -> 0.0;
+		yMovement = () -> 0.0;
 	}
 	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing){
 		this(drivetrain, tagID);
+		this.invertFacing = invertFacing;
+	}
+
+	public TurnToTag(Drivetrain drivetrain, int tagID, Supplier<Double> yMovement, Supplier<Double> xMovement) {
+		// Use addRequirements() here to declare subsystem dependencies.
+		addRequirements(drivetrain);
+		this.drivetrain = drivetrain;
+		this.controller = new PIDController(drivetrain.getSwerveController().config.headingPIDF.p, drivetrain.getSwerveController().config.headingPIDF.i, drivetrain.getSwerveController().config.headingPIDF.d);
+		controller.setSetpoint(0);
+		this.tagID = tagID;
+		
+		try {
+			fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+		} catch (IOException e) {
+			fieldLayout = null;
+		}
+		tagPose = fieldLayout.getTagPose(tagID).get().toPose2d();
+		this.xMovement = xMovement;
+		this.yMovement = yMovement;
+	}
+
+	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing, Supplier<Double> yMovement, Supplier<Double> xMovement){
+		this(drivetrain, tagID, yMovement, xMovement);
 		this.invertFacing = invertFacing;
 	}
 	
@@ -51,10 +81,10 @@ public class TurnToTag extends Command {
 	@Override
 	public void execute() {
 		if(invertFacing){
-			drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));	
+			drivetrain.drive(drivetrain.getTargetSpeeds(xMovement.get(), yMovement.get(), tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));	
 		}
 		else{
-		drivetrain.drive(drivetrain.getTargetSpeeds(0, 0, tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
+		drivetrain.drive(drivetrain.getTargetSpeeds(xMovement.get(), yMovement.get(), tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
 		
 		}
 	
@@ -64,6 +94,7 @@ public class TurnToTag extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		drivetrain.drive(new ChassisSpeeds());
+		drivetrain.resetLastAngeScalar();
 	}
 	
 	// Returns true when the command should end.

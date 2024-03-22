@@ -161,6 +161,10 @@ public class Head extends SubsystemBase {
 	public Command SpinUpShooterForAmp() {
 		return SpinUpShooter(ShooterConstants.AMP_SPEED);
 	}
+
+	public Command SpinUpShooterForPodium() {
+		return SpinUpShooter(ShooterConstants.PODIUM_SPEED);
+	}
 	
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {

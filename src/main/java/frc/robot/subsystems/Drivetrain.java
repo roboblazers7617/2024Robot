@@ -465,6 +465,10 @@ public class Drivetrain extends SubsystemBase {
 	public Rotation2d getPitch() {
 		return swerveDrive.getPitch();
 	}
+
+	public void resetLastAngeScalar(){
+		swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
+	}
 	
 	/**
 	 * Gets the current roll angle of the robot, as reported by the imu.
