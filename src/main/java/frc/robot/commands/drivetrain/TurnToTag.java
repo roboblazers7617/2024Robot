@@ -24,9 +24,10 @@ public class TurnToTag extends Command {
 	private AprilTagFieldLayout fieldLayout;
 	private final int tagID;
 	private boolean invertFacing = false;
-
+	private boolean resetLastAngleScalar = false;
 	private final Supplier<Double> xMovement;
 	private final Supplier<Double> yMovement;
+
 	
 	public TurnToTag(Drivetrain drivetrain, int tagID) {
 		// Use addRequirements() here to declare subsystem dependencies.
@@ -66,11 +67,13 @@ public class TurnToTag extends Command {
 		tagPose = fieldLayout.getTagPose(tagID).get().toPose2d();
 		this.xMovement = xMovement;
 		this.yMovement = yMovement;
+		resetLastAngleScalar = true;
 	}
 
 	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing, Supplier<Double> yMovement, Supplier<Double> xMovement){
 		this(drivetrain, tagID, yMovement, xMovement);
 		this.invertFacing = invertFacing;
+		resetLastAngleScalar = true;
 	}
 	
 	// Called when the command is initially scheduled.
@@ -94,7 +97,9 @@ public class TurnToTag extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		drivetrain.drive(new ChassisSpeeds());
-		drivetrain.resetLastAngeScalar();
+		if (resetLastAngleScalar){
+			drivetrain.resetLastAngeScalar();
+		}
 	}
 	
 	// Returns true when the command should end.

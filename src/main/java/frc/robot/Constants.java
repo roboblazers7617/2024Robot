@@ -165,7 +165,7 @@ public final class Constants {
 		public static final double MAX_VELOCITY_METER_PER_SEC = Units.feetToMeters(14.5);
 		public static final double SLOW_SPEED_DECREMENT = 0.3;
 		public static final double THE_NUMBER_THREE_TWO = THE_NUMBER_THREE;
-		public static final double REGULAR_SPEED = 0.6;
+		public static final double REGULAR_SPEED = 0.8;
 		public static final double FAST_SPEED_INCREMENT = .2;
 		public static final double PRECISE_INCREMENT = .1;
 	}
