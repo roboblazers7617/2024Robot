@@ -91,12 +91,13 @@ public class RobotContainer {
 	public RobotContainer() {
 		// NamedCommands.registerCommand("SayHi", Commands.runOnce(() -> System.out.println("Hi")));
 		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
-		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
+		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", turnTo0());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
+		NamedCommands.registerCommand("Stow", MechanismCommands.Stow(arm, head));
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
