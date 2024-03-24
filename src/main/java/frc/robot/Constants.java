@@ -53,10 +53,10 @@ public final class Constants {
 
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 3.5;
+		public static final double MIN_ANGLE = 2.5;
 		public static final double SOURCE_ANGLE = 64.5; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 84.5;
-		public static final double FLOOR_PICKUP = 4.5;
+		public static final double FLOOR_PICKUP = 3.75;
 		public static final double STOW_ANGLE = 20.0;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 14;
 		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
