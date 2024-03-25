@@ -44,7 +44,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -225,6 +224,11 @@ public class RobotContainer {
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
 		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
+		Trigger enableTrigger = new Trigger(() -> DriverStation.isEnabled());
+		enableTrigger.onTrue(Commands.runOnce(() -> {
+			arm.EnableBrakeMode();
+			head.EnableBrakeMode();
+		}));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {

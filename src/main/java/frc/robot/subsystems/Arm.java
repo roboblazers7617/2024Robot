@@ -379,6 +379,15 @@ public class Arm extends SubsystemBase {
 			}
 		}).ignoringDisable(true);
 	}
+
+	public Command EnableBrakeMode(){
+		return this.runOnce(() -> {
+			leaderArmMotor.setIdleMode(IdleMode.kBrake);
+			followerArmMotor.setIdleMode(IdleMode.kBrake);
+			leaderElevatorMotor.setIdleMode(IdleMode.kBrake);
+			followerElevatorMotor.setIdleMode(IdleMode.kBrake);
+		}).ignoringDisable(true);
+	}
 	
 	@Override
 	public void periodic() {

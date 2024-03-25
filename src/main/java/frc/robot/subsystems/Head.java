@@ -241,4 +241,10 @@ public class Head extends SubsystemBase {
 			}
 		});
 	}
+
+	public Command EnableBrakeMode(){
+		return new InstantCommand(() -> {
+			intakeMotor.setIdleMode(IdleMode.kBrake);
+		});
+	}
 }
