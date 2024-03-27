@@ -9,6 +9,7 @@ import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.ShooterConstants.ShootingPosition;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Head;
 import frc.robot.shuffleboard.ArmTab;
@@ -194,7 +195,7 @@ public class RobotContainer {
 				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.ShootInSpeaker());
+				.onTrue(head.ShootAtPosition(ShootingPosition.SPEAKER));
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));

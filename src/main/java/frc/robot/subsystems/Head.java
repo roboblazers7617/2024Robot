@@ -154,7 +154,7 @@ public class Head extends SubsystemBase {
 			setShooterSpeed(rpm);
 		}, this);
 	}
-
+	
 	public Command SpinUpShooterAtPosition(ShooterConstants.ShootingPosition position) {
 		return SpinUpShooter(position.rpm());
 	}
@@ -166,7 +166,7 @@ public class Head extends SubsystemBase {
 	public Command SpinUpShooterForAmp() {
 		return SpinUpShooterAtPosition(ShootingPosition.AMP);
 	}
-
+	
 	public Command SpinUpShooterForPodium() {
 		return SpinUpShooterAtPosition(ShootingPosition.PODIUM);
 	}
@@ -207,29 +207,9 @@ public class Head extends SubsystemBase {
 					setIntakeSpeed(0);
 				});
 	}
-
+	
 	public Command ShootAtPosition(ShooterConstants.ShootingPosition position) {
 		return Shoot(position.rpm());
-	}
-	
-	public Command ShootInSpeaker() {
-		return ShootAtPosition(ShootingPosition.SPEAKER);
-	}
-
-	public Command ShootInSpeakerAuto(){
-		return ShootAtPosition(ShootingPosition.SPEAKER_AUTO);
-	}
-
-	public Command ShootOverDBot(){
-		return ShootAtPosition(ShootingPosition.DBOT);
-	}
-
-	public Command ShootPodium() {
-		return ShootAtPosition(ShootingPosition.PODIUM);
-	}
-	
-	public Command ShootInAmp() {
-		return ShootAtPosition(ShootingPosition.AMP);
 	}
 	
 	public boolean isNoteWithinSensor() {
@@ -250,8 +230,8 @@ public class Head extends SubsystemBase {
 			}
 		});
 	}
-
-	public Command EnableBrakeMode(){
+	
+	public Command EnableBrakeMode() {
 		return new InstantCommand(() -> {
 			intakeMotor.setIdleMode(IdleMode.kBrake);
 		});

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ShooterConstants.ShootingPosition;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
@@ -34,7 +35,7 @@ public class MechanismCommands {
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.ShootInAmp())
+				.andThen(head.ShootAtPosition(ShootingPosition.AMP))
 				.andThen(arm.Stow())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
@@ -54,8 +55,8 @@ public class MechanismCommands {
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
 		return ShootSpeaker(driverController, operatorController, arm, head, () -> drivetrain.getDistanceToSpeaker());
 	}
-
-		public static Command ShootSpeakerAuto(Arm arm, Head head, Drivetrain drivetrain) {
+	
+	public static Command ShootSpeakerAuto(Arm arm, Head head, Drivetrain drivetrain) {
 		return ShootSpeakerAuto(arm, head, () -> drivetrain.getDistanceToSpeaker());
 	}
 	
@@ -75,21 +76,21 @@ public class MechanismCommands {
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.ShootInSpeaker())
+				.andThen(head.ShootAtPosition(ShootingPosition.SPEAKER))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-
+	
 	public static Command ShootSpeakerAuto(Arm arm, Head head, Supplier<Double> distance) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.ShootInSpeakerAuto());
+				.andThen(head.ShootAtPosition(ShootingPosition.SPEAKER_AUTO));
 	};
-
+	
 	public static Command ManualShoot(Head head) {
-		return head.ShootOverDBot();
+		return head.ShootAtPosition(ShootingPosition.DBOT);
 	};
 	
 	/**
@@ -108,7 +109,7 @@ public class MechanismCommands {
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.ShootInSpeaker())
+				.andThen(head.ShootAtPosition(ShootingPosition.SPEAKER))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
@@ -118,10 +119,9 @@ public class MechanismCommands {
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.ShootInSpeakerAuto());
+				.andThen(head.ShootAtPosition(ShootingPosition.SPEAKER_AUTO));
 	}
 	
-
 	/**
 	 * will finish after piece has been shot
 	 * 
@@ -139,7 +139,7 @@ public class MechanismCommands {
 				.andThen(head.SpinUpShooterForSpeaker())
 				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.ShootInSpeaker())
+				.andThen(head.ShootAtPosition(ShootingPosition.SPEAKER))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
@@ -166,17 +166,17 @@ public class MechanismCommands {
 				.andThen(() -> arm.setElevatorTarget(0))
 				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.ShootPodium())
+				.andThen(head.ShootAtPosition(ShootingPosition.PODIUM))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-
-		public static Command ShootOverDBot(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
+	
+	public static Command ShootOverDBot(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.DBOT_ANGLE)) // todo where should elevator be?
-				.andThen(() ->arm.setElevatorTarget(0))
+				.andThen(() -> arm.setElevatorTarget(0))
 				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.ShootOverDBot())
+				.andThen(head.ShootAtPosition(ShootingPosition.DBOT))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}

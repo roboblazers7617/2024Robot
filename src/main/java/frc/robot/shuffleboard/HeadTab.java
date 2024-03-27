@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.ShooterConstants.ShootingPosition;
 import frc.robot.subsystems.Head;
 
 public class HeadTab extends ShuffleboardTabBase {
@@ -87,7 +88,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		shooterLayout.add("Spin Up (speaker)", head.SpinUpShooterForSpeaker()).withPosition(2, 0);
 		shooterLayout.add("Spin Down", head.SpinDownShooter()).withPosition(2, 1);
-		shooterLayout.add("Shoot (speaker)", head.ShootInSpeaker()).withPosition(2, 2);
+		shooterLayout.add("Shoot (speaker)", head.ShootAtPosition(ShootingPosition.SPEAKER)).withPosition(2, 2);
 	}
 	
 	@Override
