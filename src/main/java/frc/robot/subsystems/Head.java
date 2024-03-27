@@ -34,6 +34,7 @@ public class Head extends SubsystemBase {
 	
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
+	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
 	private boolean isNoteAcquired = false; // Since none of the sensors will be active when a note is intaken and aligned, this boolean is necessary to know if the robot has a note.
 	
 	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
@@ -110,6 +111,10 @@ public class Head extends SubsystemBase {
 		return Commands.runOnce(() -> {
 			setIntakeSpeed(IntakeConstants.INTAKE_SPEED);
 		}, this)
+				.andThen(Commands.waitUntil(() -> isNoteWithinAlignmentSensor()))
+				.andThen(Commands.runOnce(() -> {
+					setIntakeSpeed(IntakeConstants.ALIGMNMENT_SPEED);
+				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.finallyDo(() -> {
 					isNoteAcquired = true;
@@ -161,7 +166,7 @@ public class Head extends SubsystemBase {
 	public Command SpinUpShooterForAmp() {
 		return SpinUpShooter(ShooterConstants.AMP_SPEED);
 	}
-
+	
 	public Command SpinUpShooterForPodium() {
 		return SpinUpShooter(ShooterConstants.PODIUM_SPEED);
 	}
@@ -206,15 +211,15 @@ public class Head extends SubsystemBase {
 	public Command ShootInSpeaker() {
 		return Shoot(ShooterConstants.SPEAKER_SPEED);
 	}
-
-	public Command ShootInSpeakerAuto(){
+	
+	public Command ShootInSpeakerAuto() {
 		return Shoot(ShooterConstants.AUTO_SPEED);
 	}
-
-	public Command ShootOverDBot(){
+	
+	public Command ShootOverDBot() {
 		return Shoot(ShooterConstants.DBOT_SPEED);
 	}
-
+	
 	public Command ShootPodium() {
 		return Shoot(ShooterConstants.PODIUM_SPEED);
 	}
@@ -225,6 +230,10 @@ public class Head extends SubsystemBase {
 	
 	public boolean isNoteWithinSensor() {
 		return !isNoteInSensor.get();
+	}
+	
+	public boolean isNoteWithinAlignmentSensor() {
+		return !isNoteInAlignmentSensor.get();
 	}
 	
 	// Does the intake have a note?
@@ -241,8 +250,8 @@ public class Head extends SubsystemBase {
 			}
 		});
 	}
-
-	public Command EnableBrakeMode(){
+	
+	public Command EnableBrakeMode() {
 		return new InstantCommand(() -> {
 			intakeMotor.setIdleMode(IdleMode.kBrake);
 		});
