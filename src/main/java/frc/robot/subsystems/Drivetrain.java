@@ -16,14 +16,18 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,6 +39,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.shuffleboard.MotorTab;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -48,19 +53,24 @@ public class Drivetrain extends SubsystemBase {
 	 * Swerve drive object.
 	 */
 	private final SwerveDrive swerveDrive;
-	private final Vision vision;
-
+	//private final Vision vision;
+	
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
+	private AprilTagFieldLayout fieldLayout;
+	private Optional<EstimatedRobotPose> visionMeasurement;
+	
+	private boolean doVisionUpdates = false;
+	
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
 	 * @param directory
 	 *            Directory of swerve drive config files.
 	 */
-	public Drivetrain(Vision vision) {
+	public Drivetrain(/*Vision vision*/) {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
-		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
+		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
@@ -71,21 +81,25 @@ public class Drivetrain extends SubsystemBase {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		
+		try {
+			fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+		} catch (IOException e) {
+			fieldLayout = null;
+		}
+		
 		swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot
 													// via angle.
-
-  
-	setupPathPlanner();
-	this.vision = vision;
-
-	for (int i = 0; i < 4; i++){
-		motorTab.addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor()});
-		motorTab.addMotor(new CANSparkMax[] {(CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor()});
+		
+		setupPathPlanner();
+		//this.vision = vision;
+		
+		// for (int i = 0; i < 4; i++) {
+		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
+		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor() });
+		// }
 	}
-  }
-
-
-
+	
 	/**
 	 * Setup AutoBuilder for PathPlanner.
 	 */
@@ -100,7 +114,7 @@ public class Drivetrain extends SubsystemBase {
 						// Translation PID constants
 						new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p, swerveDrive.swerveController.config.headingPIDF.i, swerveDrive.swerveController.config.headingPIDF.d),
 						// Rotation PID constants
-						5,
+						Constants.AutoConstants.MAX_MODULE_SPEED,
 						// Max module speed, in m/s
 						swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
 						// Drive base radius in meters. Distance from robot center to furthest module.
@@ -251,7 +265,9 @@ public class Drivetrain extends SubsystemBase {
 	
 	@Override
 	public void periodic() {
-		processVision();
+		if (doVisionUpdates) {
+			processVision();
+		}
 		motorTab.update();
 	}
 	
@@ -259,10 +275,10 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-		Optional<EstimatedRobotPose> visionMeasurement = vision.updateOdometry();
-		if (visionMeasurement.isPresent()) {
-			swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().timestampSeconds);
-		}
+		//visionMeasurement = vision.updateOdometry();
+		//if (visionMeasurement.isPresent()) {
+		//	swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().//timestampSeconds);
+		//}
 	}
 	
 	/**
@@ -285,6 +301,8 @@ public class Drivetrain extends SubsystemBase {
 	 *            The pose to set the odometry to
 	 */
 	public void resetOdometry(Pose2d initialHolonomicPose) {
+		
+		swerveDrive.setGyro(new Rotation3d(0,0,initialHolonomicPose.getRotation().getRadians()));
 		swerveDrive.resetOdometry(initialHolonomicPose);
 	}
 	
@@ -334,6 +352,10 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public void zeroGyro() {
 		swerveDrive.zeroGyro();
+	}
+	
+	public void disableVisionUpdates() {
+		doVisionUpdates = false;
 	}
 	
 	/**
@@ -446,5 +468,28 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public Rotation2d getPitch() {
 		return swerveDrive.getPitch();
+	}
+
+	public void resetLastAngeScalar(){
+		swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
+	}
+	
+	/**
+	 * Gets the current roll angle of the robot, as reported by the imu.
+	 *
+	 * @return The heading as a {@link Rotation2d} angle
+	 */
+	public Rotation2d getRoll() {
+		return swerveDrive.getRoll();
+	}
+	
+	public double getDistanceToSpeaker() {
+		if (DriverStation.getAlliance().isPresent()) {
+			if (DriverStation.getAlliance().get() == Alliance.Red) {
+				return getPose().getTranslation().minus(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d()).getNorm();
+			}
+			return getPose().getTranslation().minus(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d()).getNorm();
+		}
+		return -1;
 	}
 }

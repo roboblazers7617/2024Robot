@@ -2,31 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.33,
-      "y": 7.0
+      "x": 0.66,
+      "y": 6.72
     },
-    "rotation": 0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "top start to top ring"
+            "name": "ShootSpeaker"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "top ring to mid ring"
+            "pathName": "Woofer leave"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "mid ring to bot ring"
+            "name": "turnTo0"
           }
         }
       ]

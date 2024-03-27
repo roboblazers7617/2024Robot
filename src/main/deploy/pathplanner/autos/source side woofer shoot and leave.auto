@@ -3,30 +3,36 @@
   "startingPose": {
     "position": {
       "x": 0.66,
-      "y": 7.0
+      "y": 4.41
     },
-    "rotation": 0
+    "rotation": 120.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "test path forward"
+            "name": "ShootSpeaker"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SayHi"
+            "name": "Stow"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "test path back"
+            "pathName": "bot woofer"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
           }
         }
       ]

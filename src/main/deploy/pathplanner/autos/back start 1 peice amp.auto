@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.33,
-      "y": 7.0
+      "x": 0.52,
+      "y": 7.33
     },
     "rotation": -90.0
   },
@@ -14,13 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "top angle start"
+            "pathName": "amp and leave"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "SayHi"
+            "name": "shootAmp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "side amp to top ring"
           }
         }
       ]

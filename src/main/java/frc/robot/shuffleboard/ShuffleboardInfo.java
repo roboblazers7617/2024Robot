@@ -57,7 +57,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// if robot is not connected to the field system, enable shuffleboard
-		if (!DriverStation.isFMSAttached()) {
+		if (false) {
 			activateTabs();
 		}
 		// This method will be called once per scheduler run
@@ -69,17 +69,17 @@ public class ShuffleboardInfo extends SubsystemBase {
 		}
 
 		// copy over values from the logging network table to shuffleboard
-		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		for (String tab : copyTables) {
-			if (tab != null) {
-				for (String key : inst.getTable("logging/" + tab).getKeys()) {
-					NetworkTableEntry sourceEntry = inst.getTable("logging/" + tab).getEntry(key);
-					NetworkTableEntry destinationEntry = inst.getTable("Shuffleboard/" + tab).getEntry(key);
-					destinationEntry.setValue(sourceEntry.getValue());
+		// NetworkTableInstance inst = NetworkTableInstance.getDefault();
+		// for (String tab : copyTables) {
+		// 	if (tab != null) {
+		// 		for (String key : inst.getTable("logging/" + tab).getKeys()) {
+		// 			NetworkTableEntry sourceEntry = inst.getTable("logging/" + tab).getEntry(key);
+		// 			NetworkTableEntry destinationEntry = inst.getTable("Shuffleboard/" + tab).getEntry(key);
+		// 			destinationEntry.setValue(sourceEntry.getValue());
 
-				}
-			}
-		}
+		// 		}
+		// 	}
+		// }
 
 
 		// create an Alert if the battery voltage is below BATTERY_WARNING_VOLTAGE

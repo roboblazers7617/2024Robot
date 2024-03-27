@@ -1,0 +1,9 @@
+repos:
+- repo: local
+  hooks:
+    - id: print-statement-checker
+      name: print-statement-checker
+      entry: ./print.sh
+      language: script
+      types: [java]
+      pass_filenames: false

@@ -80,14 +80,23 @@ public class MotorTab{
 			motorEncoderPublishers[i + numberOfMotors] = networkTable.getDoubleTopic("Motor: " + (newMotors[i].getDeviceId()) + " Encoder Position").publish();
 
 			// create shuffleboard entries for each of these with with a position
-			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Bus Voltage", -1.0).withPosition(5, i + rowOffset);
-			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Total Current", -1.0).withPosition(6, i + rowOffset);
-			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Sticky Faults", -1.0).withPosition(7, i + rowOffset);
-			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Motor Temperature", -1.0).withPosition(8, i + rowOffset);
-			tab.add("Motor: " + (newMotors[i].getDeviceId()) + " Encoder Position", -1.0).withPosition(9, i + rowOffset);
+			
 		}
 		numberOfMotors += newMotors.length;
 
+	}
+
+	/**
+	 * this method must be called in activateShuffleboard() to add the motors to the shuffleboard in the correct position
+	 */
+	public void activateShuffleboard(){
+		for (int i = 0; i < motors.length; i++) {
+			tab.add("Motor: " + (motors[i].getDeviceId()) + " Bus Voltage", busVoltagePublishers[i]).withPosition(0, i + rowOffset);
+			tab.add("Motor: " + (motors[i].getDeviceId()) + " Total Current", optionCurrentPublishers[i]).withPosition(1, i + rowOffset);
+			tab.add("Motor: " + (motors[i].getDeviceId()) + " Sticky Faults", stickyFaultPublisher[i]).withPosition(2, i + rowOffset);
+			tab.add("Motor: " + (motors[i].getDeviceId()) + " Motor Temperature", motorTemperaturePublishers[i]).withPosition(3, i + rowOffset);
+			tab.add("Motor: " + (motors[i].getDeviceId()) + " Encoder Position", motorEncoderPublishers[i]).withPosition(4, i + rowOffset);
+		}
 	}
 	/** this MUST be called in periodic() */
 	public void update() {
