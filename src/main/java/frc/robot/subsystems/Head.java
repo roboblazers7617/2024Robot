@@ -119,7 +119,7 @@ public class Head extends SubsystemBase {
 			intakeInterrupt.enable();
 		}, this)
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-				.andThen(() -> {
+				.finallyDo(() -> {
 					intakeInterrupt.disable();
 				});
 	}
