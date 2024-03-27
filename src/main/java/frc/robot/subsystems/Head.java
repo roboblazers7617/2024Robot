@@ -35,6 +35,7 @@ public class Head extends SubsystemBase {
 	
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
+	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
 	
 	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
@@ -110,8 +111,12 @@ public class Head extends SubsystemBase {
 		return Commands.runOnce(() -> {
 			setIntakeSpeed(IntakeConstants.INTAKE_SPEED);
 		}, this)
+				.andThen(Commands.waitUntil(() -> isNoteWithinAlignmentSensor()))
+				.andThen(Commands.runOnce(() -> {
+					setIntakeSpeed(IntakeConstants.ALIGMNMENT_SPEED);
+				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-				.finallyDo(() -> {
+				.andThen(() -> {
 					setIntakeSpeed(0);
 				});
 	}
@@ -155,7 +160,6 @@ public class Head extends SubsystemBase {
 	public Command SpinUpShooter(ShootingPosition position) {
 		return SpinUpShooter(position.rpm());
 	}
-	
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
@@ -213,11 +217,14 @@ public class Head extends SubsystemBase {
 	public Command Shoot(ShootingPosition position) {
 		return Shoot(position.rpm());
 	}
-	
 	public boolean isNoteWithinSensor() {
 		return !isNoteInSensor.get();
 	}
 	
+	public boolean isNoteWithinAlignmentSensor() {
+		return !isNoteInAlignmentSensor.get();
+	}
+
 	public Command ToggleBreakModes() {
 		return new InstantCommand(() -> {
 			if (intakeMotor.getIdleMode() == IdleMode.kBrake) {
