@@ -95,8 +95,8 @@ public class RobotContainer {
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", turnTo0());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
-		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
-		NamedCommands.registerCommand("shootAmp", MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
+		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.Shoot(arm, head, drivetrain));
+		NamedCommands.registerCommand("shootAmp", MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.AMP));
 		NamedCommands.registerCommand("Stow", MechanismCommands.Stow(arm, head));
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
@@ -170,8 +170,8 @@ public class RobotContainer {
 		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
 		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
 		
-		driverControllerCommands.a().onTrue(MechanismCommands.ShootOverDBot(driverController, operatorController, arm, head));
-		driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
+		driverControllerCommands.a().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.DBOT));
+		driverControllerCommands.b().onTrue(MechanismCommands.Shoot(arm, head, drivetrain));
 		
 		// driverControllerCommands.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
 		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
@@ -183,12 +183,12 @@ public class RobotContainer {
 		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
+		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.AMP));
 		
-		operatorControllerCommands.rightTrigger().onTrue(arm.SetTargets(ShootingPosition.PODIUM).andThen(head.SpinUpShooter(ShootingPosition.PODIUM))).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
+		operatorControllerCommands.rightTrigger().onTrue(arm.SetTargets(ShootingPosition.PODIUM).andThen(head.SpinUpShooter(ShootingPosition.PODIUM))).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.PODIUM));
 		
-		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShootSpeakerSubwoofer(driverController, operatorController, arm, head)).onFalse(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
+		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.SUBWOOFER));
 		
 		operatorControllerCommands.povLeft()
 				.and(() -> (!isClimbMode))

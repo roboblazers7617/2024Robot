@@ -16,171 +16,13 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
-	public static Command Stow(Arm arm, Head head) {
-		return arm.Stow()
-				.andThen(head.StopIntake())
-				.andThen(head.SpinDownShooter());
-	}
-	
-	public static Command PrepareShootAmp(XboxController operatorController, Arm arm, Head head) {
-		return arm.SetTargets(ShootingPosition.AMP)
-				.andThen(head.SpinUpShooter(ShootingPosition.AMP))
-				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	public static Command ShootAmp(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return arm.SetTargets(ShootingPosition.AMP)
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.Shoot(ShootingPosition.AMP))
-				.andThen(arm.Stow())
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	/**
-	 * will finish after piece has been shot
-	 * 
-	 * @param driverController
-	 * @param operatorController
-	 * @param arm
-	 * @param head
-	 * @param drivetrain
-	 *            subsystem
-	 * @return
-	 */
-	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
-		return ShootSpeaker(driverController, operatorController, arm, head, () -> drivetrain.getDistanceToSpeaker());
-	}
-	
-	public static Command ShootSpeakerAuto(Arm arm, Head head, Drivetrain drivetrain) {
-		return ShootSpeakerAuto(arm, head, () -> drivetrain.getDistanceToSpeaker());
-	}
-	
-	/**
-	 * will wait until finished shooting to finish command
-	 * 
-	 * @param driverController
-	 * @param operatorController
-	 * @param arm
-	 * @param head
-	 * @param distance
-	 *            in meters
-	 * @return
-	 */
-	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
-				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.Shoot(ShootingPosition.SUBWOOFER))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	public static Command ShootSpeakerAuto(Arm arm, Head head, Supplier<Double> distance) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
-				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.Shoot(ShootingPosition.SUBWOOFER_AUTO));
-	};
-	
-	public static Command ManualShoot(Head head) {
-		return head.Shoot(ShootingPosition.DBOT);
-	};
-	
-	/**
-	 * will wait until finished shooting to finish command
-	 * 
-	 * @param driverController
-	 * @param operatorController
-	 * @param arm
-	 * @param head
-	 * @param distance
-	 *            in meters
-	 * @return
-	 */
-	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, double distance) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
-				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.Shoot(ShootingPosition.SUBWOOFER))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	public static Command ShootAuto(Arm arm, Head head, double distance) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
-				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.Shoot(ShootingPosition.SUBWOOFER_AUTO));
-	}
-	
-	/**
-	 * will finish after piece has been shot
-	 * 
-	 * @param driverController
-	 * @param operatorController
-	 * @param arm
-	 *            subsystem
-	 * @param head
-	 *            subsystem
-	 * @return Command
-	 */
-	public static Command ShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return arm.SetTargets(ShootingPosition.SUBWOOFER)
-				.andThen(head.SpinUpShooter(ShootingPosition.SUBWOOFER))
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.Shoot(ShootingPosition.SUBWOOFER))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	public static Command PrepareShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return arm.SetTargets(ShootingPosition.SUBWOOFER)
-				.andThen(head.SpinUpShooter(ShootingPosition.SUBWOOFER));
-	}
-	
-	/**
-	 * will finish after piece has been shot
-	 * 
-	 * @param driverController
-	 * @param operatorController
-	 * @param arm
-	 *            subsystem
-	 * @param head
-	 *            subsystem
-	 * @return Command
-	 */
-	public static Command ShootSpeakerPodium(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return arm.SetArmTarget(ShootingPosition.PODIUM)
-				.andThen(() -> arm.setElevatorTarget(0))
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.Shoot(ShootingPosition.PODIUM))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	public static Command ShootOverDBot(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return arm.SetTargets(ShootingPosition.DBOT)
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(head.Shoot(ShootingPosition.DBOT))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
 	/**
 	 * will finish after piece has been intaken
 	 * 
 	 * @param driverController
+	 *            for haptics
 	 * @param operatorController
+	 *            for haptics
 	 * @param arm
 	 *            subsystem
 	 * @param head
@@ -196,6 +38,19 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
+	/**
+	 * will finish after piece has been intaken
+	 * 
+	 * @param driverController
+	 *            for haptics
+	 * @param operatorController
+	 *            for haptics
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @return Command
+	 */
 	public static Command IntakeGround(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return head.SpinDownShooter()
 				.andThen(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
@@ -203,5 +58,179 @@ public class MechanismCommands {
 				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+	
+	/**
+	 * cancel shoot and intake and stow
+	 * 
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @return
+	 */
+	public static Command Stow(Arm arm, Head head) {
+		return arm.Stow()
+				.andThen(head.StopIntake())
+				.andThen(head.SpinDownShooter());
+	}
+	
+	public static Command PrepareShoot(Arm arm, Head head, ShootingPosition position) {
+		return arm.SetTargets(position)
+				.andThen(head.SpinUpShooter(position));
+	}
+	
+	public static Command PrepareShoot(XboxController operatorController, Arm arm, Head head, ShootingPosition position) {
+		return PrepareShoot(arm, head, position)
+				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+	
+	/**
+	 * will finish after piece has been shot
+	 * 
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param position
+	 *            position to shoot from
+	 * @return Command
+	 */
+	public static Command Shoot(Arm arm, Head head, ShootingPosition position) {
+		return arm.SetTargets(position)
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(arm.WaitUntilElevatorAtTarget())
+				.andThen(head.Shoot(position))
+				.andThen(arm.Stow());
+	}
+	
+	/**
+	 * will finish after piece has been shot
+	 * 
+	 * @param driverController
+	 *            for haptics
+	 * @param operatorController
+	 *            for haptics
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param position
+	 *            position to shoot from
+	 * @return Command
+	 */
+	public static Command Shoot(XboxController driverController, XboxController operatorController, Arm arm, Head head, ShootingPosition position) {
+		return Shoot(arm, head, position)
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+	
+	/**
+	 * will wait until finished shooting to finish command
+	 * 
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param distance
+	 *            in meters
+	 * @return Command
+	 */
+	public static Command Shoot(Arm arm, Head head, Double distance) {
+		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(arm.WaitUntilElevatorAtTarget())
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(head.Shoot(ShootingPosition.SUBWOOFER));
+	}
+	
+	/**
+	 * will wait until finished shooting to finish command
+	 * 
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param distance
+	 *            in meters
+	 * @return Command
+	 */
+	public static Command Shoot(Arm arm, Head head, Supplier<Double> distance) {
+		return Shoot(arm, head, distance.get());
+	}
+	
+	/**
+	 * will wait until finished shooting to finish command
+	 * 
+	 * @param driverController
+	 *            for haptics
+	 * @param operatorController
+	 *            for haptics
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param distance
+	 *            in meters
+	 * @return Command
+	 */
+	public static Command Shoot(XboxController driverController, XboxController operatorController, Arm arm, Head head, Double distance) {
+		return Shoot(arm, head, distance)
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+	
+	/**
+	 * will wait until finished shooting to finish command
+	 * 
+	 * @param driverController
+	 *            for haptics
+	 * @param operatorController
+	 *            for haptics
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param distance
+	 *            in meters
+	 * @return Command
+	 */
+	public static Command Shoot(XboxController driverController, XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
+		return Shoot(driverController, operatorController, arm, head, distance.get());
+	}
+
+	/**
+	 * will finish after piece has been shot
+	 * 
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param drivetrain
+	 *            subsystem
+	 * @return Command
+	 */
+	public static Command Shoot(Arm arm, Head head, Drivetrain drivetrain) {
+		return Shoot(arm, head, () -> drivetrain.getDistanceToSpeaker());
+	}
+	
+	/**
+	 * will finish after piece has been shot
+	 * 
+	 * @param driverController
+	 *            for haptics
+	 * @param operatorController
+	 *            for haptics
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @param drivetrain
+	 *            subsystem
+	 * @return Command
+	 */
+	public static Command Shoot(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
+		return Shoot(driverController, operatorController, arm, head, () -> drivetrain.getDistanceToSpeaker());
 	}
 }
