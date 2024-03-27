@@ -19,6 +19,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -277,17 +278,14 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-		
-		getOdo
-			PoseLatency visionBotPose = m_visionSystem.getPoseLatency();
 			// invalid LL data
-			if (visionBotPose.pose2d.getX() == 0.0) {
+			if (LimelightHelpers.getBotPose2d("").getX() == 0.0) {
 			  return;
 			}
 		
 			// distance from current pose to vision estimated pose
 			double poseDifference = m_poseEstimator.getEstimatedPosition().getTranslation()
-				.getDistance(visionBotPose.pose2d.getTranslation());
+				.getDistance(LimelightHelpers.getBotPose2d("").getTranslation());
 		
 			if (m_visionSystem.areAnyTargetsValid()) {
 			  double xyStds;
