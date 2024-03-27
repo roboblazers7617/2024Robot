@@ -19,6 +19,22 @@ public class MechanismCommands {
 	/**
 	 * will finish after piece has been intaken
 	 * 
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @return Command
+	 */
+	public static Command IntakeSource(Arm arm, Head head) {
+		return head.SpinDownShooter()
+				.andThen(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(head.IntakePiece());
+	}
+	
+	/**
+	 * will finish after piece has been intaken
+	 * 
 	 * @param driverController
 	 *            for haptics
 	 * @param operatorController
@@ -30,12 +46,25 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command IntakeSource(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return head.SpinDownShooter()
-				.andThen(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
-				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(head.IntakePiece())
+		return IntakeSource(arm, head)
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+	
+	/**
+	 * will finish after piece has been intaken
+	 * 
+	 * @param arm
+	 *            subsystem
+	 * @param head
+	 *            subsystem
+	 * @return Command
+	 */
+	public static Command IntakeGround(Arm arm, Head head) {
+		return head.SpinDownShooter()
+				.andThen(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
+				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
+				.andThen(head.IntakePiece());
 	}
 	
 	/**
@@ -52,10 +81,7 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command IntakeGround(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return head.SpinDownShooter()
-				.andThen(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
-				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(head.IntakePiece())
+		return IntakeGround(arm, head)
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
@@ -199,7 +225,7 @@ public class MechanismCommands {
 	public static Command Shoot(XboxController driverController, XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
 		return Shoot(driverController, operatorController, arm, head, distance.get());
 	}
-
+	
 	/**
 	 * will finish after piece has been shot
 	 * 

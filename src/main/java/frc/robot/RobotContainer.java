@@ -94,7 +94,7 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", turnTo0());
-		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
+		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.Shoot(arm, head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.Shoot(arm, head, ShootingPosition.AMP));
 		NamedCommands.registerCommand("Stow", MechanismCommands.Stow(arm, head));
