@@ -53,7 +53,6 @@ public class HeadTab extends ShuffleboardTabBase {
 	public void update() {
 		noteWithinSensorPublisher.set(head.isNoteWithinSensor());
 		// noteInShooterPublisher.set(head.isNoteInShooter());
-		noteAcquiredPublisher.set(head.isNoteAcquired());
 		
 		shooterBottomSpeedPublisher.set(head.getShooterBottomSpeed());
 		shooterTopSpeedPublisher.set(head.getShooterTopSpeed());
@@ -68,7 +67,6 @@ public class HeadTab extends ShuffleboardTabBase {
 		// Intake
 		ShuffleboardLayout intakeLayout = tab.getLayout("Intake", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 0);
 		intakeLayout.add("Note Within Sensor", false).withPosition(0, 0);
-		intakeLayout.add("Note Acquired", false).withPosition(0, 1);
 		
 		intakeLayout.add("Intake", head.IntakePiece()).withPosition(1, 0);
 		intakeLayout.add("Manual Intake", head.StartIntake()).withPosition(2, 0);

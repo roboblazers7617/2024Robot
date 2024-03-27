@@ -100,6 +100,12 @@ public class MechanismCommands {
 				.andThen(head.StopIntake())
 				.andThen(head.SpinDownShooter());
 	}
+	//THIS ISNT CODE DUPLICATION IT DOES A FUNDAMENTALLY DIFFERENT THING!!!!!
+	public static Command AutoStow(Arm arm, Head head) {
+		return arm.Stow()
+				.andThen(head.StopIntake());
+	}
+
 	
 	public static Command PrepareShoot(Arm arm, Head head, ShootingPosition position) {
 		return arm.SetTargets(position)
