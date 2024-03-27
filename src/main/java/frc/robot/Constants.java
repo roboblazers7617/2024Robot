@@ -33,6 +33,26 @@ public final class Constants {
 	// 	public static int number = 5;
 	// }
 
+	public static class ShootingConstants {
+		public enum ShootingPosition {
+			AMP(1500.0),
+			SPEAKER(5500.0),
+			SPEAKER_AUTO(6000.0),
+			PODIUM(7000.0),
+			DBOT(8000.0);
+		
+			ShootingPosition(double rpm) {
+				this.rpm = rpm;
+			}
+		
+			private final double rpm;
+		
+			public double rpm(){
+				return rpm;
+			}
+		}
+	}
+
 	public static class ArmConstants {
 		public static final int RIGHT_MOTOR_ID = 25; 
 		public static final int LEFT_MOTOR_ID = 26;
@@ -200,24 +220,6 @@ public final class Constants {
 		public static final double TOP_kMaxOutput = 1;
 
 		public static final double IDLE_SPEED = 0.0;
-		
-		public enum ShootingPosition {
-			AMP(1500.0),
-			SPEAKER(5500.0),
-			SPEAKER_AUTO(6000.0),
-			PODIUM(7000.0),
-			DBOT(8000.0);
-
-			ShootingPosition(double rpm) {
-				this.rpm = rpm;
-			}
-
-			private final double rpm;
-
-			public double rpm(){
-				return rpm;
-			}
-		}
 
 		public static final double VELOCITY_MINIMUM = 0.5;
 		public static final double VELOCITY_MAXIMUM = 2.0;
