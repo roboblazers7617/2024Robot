@@ -144,7 +144,7 @@ public class RobotContainer {
 		
 		// driverControllerCommands.povRight().toggleOnTrue(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-15)));
 		driverControllerCommands.povRight().whileTrue(turnToSpeaker(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX())));
-
+		
 		driverControllerCommands.leftBumper()
 				.onTrue(new ScheduleCommand(rotationDrive))
 				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
@@ -168,7 +168,7 @@ public class RobotContainer {
 		
 		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
 		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
-
+		
 		driverControllerCommands.a().onTrue(MechanismCommands.ShootOverDBot(driverController, operatorController, arm, head));
 		driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
 		
@@ -185,8 +185,8 @@ public class RobotContainer {
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		
-		 operatorControllerCommands.rightTrigger().onTrue(Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)).andThen(Commands.runOnce(() ->arm.setElevatorTarget(ElevatorConstants.MIN_HEIGHT))).andThen(head.SpinUpShooterForPodium())).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
-
+		operatorControllerCommands.rightTrigger().onTrue(Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)).andThen(Commands.runOnce(() -> arm.setElevatorTarget(ElevatorConstants.MIN_HEIGHT))).andThen(head.SpinUpShooterForPodium())).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
+		
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShootSpeakerSubwoofer(driverController, operatorController, arm, head)).onFalse(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.povLeft()
@@ -222,8 +222,7 @@ public class RobotContainer {
 		}));
 		
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
-		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
-		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
+		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes().andThen(head.ToggleBreakModes()));
 		Trigger enableTrigger = new Trigger(() -> DriverStation.isEnabled());
 		enableTrigger.onTrue(Commands.runOnce(() -> {
 			arm.EnableBrakeMode();
@@ -270,7 +269,7 @@ public class RobotContainer {
 		}
 		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(1));
 	}
-
+	
 	public Command turnToSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
 		if (checkAllianceColors(Alliance.Red)) {
 			return new TurnToTag(drivetrain, 4, true, yMovement, xMovement);
