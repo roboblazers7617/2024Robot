@@ -79,7 +79,7 @@ public class RobotContainer {
 	
 	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()));
 	
-	private final DigitalInput brakeToggleButton = new DigitalInput(ArmConstants.BRAKE_TOGGLE_BUTTON_DIO);
+	private final DigitalInput brakeToggleButton = new DigitalInput(Constants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
 	private boolean doRightClimb = false;
 	private boolean doLeftClimb = false;
