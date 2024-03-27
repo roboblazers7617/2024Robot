@@ -148,7 +148,7 @@ public class Arm extends SubsystemBase {
 		armTarget = armAbsoluteEncoder.getPosition();
 		// lastAcutalArmTarget = armTarget;
 
-		armAngleBasedOnDistance.put(1.27, ShootingPosition.SPEAKER.arm_angle());
+		armAngleBasedOnDistance.put(1.27, ShootingPosition.SUBWOOFER.arm_angle());
 		armAngleBasedOnDistance.put(2.7, 31.25);
 		armAngleBasedOnDistance.put(3.24, 35.25);
 		//armAngleBasedOnDistance.put(3.25, 39.6);

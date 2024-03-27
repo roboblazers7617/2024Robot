@@ -36,8 +36,8 @@ public final class Constants {
 	public static class ShootingConstants {
 		public enum ShootingPosition {
 			AMP(1500.0, 84.5, ElevatorConstants.MAX_HEIGHT),
-			SPEAKER(5500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
-			SPEAKER_AUTO(6000.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			SUBWOOFER(5500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			SUBWOOFER_AUTO(6000.0, 14.0, ElevatorConstants.MAX_HEIGHT),
 			PODIUM(7000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
 			DBOT(8000.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
 		

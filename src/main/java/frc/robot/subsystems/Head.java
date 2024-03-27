@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShootingConstants;
 import frc.robot.Constants.ShootingConstants.ShootingPosition;
 
 public class Head extends SubsystemBase {
@@ -156,7 +155,7 @@ public class Head extends SubsystemBase {
 		}, this);
 	}
 	
-	public Command SpinUpShooterAtPosition(ShootingConstants.ShootingPosition position) {
+	public Command SpinUpShooter(ShootingPosition position) {
 		return SpinUpShooter(position.rpm());
 	}
 	
@@ -197,7 +196,7 @@ public class Head extends SubsystemBase {
 				});
 	}
 	
-	public Command ShootAtPosition(ShootingConstants.ShootingPosition position) {
+	public Command Shoot(ShootingPosition position) {
 		return Shoot(position.rpm());
 	}
 	

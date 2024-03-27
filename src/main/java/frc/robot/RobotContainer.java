@@ -186,7 +186,7 @@ public class RobotContainer {
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.rightTrigger().onTrue(arm.SetTargets(ShootingPosition.PODIUM).andThen(head.SpinUpShooterAtPosition(ShootingPosition.PODIUM))).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
+		operatorControllerCommands.rightTrigger().onTrue(arm.SetTargets(ShootingPosition.PODIUM).andThen(head.SpinUpShooter(ShootingPosition.PODIUM))).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShootSpeakerSubwoofer(driverController, operatorController, arm, head)).onFalse(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		
@@ -195,7 +195,7 @@ public class RobotContainer {
 				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.ShootAtPosition(ShootingPosition.SPEAKER));
+				.onTrue(head.Shoot(ShootingPosition.SUBWOOFER));
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
