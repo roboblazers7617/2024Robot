@@ -80,7 +80,7 @@ public class RobotContainer {
 	
 	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()));
 	
-	private final DigitalInput brakeToggleButton = new DigitalInput(ArmConstants.BRAKE_TOGGLE_BUTTON_DIO);
+	private final DigitalInput brakeToggleButton = new DigitalInput(Constants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
 	private boolean doRightClimb = false;
 	private boolean doLeftClimb = false;
@@ -93,11 +93,12 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
-		NamedCommands.registerCommand("turnTo0", turnTo0());
+		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.Shoot(arm, head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.Shoot(arm, head, ShootingPosition.AMP));
 		NamedCommands.registerCommand("Stow", MechanismCommands.Stow(arm, head));
+		NamedCommands.registerCommand("turnSideways", turnSideways());
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
@@ -171,7 +172,7 @@ public class RobotContainer {
 		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
 		
 		driverControllerCommands.a().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.DBOT));
-		driverControllerCommands.b().onTrue(MechanismCommands.Shoot(arm, head, drivetrain));
+		// driverControllerCommands.b().onTrue(MechanismCommands.Shoot(arm, head, drivetrain));
 		
 		// driverControllerCommands.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
 		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
@@ -285,10 +286,19 @@ public class RobotContainer {
 	/**
 	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
 	 */
-	public Command turnTo0() {
+	public Command pointAwayFromSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180));
 		}
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
 	}
+
+	public Command turnSideways(){
+		if (checkAllianceColors(Alliance.Red)) {
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
+		}
+		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
+	}
+
+
 }
