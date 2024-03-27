@@ -63,7 +63,9 @@ public class Drivetrain extends SubsystemBase {
 	private boolean doVisionUpdates = false;
 
 	private Timer timer = new Timer();
-	
+
+	private LimelightHelpers.PoseEstimate poseData;
+
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -278,42 +280,11 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-			// invalid LL data
-			if (LimelightHelpers.getBotPose2d("").getX() == 0.0) {
-			  return;
-			}
-		
-			// distance from current pose to vision estimated pose
-			double poseDifference = m_poseEstimator.getEstimatedPosition().getTranslation()
-				.getDistance(LimelightHelpers.getBotPose2d("").getTranslation());
-		
-			if (m_visionSystem.areAnyTargetsValid()) {
-			  double xyStds;
-			  double degStds;
-			  // multiple targets detected
-			  if (m_visionSystem.getNumberOfTargetsVisible() >= 2) {
-				xyStds = 0.5;
-				degStds = 6;
-			  }
-			  // 1 target with large area and close to estimated pose
-			  else if (m_visionSystem.getBestTargetArea() > 0.8 && poseDifference < 0.5) {
-				xyStds = 1.0;
-				degStds = 12;
-			  }
-			  // 1 target farther away and estimated pose is close
-			  else if (LimelightHelpers. > 0.1 && poseDifference < 0.3) {
-				xyStds = 2.0;
-				degStds = 30;
-			  }
-			  // conditions don't match to add a vision measurement
-			  else {
-				return;
-			  }
-		
-			  m_poseEstimator.setVisionMeasurementStdDevs(
-				  VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
-			  m_poseEstimator.addVisionMeasurement(visionBotPose.pose2d,
-				  Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline("") - LimelightHelpers.getLatency_Capture(""));
+			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+			
+			if (poseData.tagCount > 0) {
+			  swerveDrive.addVisionMeasurement(getPose(), Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline("") - LimelightHelpers.getLatency_Capture(""));
+
 			}
 	}
 	
