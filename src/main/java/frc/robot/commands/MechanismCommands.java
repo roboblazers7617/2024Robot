@@ -10,17 +10,41 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ShooterPositions;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
 
 public class MechanismCommands {
+	/** this is a general shoot command for any position, I don't think this is used in auto */
+	public static Command Shoot(ShooterPositions position, XboxController driverController, XboxController operatorController, Arm arm, Head head) {
+		return Commands.runOnce(() -> arm.setArmTarget(position.armAngle))
+				.andThen(() -> arm.setElevatorTarget(position.elevatorHeight))
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(arm.WaitUntilElevatorAtTarget())
+				.andThen(head.ShootInSpeaker())
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+
+	public static Command PrepareShoot(ShooterPositions position, XboxController operatorController, Arm arm, Head head) {
+		return Commands.runOnce(() -> arm.setArmTarget(position.armAngle))
+				.andThen(() -> arm.setElevatorTarget(position.elevatorHeight))
+				// .andThen(head.SpinUpShooterForSpeaker()); TODO add a way to spin up shooter for a specific position
+				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+
+	}
+	
 	public static Command Stow(Arm arm, Head head) {
 		return arm.Stow()
 				.andThen(head.StopIntake())
 				.andThen(head.SpinDownShooter());
 	}
 	
+	/** 
+	 * @deprecated use {@link #PrepareShoot} instead
+	*/
 	public static Command PrepareShootAmp(XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
@@ -29,6 +53,9 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
+	/** 
+	 * @deprecated use {@link #Shoot} instead
+	*/
 	public static Command ShootAmp(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
@@ -42,6 +69,7 @@ public class MechanismCommands {
 	
 	/**
 	 * will finish after piece has been shot
+	 * @deprecated use {@link #Shoot} instead
 	 * 
 	 * @param driverController
 	 * @param operatorController
@@ -54,13 +82,14 @@ public class MechanismCommands {
 	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, Drivetrain drivetrain) {
 		return ShootSpeaker(driverController, operatorController, arm, head, () -> drivetrain.getDistanceToSpeaker());
 	}
-
-		public static Command ShootSpeakerAuto(Arm arm, Head head, Drivetrain drivetrain) {
+	
+	public static Command ShootSpeakerAuto(Arm arm, Head head, Drivetrain drivetrain) {
 		return ShootSpeakerAuto(arm, head, () -> drivetrain.getDistanceToSpeaker());
 	}
 	
 	/**
 	 * will wait until finished shooting to finish command
+	 * @deprecated use {@link #Shoot} instead
 	 * 
 	 * @param driverController
 	 * @param operatorController
@@ -79,7 +108,7 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-
+	
 	public static Command ShootSpeakerAuto(Arm arm, Head head, Supplier<Double> distance) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance.get()))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
@@ -87,31 +116,10 @@ public class MechanismCommands {
 				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(head.ShootInSpeakerAuto());
 	};
-
+	
 	public static Command ManualShoot(Head head) {
 		return head.ShootOverDBot();
 	};
-	
-	/**
-	 * will wait until finished shooting to finish command
-	 * 
-	 * @param driverController
-	 * @param operatorController
-	 * @param arm
-	 * @param head
-	 * @param distance
-	 *            in meters
-	 * @return
-	 */
-	public static Command ShootSpeaker(XboxController driverController, XboxController operatorController, Arm arm, Head head, double distance) {
-		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
-				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(arm.WaitUntilElevatorAtTarget())
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(head.ShootInSpeaker())
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
-	}
 	
 	public static Command ShootAuto(Arm arm, Head head, double distance) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(distance))
@@ -121,9 +129,9 @@ public class MechanismCommands {
 				.andThen(head.ShootInSpeakerAuto());
 	}
 	
-
 	/**
 	 * will finish after piece has been shot
+	 * @deprecated use {@link #Shoot} instead
 	 * 
 	 * @param driverController
 	 * @param operatorController
@@ -144,6 +152,9 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
+	/** 
+	 * @deprecated use {@link #PrepareShoot} instead
+	*/
 	public static Command PrepareShootSpeakerSubwoofer(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTargetByDistance(1.27))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
@@ -152,6 +163,7 @@ public class MechanismCommands {
 	
 	/**
 	 * will finish after piece has been shot
+	 * @deprecated use {@link #Shoot} instead
 	 * 
 	 * @param driverController
 	 * @param operatorController
@@ -170,10 +182,13 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-
-		public static Command ShootOverDBot(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
+	
+	/** 
+	 * @deprecated use {@link #Shoot} instead
+	*/
+	public static Command ShootOverDBot(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.DBOT_ANGLE)) // todo where should elevator be?
-				.andThen(() ->arm.setElevatorTarget(0))
+				.andThen(() -> arm.setElevatorTarget(0))
 				.andThen(arm.WaitUntilArmAtTarget())
 				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(head.ShootOverDBot())

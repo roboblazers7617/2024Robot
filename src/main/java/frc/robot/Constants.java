@@ -221,6 +221,31 @@ public final class Constants {
 		public static final double CLIMB_RATE = .6;
 	}
 
+	
+	/**
+	 * The positions to shoot from, to create a custom one (like for vision) use {@link #ShooterPositions(double, double, double)}
+	 */
+	// @formatter:off
+	public enum ShooterPositions{
+		SUBWOOFER(ShooterConstants.SPEAKER_SPEED, ArmConstants.SPEAKER_SUBWOOFER_ANGLE, ElevatorConstants.MIN_HEIGHT), 
+		AMP(ShooterConstants.AMP_SPEED, ArmConstants.AMP_ANGLE, ElevatorConstants.MAX_HEIGHT), 
+		PODIUM(ShooterConstants.PODIUM_SPEED, ArmConstants.SPEAKER_PODIUM_ANGLE, ElevatorConstants.MIN_HEIGHT), 
+		MIDSTAGE(ShooterConstants.DBOT_SPEED, ArmConstants.DBOT_ANGLE, ElevatorConstants.MIN_HEIGHT);
+
+		public final double shooterSpeed;
+		public final double armAngle;
+		public final double elevatorHeight;
+
+		ShooterPositions(double shooterSpeed, double armAngle, double elevatorHeight){
+			this.shooterSpeed = shooterSpeed;
+			this.armAngle = armAngle;
+			this.elevatorHeight = elevatorHeight;
+		}
+
+		
+	}
+	// @formatter:on
+
 	public static final int NUMBER_OF_MOTORS = 10;
 	
 	public static class VisionConstants {
