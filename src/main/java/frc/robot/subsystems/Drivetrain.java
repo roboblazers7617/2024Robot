@@ -60,7 +60,7 @@ public class Drivetrain extends SubsystemBase {
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
 	
-	private boolean doVisionUpdates = false;
+	private boolean doVisionUpdates = true;
 
 	private Timer timer = new Timer();
 
@@ -283,7 +283,7 @@ public class Drivetrain extends SubsystemBase {
 			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
 			
 			if (poseData.tagCount > 0) {
-			  swerveDrive.addVisionMeasurement(getPose(), Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline("") - LimelightHelpers.getLatency_Capture(""));
+			  swerveDrive.addVisionMeasurement(poseData.pose, Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline("") - LimelightHelpers.getLatency_Capture(""));
 
 			}
 	}
@@ -361,8 +361,8 @@ public class Drivetrain extends SubsystemBase {
 		swerveDrive.zeroGyro();
 	}
 	
-	public void disableVisionUpdates() {
-		doVisionUpdates = false;
+	public void doVisionUpdates(boolean doVisionUpdates) {
+		this.doVisionUpdates = doVisionUpdates;
 	}
 	
 	/**

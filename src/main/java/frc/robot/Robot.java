@@ -105,6 +105,7 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
 		}
+		m_robotContainer.doVisionUpdates(false);
 
 
 	}
@@ -123,6 +124,8 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+
+		m_robotContainer.doVisionUpdates(true);
 
 		m_robotContainer.setMotorBrake(true);
 		// m_robotContainer.teleopInit();

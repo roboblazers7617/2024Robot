@@ -122,7 +122,8 @@ public class RobotContainer {
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 	}
-	
+
+
 	/**
 	 * Use this method to define your trigger->command mappings. Triggers can be
 	 * created via the
@@ -173,7 +174,7 @@ public class RobotContainer {
 		driverControllerCommands.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
 		
 		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
-		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
+		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.doVisionUpdates(false)));
 		
 		driverControllerCommands.a().onTrue(MechanismCommands.ShootOverDBot(driverController, operatorController, arm, head));
 		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
@@ -254,6 +255,11 @@ public class RobotContainer {
 	private double processJoystickAngularButFree(double joystickInput) {
 		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
 	}
+
+		public void doVisionUpdates(boolean doVisionUpdates){
+			drivetrain.doVisionUpdates(doVisionUpdates);
+		}
+	
 	
 	/**
 	 * Use this to pass the autonomous command to the main {@link Robot} class.
