@@ -159,18 +159,6 @@ public class Head extends SubsystemBase {
 		return SpinUpShooter(position.rpm());
 	}
 	
-	public Command SpinUpShooterForSpeaker() {
-		return SpinUpShooterAtPosition(ShootingPosition.SPEAKER);
-	}
-	
-	public Command SpinUpShooterForAmp() {
-		return SpinUpShooterAtPosition(ShootingPosition.AMP);
-	}
-	
-	public Command SpinUpShooterForPodium() {
-		return SpinUpShooterAtPosition(ShootingPosition.PODIUM);
-	}
-	
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;

@@ -86,7 +86,7 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		shooterLayout.add("Ready to Shoot", false).withPosition(1, 0);
 		
-		shooterLayout.add("Spin Up (speaker)", head.SpinUpShooterForSpeaker()).withPosition(2, 0);
+		shooterLayout.add("Spin Up (speaker)", head.SpinUpShooterAtPosition(ShootingPosition.SPEAKER)).withPosition(2, 0);
 		shooterLayout.add("Spin Down", head.SpinDownShooter()).withPosition(2, 1);
 		shooterLayout.add("Shoot (speaker)", head.ShootAtPosition(ShootingPosition.SPEAKER)).withPosition(2, 2);
 	}
