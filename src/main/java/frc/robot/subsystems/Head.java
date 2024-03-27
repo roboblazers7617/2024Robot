@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterConstants.ShootingPosition;
 
 public class Head extends SubsystemBase {
 	// Shooter
@@ -153,17 +154,21 @@ public class Head extends SubsystemBase {
 			setShooterSpeed(rpm);
 		}, this);
 	}
+
+	public Command SpinUpShooterAtPosition(ShooterConstants.ShootingPosition position) {
+		return SpinUpShooter(position.rpm());
+	}
 	
 	public Command SpinUpShooterForSpeaker() {
-		return SpinUpShooter(ShooterConstants.SPEAKER_SPEED);
+		return SpinUpShooterAtPosition(ShootingPosition.SPEAKER);
 	}
 	
 	public Command SpinUpShooterForAmp() {
-		return SpinUpShooter(ShooterConstants.AMP_SPEED);
+		return SpinUpShooterAtPosition(ShootingPosition.AMP);
 	}
 
 	public Command SpinUpShooterForPodium() {
-		return SpinUpShooter(ShooterConstants.PODIUM_SPEED);
+		return SpinUpShooterAtPosition(ShootingPosition.PODIUM);
 	}
 	
 	public Command SpinDownShooter() {
@@ -202,25 +207,29 @@ public class Head extends SubsystemBase {
 					setIntakeSpeed(0);
 				});
 	}
+
+	public Command ShootAtPosition(ShooterConstants.ShootingPosition position) {
+		return Shoot(position.rpm());
+	}
 	
 	public Command ShootInSpeaker() {
-		return Shoot(ShooterConstants.SPEAKER_SPEED);
+		return ShootAtPosition(ShootingPosition.SPEAKER);
 	}
 
 	public Command ShootInSpeakerAuto(){
-		return Shoot(ShooterConstants.AUTO_SPEED);
+		return ShootAtPosition(ShootingPosition.SPEAKER_AUTO);
 	}
 
 	public Command ShootOverDBot(){
-		return Shoot(ShooterConstants.DBOT_SPEED);
+		return ShootAtPosition(ShootingPosition.DBOT);
 	}
 
 	public Command ShootPodium() {
-		return Shoot(ShooterConstants.PODIUM_SPEED);
+		return ShootAtPosition(ShootingPosition.PODIUM);
 	}
 	
 	public Command ShootInAmp() {
-		return Shoot(ShooterConstants.AMP_SPEED);
+		return ShootAtPosition(ShootingPosition.AMP);
 	}
 	
 	public boolean isNoteWithinSensor() {

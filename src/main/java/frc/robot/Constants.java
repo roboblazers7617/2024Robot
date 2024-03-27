@@ -198,16 +198,29 @@ public final class Constants {
 		public static final double TOP_kF = 0.004;
 		public static final double TOP_kMinOutput = -1;
 		public static final double TOP_kMaxOutput = 1;
-		
+
 		public static final double IDLE_SPEED = 0.0;
-		public static final double AMP_SPEED = 1500.0;
-		public static final double SPEAKER_SPEED = 5500.0;
-		public static final double PODIUM_SPEED = 7000.0;
-		public static final double DBOT_SPEED = 8000.0;
+		
+		public enum ShootingPosition {
+			AMP(1500.0),
+			SPEAKER(5500.0),
+			SPEAKER_AUTO(6000.0),
+			PODIUM(7000.0),
+			DBOT(8000.0);
+
+			ShootingPosition(double rpm) {
+				this.rpm = rpm;
+			}
+
+			private final double rpm;
+
+			public double rpm(){
+				return rpm;
+			}
+		}
 
 		public static final double VELOCITY_MINIMUM = 0.5;
 		public static final double VELOCITY_MAXIMUM = 2.0;
-		public static final double AUTO_SPEED = 6000;
 	}
 
 	public static class ClimberConstants {
