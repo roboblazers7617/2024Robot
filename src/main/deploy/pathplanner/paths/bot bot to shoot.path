@@ -3,37 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5338787698652874,
-        "y": 4.112577405249212
+        "x": 7.8,
+        "y": 0.77
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6338787698652875,
-        "y": 4.112577405249212
+        "x": 6.543201087704259,
+        "y": 0.3101942986293386
       },
       "isLocked": false,
-      "linkedName": "bot front start"
+      "linkedName": "bot bot ring"
     },
     {
       "anchor": {
-        "x": 2.25,
-        "y": 4.11
+        "x": 3.699166774888816,
+        "y": 3.2515897631621655
       },
       "prevControl": {
-        "x": 2.15,
-        "y": 4.11
+        "x": 3.3963245406236187,
+        "y": 2.4782511330068964
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "bot ring"
+      "linkedName": "bot far shoot"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 120.0
   },

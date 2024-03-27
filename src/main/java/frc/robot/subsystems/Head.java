@@ -35,7 +35,6 @@ public class Head extends SubsystemBase {
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
-	private boolean isNoteAcquired = false; // Since none of the sensors will be active when a note is intaken and aligned, this boolean is necessary to know if the robot has a note.
 	
 	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
@@ -117,7 +116,6 @@ public class Head extends SubsystemBase {
 				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.andThen(() -> {
-					isNoteAcquired = true;
 					setIntakeSpeed(0);
 				});
 	}
@@ -129,7 +127,6 @@ public class Head extends SubsystemBase {
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 				.andThen(Commands.waitSeconds(3))
 				.finallyDo(() -> {
-					isNoteAcquired = false;
 					setIntakeSpeed(0);
 				});
 	}
@@ -174,6 +171,7 @@ public class Head extends SubsystemBase {
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
+			shooterSetPoint = 0.0;
 			shooterMotorBottom.setVoltage(0);
 			shooterMotorTop.setVoltage(0);
 		}, this);
@@ -203,17 +201,33 @@ public class Head extends SubsystemBase {
 				.andThen(Commands.waitSeconds(0.5))
 				.andThen(SpinDownShooter())
 				.finallyDo(() -> {
-					isNoteAcquired = false;
 					setIntakeSpeed(0);
 				});
 	}
+
+	public Command ShootAuto(double rpm) {
+		return SpinUpShooter(rpm)
+				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
+				.andThen(Commands.waitSeconds(0.1))
+				.andThen(Commands.runOnce(() -> {
+					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
+				}))
+				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
+				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
+				.andThen(Commands.waitSeconds(0.5))
+				// .andThen(SpinDownShooter())
+				.finallyDo(() -> {
+					setIntakeSpeed(0);
+				});
+	}
+
 	
 	public Command ShootInSpeaker() {
 		return Shoot(ShooterConstants.SPEAKER_SPEED);
 	}
-	
-	public Command ShootInSpeakerAuto() {
-		return Shoot(ShooterConstants.AUTO_SPEED);
+  
+	public Command ShootInSpeakerAuto(){
+		return ShootAuto(ShooterConstants.AUTO_SPEED);
 	}
 	
 	public Command ShootOverDBot() {
@@ -235,12 +249,7 @@ public class Head extends SubsystemBase {
 	public boolean isNoteWithinAlignmentSensor() {
 		return !isNoteInAlignmentSensor.get();
 	}
-	
-	// Does the intake have a note?
-	public boolean isNoteAcquired() {
-		return isNoteAcquired;
-	}
-	
+
 	public Command ToggleBreakModes() {
 		return new InstantCommand(() -> {
 			if (intakeMotor.getIdleMode() == IdleMode.kBrake) {

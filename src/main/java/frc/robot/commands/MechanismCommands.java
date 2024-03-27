@@ -20,6 +20,12 @@ public class MechanismCommands {
 				.andThen(head.StopIntake())
 				.andThen(head.SpinDownShooter());
 	}
+	//THIS ISNT CODE DUPLICATION IT DOES A FUNDAMENTALLY DIFFERENT THING!!!!!
+	public static Command AutoStow(Arm arm, Head head) {
+		return arm.Stow()
+				.andThen(head.StopIntake());
+	}
+
 	
 	public static Command PrepareShootAmp(XboxController operatorController, Arm arm, Head head) {
 		return Commands.runOnce(() -> arm.setArmTarget(ArmConstants.AMP_ANGLE))
