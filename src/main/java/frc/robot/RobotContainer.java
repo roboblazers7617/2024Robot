@@ -22,7 +22,6 @@ import frc.robot.shuffleboard.SwerveTab;
 import frc.robot.shuffleboard.HeadTab;
 import frc.robot.subsystems.Arm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 

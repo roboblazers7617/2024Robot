@@ -1,13 +1,10 @@
 package frc.robot.shuffleboard;
 
-import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivetrain;
 
 public class ClimberTab extends ShuffleboardTabBase {
 	private final Climber climber;

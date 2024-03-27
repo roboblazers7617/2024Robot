@@ -4,22 +4,17 @@
 
 package frc.robot.subsystems;
 
-import java.util.Optional;
 
 import frc.robot.util.LimelightHelpers;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -36,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.shuffleboard.MotorTab;
 
@@ -55,7 +49,6 @@ public class Drivetrain extends SubsystemBase {
 	 * Swerve drive object.
 	 */
 	private final SwerveDrive swerveDrive;
-	//private final Vision vision;
 	
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
@@ -79,10 +72,6 @@ public class Drivetrain extends SubsystemBase {
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
-			// Alternative method if you don't want to supply the conversion factor via JSON
-			// files.
-			// swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
-			// angleConversionFactor, driveConversionFactor);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -98,11 +87,6 @@ public class Drivetrain extends SubsystemBase {
 		
 		setupPathPlanner();
 		timer.start();
-		
-		// for (int i = 0; i < 4; i++) {
-		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
-		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor() });
-		// }
 	}
 	
 	/**
@@ -172,7 +156,6 @@ public class Drivetrain extends SubsystemBase {
 	 * @return Drive command.
 	 */
 	public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY) {
-		// swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
 		return run(() -> {
 			double xInput = translationX.getAsDouble();
 			double yInput = translationY.getAsDouble();
@@ -193,7 +176,6 @@ public class Drivetrain extends SubsystemBase {
 	 * @return Drive command.
 	 */
 	public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
-		// swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
 		return run(() -> {
 			// Make the robot move
 			driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(), translationY.getAsDouble(), rotation.getAsDouble() * Math.PI, swerveDrive.getOdometryHeading().getRadians(), swerveDrive.getMaximumVelocity()));
