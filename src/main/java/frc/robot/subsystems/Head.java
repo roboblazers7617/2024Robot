@@ -37,7 +37,6 @@ public class Head extends SubsystemBase {
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
 	
-	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
 	
 	/** Creates a new Head. */
@@ -152,7 +151,6 @@ public class Head extends SubsystemBase {
 	
 	public Command SpinUpShooter(double rpm) {
 		return Commands.runOnce(() -> {
-			shooterIdle = false;
 			setShooterSpeed(rpm);
 		}, this);
 	}
@@ -160,9 +158,9 @@ public class Head extends SubsystemBase {
 	public Command SpinUpShooter(ShootingPosition position) {
 		return SpinUpShooter(position.rpm());
 	}
+	
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
-			shooterIdle = true;
 			shooterSetPoint = 0.0;
 			shooterMotorBottom.setVoltage(0);
 			shooterMotorTop.setVoltage(0);
@@ -177,7 +175,7 @@ public class Head extends SubsystemBase {
 			) && (
 				(getShooterTopSpeed() >= (shooterSetPoint * ShooterConstants.VELOCITY_MINIMUM)) &&
 				(getShooterTopSpeed() <= (shooterSetPoint * ShooterConstants.VELOCITY_MAXIMUM))
-			) && !shooterIdle;
+			);
 		// @formatter:on
 	}
 	
@@ -196,7 +194,7 @@ public class Head extends SubsystemBase {
 					setIntakeSpeed(0);
 				});
 	}
-
+	
 	public Command ShootAuto(double rpm) {
 		return SpinUpShooter(rpm)
 				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
@@ -212,11 +210,11 @@ public class Head extends SubsystemBase {
 					setIntakeSpeed(0);
 				});
 	}
-
 	
 	public Command Shoot(ShootingPosition position) {
 		return Shoot(position.rpm());
 	}
+	
 	public boolean isNoteWithinSensor() {
 		return !isNoteInSensor.get();
 	}
@@ -224,7 +222,7 @@ public class Head extends SubsystemBase {
 	public boolean isNoteWithinAlignmentSensor() {
 		return !isNoteInAlignmentSensor.get();
 	}
-
+	
 	public Command ToggleBreakModes() {
 		return new InstantCommand(() -> {
 			if (intakeMotor.getIdleMode() == IdleMode.kBrake) {
