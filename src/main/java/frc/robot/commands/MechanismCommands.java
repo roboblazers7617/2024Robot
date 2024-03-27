@@ -101,14 +101,33 @@ public class MechanismCommands {
 				.andThen(head.SpinDownShooter());
 	}
 	
+	/**
+	 * will finish when ready
+	 * @param arm
+	 * @param head
+	 * @param position
+	 */
 	public static Command PrepareShoot(Arm arm, Head head, ShootingPosition position) {
 		return arm.SetTargets(position)
-				.andThen(head.SpinUpShooter(position));
+				.andThen(head.SpinUpShooter(position))
+				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(arm.WaitUntilElevatorAtTarget());
 	}
 	
+	/**
+	 * will finish when ready
+	 * @param operatorController
+	 * @param arm
+	 * @param head
+	 * @param position
+	 * @return
+	 */
 	public static Command PrepareShoot(XboxController operatorController, Arm arm, Head head, ShootingPosition position) {
 		return PrepareShoot(arm, head, position)
 				.andThen(Commands.waitUntil(() -> head.isReadyToShoot()))
+				.andThen(arm.WaitUntilArmAtTarget())
+				.andThen(arm.WaitUntilElevatorAtTarget())
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
@@ -124,9 +143,7 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command Shoot(Arm arm, Head head, ShootingPosition position) {
-		return arm.SetTargets(position)
-				.andThen(arm.WaitUntilArmAtTarget())
-				.andThen(arm.WaitUntilElevatorAtTarget())
+		return PrepareShoot(arm, head, position)
 				.andThen(head.Shoot(position))
 				.andThen(arm.Stow());
 	}

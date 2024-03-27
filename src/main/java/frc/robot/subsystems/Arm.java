@@ -245,10 +245,6 @@ public class Arm extends SubsystemBase {
 		armTarget = targetDegrees;
 	}
 
-	public Command SetArmTarget(ShootingPosition position) {
-		return Commands.runOnce(() -> setArmTarget(position.arm_angle()));
-	}
-
 	/**
 	 * sets the arm target based on the distance to the speaker and the interpolation table
 	 * 
@@ -345,13 +341,10 @@ public class Arm extends SubsystemBase {
 		elevatorTarget = target;
 	}
 
-	public Command SetElevatorTarget(ShootingPosition position) {
-		return Commands.runOnce(() -> setElevatorTarget(position.elevator_target()));
-	}
 
 	public Command SetTargets(ShootingPosition position) {
-		return SetArmTarget(position)
-			.andThen(SetElevatorTarget(position));
+		return Commands.runOnce(() -> setArmTarget(position.arm_angle()))
+			.andThen(() -> setElevatorTarget(position.elevator_target()));
 	}
 	
 	/**
