@@ -116,7 +116,7 @@ public class Head extends SubsystemBase {
 					setIntakeSpeed(IntakeConstants.ALIGMNMENT_SPEED);
 				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-				.finallyDo(() -> {
+				.andThen(() -> {
 					isNoteAcquired = true;
 					setIntakeSpeed(0);
 				});
