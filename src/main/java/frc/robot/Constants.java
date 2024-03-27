@@ -181,7 +181,6 @@ public final class Constants {
 		public static final double TOP_kMinOutput = -1;
 		public static final double TOP_kMaxOutput = 1;
 		
-		public static final double IDLE_SPEED = 0.0;
 		public static final double AMP_SPEED = 1500.0;
 		public static final double SPEAKER_SPEED = 5500.0;
 		public static final double PODIUM_SPEED = 7000.0;
