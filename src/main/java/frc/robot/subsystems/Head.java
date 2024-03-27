@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.wpilibj.AsynchronousInterrupt;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,6 +36,10 @@ public class Head extends SubsystemBase {
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
+
+	private final AsynchronousInterrupt intakeInterrupt = new AsynchronousInterrupt(isNoteInSensor, (rising, falling) -> {
+		setIntakeSpeed(0);
+	});
 	
 	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
@@ -77,6 +82,8 @@ public class Head extends SubsystemBase {
 		shooterMotorBottom.burnFlash();
 		Timer.delay(0.005);
 		shooterMotorTop.burnFlash();
+
+		intakeInterrupt.setInterruptEdges(false, true);
 	}
 	
 	@Override
@@ -109,14 +116,11 @@ public class Head extends SubsystemBase {
 	public Command IntakePiece() {
 		return Commands.runOnce(() -> {
 			setIntakeSpeed(IntakeConstants.INTAKE_SPEED);
+			intakeInterrupt.enable();
 		}, this)
-				.andThen(Commands.waitUntil(() -> isNoteWithinAlignmentSensor()))
-				.andThen(Commands.runOnce(() -> {
-					setIntakeSpeed(IntakeConstants.ALIGMNMENT_SPEED);
-				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.andThen(() -> {
-					setIntakeSpeed(0);
+					intakeInterrupt.disable();
 				});
 	}
 	
