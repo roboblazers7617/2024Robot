@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Head;
-import frc.robot.util.TunableNumber;
 
 public class HeadTab extends ShuffleboardTabBase {
 	private final Head head;

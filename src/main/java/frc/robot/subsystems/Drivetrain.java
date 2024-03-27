@@ -119,7 +119,7 @@ public class Drivetrain extends SubsystemBase {
 						// Translation PID constants
 						new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p, swerveDrive.swerveController.config.headingPIDF.i, swerveDrive.swerveController.config.headingPIDF.d),
 						// Rotation PID constants
-						10,
+						Constants.AutoConstants.MAX_MODULE_SPEED,
 						// Max module speed, in m/s
 						swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
 						// Drive base radius in meters. Distance from robot center to furthest module.
@@ -222,7 +222,7 @@ public class Drivetrain extends SubsystemBase {
 	public Command turnToAngleCommand(Rotation2d angle) {
 		return Commands.run(() -> {
 			this.driveFieldOriented(getTargetSpeeds(0, 0, angle));
-		}, this).raceWith(Commands.waitUntil(() -> Math.abs(getHeading().minus(angle).getDegrees()) <= 2)).finallyDo(() -> {
+		}, this).raceWith(Commands.waitUntil(() -> Math.abs(getHeading().minus(angle).getDegrees()) <= SwerveConstants.TURN_TO_ANGLE_RANGE_FOR_END)).finallyDo(() -> {
 			swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
 		});
 	}
@@ -392,6 +392,10 @@ public class Drivetrain extends SubsystemBase {
 	public Rotation2d getHeading() {
 		return swerveDrive.getOdometryHeading();
 	}
+
+	public void setHeadingCorrection(boolean doHeadingCorrection){
+		swerveDrive.setHeadingCorrection(doHeadingCorrection);
+	}
 	
 	public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput) {
 		xInput = xInput * swerveDrive.getMaximumVelocity();
@@ -471,6 +475,10 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public Rotation2d getPitch() {
 		return swerveDrive.getPitch();
+	}
+
+	public void resetLastAngeScalar(){
+		swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
 	}
 	
 	/**

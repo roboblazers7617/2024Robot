@@ -3,44 +3,44 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.289603297898468,
-        "y": 2.4361120719747715
+        "x": 2.8963130898005427,
+        "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.2862599040448774,
-        "y": 2.4361120719747715
+        "x": 1.8963130898005427,
+        "y": 7.0
       },
       "isLocked": false,
-      "linkedName": "botmid far"
+      "linkedName": "top ring"
     },
     {
       "anchor": {
-        "x": 4.147790496116358,
-        "y": 1.9867228632307663
+        "x": 1.8473804672580412,
+        "y": 7.75
       },
       "prevControl": {
-        "x": 5.10498363378001,
-        "y": 1.9867228632307663
+        "x": 1.8473804672580412,
+        "y": 6.750000000000001
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "way bot shoot"
+      "linkedName": "amp"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 0.75,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 120.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
-    "rotateFast": false
+    "rotation": -90.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": null,

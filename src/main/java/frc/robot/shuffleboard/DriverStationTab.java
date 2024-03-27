@@ -72,7 +72,6 @@ public class DriverStationTab extends ShuffleboardTabBase {
 	public void activateShuffleboard() {
 		// this should be called immediately
 		ShuffleboardTab tab = Shuffleboard.getTab("Driver Station");
-		tab.add("activate tabs", new ActivateTabs());
 		tab.add("Auto Path", autoChooser);
 	}
 	

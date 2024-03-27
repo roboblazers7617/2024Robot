@@ -147,8 +147,9 @@ public class Arm extends SubsystemBase {
 		// lastAcutalArmTarget = armTarget;
 
 		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
-		armAngleBasedOnDistance.put(2.7, 34.0);
-		armAngleBasedOnDistance.put(3.24, 37.0);
+		armAngleBasedOnDistance.put(2.7, 31.25);
+		armAngleBasedOnDistance.put(3.24, 35.25);
+		//armAngleBasedOnDistance.put(3.25, 39.6);
 		// System.out.println("arm: target: " + armTarget);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
@@ -378,6 +379,15 @@ public class Arm extends SubsystemBase {
 			}
 		}).ignoringDisable(true);
 	}
+
+	public Command EnableBrakeMode(){
+		return this.runOnce(() -> {
+			leaderArmMotor.setIdleMode(IdleMode.kBrake);
+			followerArmMotor.setIdleMode(IdleMode.kBrake);
+			leaderElevatorMotor.setIdleMode(IdleMode.kBrake);
+			followerElevatorMotor.setIdleMode(IdleMode.kBrake);
+		}).ignoringDisable(true);
+	}
 	
 	@Override
 	public void periodic() {
@@ -448,7 +458,6 @@ public class Arm extends SubsystemBase {
 				}
 			}
 			
-			/** this is a constant increase to make the elvator go faster */
 			if (currentElevatorTarget != lastAcutalElevatorTarget) {
 				double elevatorFeedFowardValue = getElevatorFeedforward().calculate(elevatorEncoder.getVelocity());
 				elevatorPIDController.setReference(currentElevatorTarget, CANSparkMax.ControlType.kPosition, 0, /*speedyElevatorFeedForward*/ + elevatorFeedFowardValue, ArbFFUnits.kVoltage);

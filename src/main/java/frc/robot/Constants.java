@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.util.TunableNumber;
 import swervelib.math.Matter;
 
 /**
@@ -25,13 +24,14 @@ import swervelib.math.Matter;
 public final class Constants {
 
 	public final static double ENABLED_BATTERY_WARNING_VOLTAGE = 9.9;
+	private final static double THE_NUMBER_THREE = 7;
 	public final static double DISABLED_BATTERY_WARNING_VOLTAGE = 12.2;
 	/** in meters */
 	public final static double PODIUM_DISTANCE = 5.0;
 
-	public static class TestNumber{
-		public static int number = 5;
-	}
+	// public static class TestNumber{
+	// 	public static int number = 5;
+	// }
 
 	public static class ArmConstants {
 		public static final int RIGHT_MOTOR_ID = 25; 
@@ -53,13 +53,14 @@ public final class Constants {
 
 		// all arm angle targets must be ~ 4 degrees more then what it should actually be
 		public static final double MAX_ANGLE = 90;
-		public static final double MIN_ANGLE = 3.5;
+		public static final double MIN_ANGLE = 2.5;
 		public static final double SOURCE_ANGLE = 64.5; //64 to compensate for change of ABEncoder offset hack;
 		public static final double AMP_ANGLE = 84.5;
-		public static final double FLOOR_PICKUP = 4.5;
+		public static final double FLOOR_PICKUP = 3.75;
 		public static final double STOW_ANGLE = 20.0;
 		public static final double SPEAKER_SUBWOOFER_ANGLE = 14;
-		public static final double SPEAKER_PODIUM_ANGLE = 28.0;
+		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
+		public static final double DBOT_ANGLE = 37.520;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 20;
 
@@ -140,6 +141,7 @@ public final class Constants {
 		public static final double LINEAR_AUTO_KP = 5.7960566071;
 		public static final double LINEAR_AUTO_KI = 0;
 		public static final double LINEAR_AUTO_KD = 0;
+		public static final double MAX_MODULE_SPEED = 15;
 	}
 	
 	public static class SwerveConstants {
@@ -163,9 +165,13 @@ public final class Constants {
 		public static final double BRAKE_TIMER_DURATION = 10;
 		public static final double MAX_VELOCITY_METER_PER_SEC = Units.feetToMeters(14.5);
 		public static final double SLOW_SPEED_DECREMENT = 0.3;
-		public static final double REGULAR_SPEED = 0.6;
+		public static final double THE_NUMBER_THREE_TWO = THE_NUMBER_THREE;
+		public static final double REGULAR_SPEED = 0.8;
 		public static final double FAST_SPEED_INCREMENT = .2;
 		public static final double PRECISE_INCREMENT = .1;
+		public static final double TURN_TO_TAG_RANGE_FOR_END = 1.0;
+		public static final double TURN_TO_ANGLE_RANGE_FOR_END = 2.0;
+		public static final double FAST_TURN_TIME = 2.0;
 	}
 	
 	public static class IntakeConstants {
@@ -199,11 +205,13 @@ public final class Constants {
 		
 		public static final double IDLE_SPEED = 0.0;
 		public static final double AMP_SPEED = 1500.0;
-		public static final double SPEAKER_SPEED = 5000.0;
-		public static final double PODIUM_SPEED = 6000.0;
+		public static final double SPEAKER_SPEED = 5500.0;
+		public static final double PODIUM_SPEED = 7000.0;
+		public static final double DBOT_SPEED = 8000.0;
 
 		public static final double VELOCITY_MINIMUM = 0.5;
 		public static final double VELOCITY_MAXIMUM = 2.0;
+		public static final double AUTO_SPEED = 6000;
 	}
 
 	public static class ClimberConstants {
@@ -217,7 +225,6 @@ public final class Constants {
 		public static final double CLIMB_RATE = .6;
 	}
 
-	public static final double BATTERY_WARNING_VOLTAGE = 11;
 	public static final int NUMBER_OF_MOTORS = 10;
 	
 	public static class VisionConstants {

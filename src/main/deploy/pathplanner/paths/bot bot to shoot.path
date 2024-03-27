@@ -3,50 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.6,
-        "y": 5.78
+        "x": 7.8,
+        "y": 0.77
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.194567169201722,
-        "y": 5.78
+        "x": 6.543201087704259,
+        "y": 0.3101942986293386
       },
       "isLocked": false,
-      "linkedName": "topmid far"
+      "linkedName": "bot bot ring"
     },
     {
       "anchor": {
-        "x": 2.8981098534154617,
-        "y": 7.0
+        "x": 3.699166774888816,
+        "y": 3.2515897631621655
       },
       "prevControl": {
-        "x": 4.28111809979044,
-        "y": 7.0
+        "x": 3.3963245406236187,
+        "y": 2.4782511330068964
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "top ring"
+      "linkedName": "bot far shoot"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 0.75,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 120.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 0.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 0.0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

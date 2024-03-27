@@ -24,6 +24,7 @@ import frc.robot.subsystems.Arm;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -44,7 +45,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -79,23 +79,25 @@ public class RobotContainer {
 	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngular(driverControllerCommands.getRightX()), () -> processJoystickAngular(driverControllerCommands.getRightY()));
 	
 	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()));
+
+	private final Command rotationDriveFast = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()*SwerveConstants.FAST_TURN_TIME));
 	
 	private final DigitalInput brakeToggleButton = new DigitalInput(ArmConstants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
-	private boolean doRightClimb = false;
-	private boolean doLeftClimb = false;
-	
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		// NamedCommands.registerCommand("SayHi", Commands.runOnce(() -> System.out.println("Hi")));
 		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
-		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());
+		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
-		NamedCommands.registerCommand("turnTo0", turnTo0());
+		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
-		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeaker(driverController, operatorController, arm, head, drivetrain));
+		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
+		NamedCommands.registerCommand("shootAmp", MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
+		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStow(arm, head));
+		NamedCommands.registerCommand("turnSideways", turnSideways());
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
@@ -141,11 +143,17 @@ public class RobotContainer {
 		// the joysticks do not correctly drive the robot forward. Everything is reversed.
 		drivetrain.setDefaultCommand(absoluteDrive);
 		
-		driverControllerCommands.povRight().toggleOnTrue(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-15)));
+		// driverControllerCommands.povRight().toggleOnTrue(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-15)));
+		driverControllerCommands.povRight().whileTrue(turnToSpeaker(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX())));
 		
 		driverControllerCommands.leftBumper()
 				.onTrue(new ScheduleCommand(rotationDrive))
 				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
+
+		driverControllerCommands.leftTrigger()
+				.onTrue(new ScheduleCommand(rotationDriveFast))
+				.onFalse(Commands.runOnce(() -> rotationDriveFast.cancel()));
+				
 		driverControllerCommands.rightBumper()
 				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.SLOW_SPEED_DECREMENT)))
 				.onFalse(Commands.runOnce(() -> speedMultiplier += SwerveConstants.SLOW_SPEED_DECREMENT));
@@ -167,6 +175,9 @@ public class RobotContainer {
 		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
 		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
 		
+		driverControllerCommands.a().onTrue(MechanismCommands.ShootOverDBot(driverController, operatorController, arm, head));
+		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
+		
 		// driverControllerCommands.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
 		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
 		
@@ -175,12 +186,13 @@ public class RobotContainer {
 		operatorControllerCommands.x().and(() -> !isClimbMode).onTrue(arm.Stow());
 		operatorControllerCommands.y().and(() -> !isClimbMode).whileTrue(head.StartOutake()).onFalse(head.StopIntake());
 		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
-		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head).andThen(arm.Stow()));
+		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.rightTrigger().onTrue(Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)).andThen(Commands.runOnce(() ->arm.setElevatorTarget(ElevatorConstants.MIN_HEIGHT))).andThen(head.SpinUpShooterForSpeaker())).onFalse(arm.WaitUntilArmAtTarget().andThen(arm.WaitUntilElevatorAtTarget()).andThen(head.ShootInSpeaker()));
+		operatorControllerCommands.rightTrigger().onTrue(Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)).andThen(Commands.runOnce(() -> arm.setElevatorTarget(ElevatorConstants.MIN_HEIGHT))).andThen(head.SpinUpShooterForPodium())).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
+		
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShootSpeakerSubwoofer(driverController, operatorController, arm, head)).onFalse(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.povLeft()
@@ -190,8 +202,8 @@ public class RobotContainer {
 				.and(() -> (!isClimbMode))
 				.onTrue(head.ShootInSpeaker());
 		
-		operatorControllerCommands.povUp().and(() -> isClimbMode).onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
-		operatorControllerCommands.povDown().and(() -> isClimbMode).onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
+		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		
 		operatorControllerCommands.x()
 				.and(() -> isClimbMode)
@@ -216,8 +228,12 @@ public class RobotContainer {
 		}));
 		
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
-		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
-		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
+		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes().andThen(head.ToggleBreakModes()));
+		Trigger enableTrigger = new Trigger(() -> DriverStation.isEnabled());
+		enableTrigger.onTrue(Commands.runOnce(() -> {
+			arm.EnableBrakeMode();
+			head.EnableBrakeMode();
+		}));
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
@@ -260,6 +276,13 @@ public class RobotContainer {
 		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(1));
 	}
 	
+	public Command turnToSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
+		if (checkAllianceColors(Alliance.Red)) {
+			return new TurnToTag(drivetrain, 4, true, yMovement, xMovement);
+		}
+		return new TurnToTag(drivetrain, 7, true, yMovement, xMovement);
+	}
+	
 	public void teleopInit() {
 		// arm.teleopInit();
 	}
@@ -267,10 +290,19 @@ public class RobotContainer {
 	/**
 	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
 	 */
-	public Command turnTo0() {
+	public Command pointAwayFromSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180));
 		}
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
 	}
+
+	public Command turnSideways(){
+		if (checkAllianceColors(Alliance.Red)) {
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
+		}
+		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
+	}
+
+
 }

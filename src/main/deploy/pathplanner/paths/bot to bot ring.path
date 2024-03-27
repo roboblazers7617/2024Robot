@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.2891653743251,
-        "y": 0.7670095635136396
+        "x": 1.5338787698652874,
+        "y": 4.112577405249212
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.289165374325101,
-        "y": 0.7670095635136397
+        "x": 1.6338787698652875,
+        "y": 4.112577405249212
       },
       "isLocked": false,
-      "linkedName": "far bot"
+      "linkedName": "bot front start"
     },
     {
       "anchor": {
-        "x": 4.147790496116358,
-        "y": 1.9867228632307663
+        "x": 2.6,
+        "y": 3.1
       },
       "prevControl": {
-        "x": 5.147790496116358,
-        "y": 1.9867228632307663
+        "x": 2.5,
+        "y": 3.1
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "way bot shoot"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -44,9 +44,6 @@
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
-    "rotation": 0,
-    "velocity": 0
-  },
-  "useDefaultConstraints": true
+  "previewStartingState": null,
+  "useDefaultConstraints": false
 }

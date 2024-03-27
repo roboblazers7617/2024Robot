@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.7,
-        "y": 4.105
+        "x": 2.25,
+        "y": 4.11
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7000000000000002,
-        "y": 4.105
+        "x": 1.25,
+        "y": 4.11
       },
       "isLocked": false,
       "linkedName": "bot ring"
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 0.75,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 120.0
   },
