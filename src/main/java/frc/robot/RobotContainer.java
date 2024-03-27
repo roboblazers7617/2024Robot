@@ -8,7 +8,6 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.ShootingConstants;
 import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
@@ -187,7 +186,7 @@ public class RobotContainer {
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.rightTrigger().onTrue(Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)).andThen(Commands.runOnce(() -> arm.setElevatorTarget(ElevatorConstants.MIN_HEIGHT))).andThen(head.SpinUpShooterAtPosition(ShootingConstants.ShootingPosition.PODIUM))).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
+		operatorControllerCommands.rightTrigger().onTrue(arm.SetTargets(ShootingPosition.PODIUM).andThen(head.SpinUpShooterAtPosition(ShootingPosition.PODIUM))).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShootSpeakerSubwoofer(driverController, operatorController, arm, head)).onFalse(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
 		
@@ -196,7 +195,7 @@ public class RobotContainer {
 				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.ShootAtPosition(ShootingConstants.ShootingPosition.SPEAKER));
+				.onTrue(head.ShootAtPosition(ShootingPosition.SPEAKER));
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));

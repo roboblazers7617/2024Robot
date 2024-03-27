@@ -35,20 +35,32 @@ public final class Constants {
 
 	public static class ShootingConstants {
 		public enum ShootingPosition {
-			AMP(1500.0),
-			SPEAKER(5500.0),
-			SPEAKER_AUTO(6000.0),
-			PODIUM(7000.0),
-			DBOT(8000.0);
+			AMP(1500.0, 84.5, ElevatorConstants.MAX_HEIGHT),
+			SPEAKER(5500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			SPEAKER_AUTO(6000.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			PODIUM(7000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
+			DBOT(8000.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
 		
-			ShootingPosition(double rpm) {
+			ShootingPosition(double rpm, double arm_angle, double elevator_target) {
 				this.rpm = rpm;
+				this.arm_angle = arm_angle;
+				this.elevator_target = elevator_target;
 			}
 		
 			private final double rpm;
+			private final double arm_angle;
+			private final double elevator_target;
 		
 			public double rpm(){
 				return rpm;
+			}
+
+			public double arm_angle(){
+				return arm_angle;
+			}
+
+			public double elevator_target(){
+				return elevator_target;
 			}
 		}
 	}
@@ -75,12 +87,8 @@ public final class Constants {
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 2.5;
 		public static final double SOURCE_ANGLE = 64.5; //64 to compensate for change of ABEncoder offset hack;
-		public static final double AMP_ANGLE = 84.5;
 		public static final double FLOOR_PICKUP = 3.75;
 		public static final double STOW_ANGLE = 20.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 14;
-		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
-		public static final double DBOT_ANGLE = 37.520;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 20;
 

@@ -22,10 +22,12 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.shuffleboard.MotorTab;
 // import frc.robot.util.TunableNumber;
 
@@ -146,7 +148,7 @@ public class Arm extends SubsystemBase {
 		armTarget = armAbsoluteEncoder.getPosition();
 		// lastAcutalArmTarget = armTarget;
 
-		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
+		armAngleBasedOnDistance.put(1.27, ShootingPosition.SPEAKER.arm_angle());
 		armAngleBasedOnDistance.put(2.7, 31.25);
 		armAngleBasedOnDistance.put(3.24, 35.25);
 		//armAngleBasedOnDistance.put(3.25, 39.6);
@@ -243,6 +245,10 @@ public class Arm extends SubsystemBase {
 		armTarget = targetDegrees;
 	}
 
+	public Command SetArmTarget(ShootingPosition position) {
+		return Commands.runOnce(() -> setArmTarget(position.arm_angle()));
+	}
+
 	/**
 	 * sets the arm target based on the distance to the speaker and the interpolation table
 	 * 
@@ -337,6 +343,15 @@ public class Arm extends SubsystemBase {
 			target = ElevatorConstants.MIN_HEIGHT;
 		}
 		elevatorTarget = target;
+	}
+
+	public Command SetElevatorTarget(ShootingPosition position) {
+		return Commands.runOnce(() -> setElevatorTarget(position.elevator_target()));
+	}
+
+	public Command SetTargets(ShootingPosition position) {
+		return SetArmTarget(position)
+			.andThen(SetElevatorTarget(position));
 	}
 	
 	/**
