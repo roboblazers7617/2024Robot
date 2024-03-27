@@ -166,6 +166,7 @@ public class Head extends SubsystemBase {
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
 			shooterIdle = true;
+			shooterSetPoint = 0.0;
 			shooterMotorBottom.setVoltage(0);
 			shooterMotorTop.setVoltage(0);
 		}, this);
