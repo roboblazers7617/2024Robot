@@ -12,6 +12,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Constants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class TurnToTag extends Command {
@@ -65,6 +67,6 @@ public class TurnToTag extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return Math.abs(drivetrain.getHeading().minus(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()).getDegrees()) <= 2;
+		return Math.abs(drivetrain.getHeading().minus(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()).getDegrees()) <= SwerveConstants.TURN_TO_TAG_RANGE_FOR_END;
 	}
 }

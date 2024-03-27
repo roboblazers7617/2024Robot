@@ -203,7 +203,7 @@ public class Drivetrain extends SubsystemBase {
 	public Command turnToAngleCommand(Rotation2d angle) {
 		return Commands.run(() -> {
 			this.driveFieldOriented(getTargetSpeeds(0, 0, angle));
-		}, this).raceWith(Commands.waitUntil(() -> Math.abs(getHeading().minus(angle).getDegrees()) <= 2)).finallyDo(() -> {
+		}, this).raceWith(Commands.waitUntil(() -> Math.abs(getHeading().minus(angle).getDegrees()) <= SwerveConstants.TURN_TO_ANGLE_RANGE_FOR_END)).finallyDo(() -> {
 			swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
 		});
 	}
@@ -362,6 +362,10 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public Rotation2d getHeading() {
 		return swerveDrive.getOdometryHeading();
+	}
+
+	public void setHeadingCorrection(boolean doHeadingCorrection){
+		swerveDrive.setHeadingCorrection(doHeadingCorrection);
 	}
 	
 	public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double thetaInput) {

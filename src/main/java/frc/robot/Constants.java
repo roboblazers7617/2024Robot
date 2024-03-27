@@ -150,6 +150,8 @@ public final class Constants {
 		public static final double REGULAR_SPEED = 0.6;
 		public static final double FAST_SPEED_INCREMENT = .2;
 		public static final double PRECISE_INCREMENT = .1;
+		public static final double TURN_TO_TAG_RANGE_FOR_END = 1.0;
+		public static final double TURN_TO_ANGLE_RANGE_FOR_END = 2.0;
 	}
 	
 	public static class IntakeConstants {
