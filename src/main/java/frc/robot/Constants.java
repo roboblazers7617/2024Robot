@@ -141,6 +141,7 @@ public final class Constants {
 		public static final double LINEAR_AUTO_KP = 5.7960566071;
 		public static final double LINEAR_AUTO_KI = 0;
 		public static final double LINEAR_AUTO_KD = 0;
+		public static final double MAX_MODULE_SPEED = 15;
 	}
 	
 	public static class SwerveConstants {

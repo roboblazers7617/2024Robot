@@ -114,7 +114,7 @@ public class Drivetrain extends SubsystemBase {
 						// Translation PID constants
 						new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p, swerveDrive.swerveController.config.headingPIDF.i, swerveDrive.swerveController.config.headingPIDF.d),
 						// Rotation PID constants
-						15,
+						Constants.AutoConstants.MAX_MODULE_SPEED,
 						// Max module speed, in m/s
 						swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
 						// Drive base radius in meters. Distance from robot center to furthest module.

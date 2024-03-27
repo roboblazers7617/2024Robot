@@ -92,11 +92,12 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
-		NamedCommands.registerCommand("turnTo0", turnTo0());
+		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
-		NamedCommands.registerCommand("Stow", MechanismCommands.Stow(arm, head));
+		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStow(arm, head));
+		NamedCommands.registerCommand("turnSideways", turnSideways());
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
@@ -170,7 +171,7 @@ public class RobotContainer {
 		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
 		
 		driverControllerCommands.a().onTrue(MechanismCommands.ShootOverDBot(driverController, operatorController, arm, head));
-		driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
+		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
 		
 		// driverControllerCommands.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
 		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
@@ -284,10 +285,19 @@ public class RobotContainer {
 	/**
 	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
 	 */
-	public Command turnTo0() {
+	public Command pointAwayFromSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180));
 		}
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
 	}
+
+	public Command turnSideways(){
+		if (checkAllianceColors(Alliance.Red)) {
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
+		}
+		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
+	}
+
+
 }

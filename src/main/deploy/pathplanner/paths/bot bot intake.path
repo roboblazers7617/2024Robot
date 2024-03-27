@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5338787698652874,
-        "y": 4.112577405249212
+        "x": 6.510960937720486,
+        "y": 0.77
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6338787698652875,
-        "y": 4.112577405249212
+        "x": 7.510960937720486,
+        "y": 0.7699999999999996
       },
       "isLocked": false,
-      "linkedName": "bot front start"
+      "linkedName": "bot bot intake"
     },
     {
       "anchor": {
-        "x": 2.25,
-        "y": 4.11
+        "x": 7.8,
+        "y": 0.77
       },
       "prevControl": {
-        "x": 2.15,
-        "y": 4.11
+        "x": 6.8,
+        "y": 0.77
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "bot ring"
+      "linkedName": "bot bot ring"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxAcceleration": 0.75,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 120.0
   },

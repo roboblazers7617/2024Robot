@@ -202,13 +202,31 @@ public class Head extends SubsystemBase {
 					setIntakeSpeed(0);
 				});
 	}
+
+	public Command ShootAuto(double rpm) {
+		return SpinUpShooter(rpm)
+				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
+				.andThen(Commands.waitSeconds(0.1))
+				.andThen(Commands.runOnce(() -> {
+					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
+				}))
+				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
+				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
+				.andThen(Commands.waitSeconds(0.5))
+				// .andThen(SpinDownShooter())
+				.finallyDo(() -> {
+					isNoteAcquired = false;
+					setIntakeSpeed(0);
+				});
+	}
+
 	
 	public Command ShootInSpeaker() {
 		return Shoot(ShooterConstants.SPEAKER_SPEED);
 	}
 
 	public Command ShootInSpeakerAuto(){
-		return Shoot(ShooterConstants.AUTO_SPEED);
+		return ShootAuto(ShooterConstants.AUTO_SPEED);
 	}
 
 	public Command ShootOverDBot(){
