@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ShootingConstants;
 import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
@@ -120,6 +121,11 @@ public class MechanismCommands {
 		return arm.SetTargets(position)
 				.andThen(head.SpinUpShooter(position));
 	}
+
+	public static Command AutonomousPrepareShoot(Arm arm, Head head, Supplier<Double> distance) {
+		return arm.SetTargetsAuto(distance.get())
+				.andThen(head.SpinUpShooter(ShootingConstants.AUTO_SHOOT_SPEED));
+	}
 	
 	/**
 	 * will finish when ready
@@ -152,6 +158,11 @@ public class MechanismCommands {
 
 	public static Command AutonomousShoot(Arm arm, Head head, ShootingPosition position){
 		return PrepareShoot(arm, head, position)
+			.andThen(Shoot(arm, head));
+	}
+
+	public static Command AutonomousShoot(Arm arm, Head head, Drivetrain drivetrain){
+		return AutonomousPrepareShoot(arm, head, () -> drivetrain.getDistanceToSpeaker())
 			.andThen(Shoot(arm, head));
 	}
 	

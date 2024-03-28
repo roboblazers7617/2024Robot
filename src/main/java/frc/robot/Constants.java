@@ -64,6 +64,8 @@ public final class Constants {
 				return elevator_target;
 			}
 		}
+
+		public static final int AUTO_SHOOT_SPEED = 6000;
 	}
 
 	public static class ArmConstants {

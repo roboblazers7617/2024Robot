@@ -259,6 +259,13 @@ public class Arm extends SubsystemBase {
 				setElevatorTarget(position.elevator_target());
 		});
 	}
+
+	public Command SetTargetsAuto(double distance) {
+		return Commands.runOnce(() -> {
+				setArmTargetByDistance(distance);
+				setElevatorTarget(ElevatorConstants.MAX_HEIGHT);
+		});
+	}
 	
 	/**
 	 * sets the velocity for the elevator by moving a position setpoint

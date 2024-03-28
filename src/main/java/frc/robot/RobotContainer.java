@@ -30,6 +30,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -94,7 +95,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
-		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.Shoot(arm,head));
+		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.AutonomousShoot(arm,head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.AutonomousShoot(arm, head, ShootingPosition.AMP));
 		NamedCommands.registerCommand("Stow", MechanismCommands.StowStopIntakeAndShooter(arm, head));
 		NamedCommands.registerCommand("turnSideways", turnSideways());
@@ -182,7 +183,7 @@ public class RobotContainer {
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		operatorControllerCommands.leftBumper().onTrue(Commands.race(new LockWheelsState(drivetrain),MechanismCommands.Shoot(driverController, operatorController, arm, head)));
 		
 		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
