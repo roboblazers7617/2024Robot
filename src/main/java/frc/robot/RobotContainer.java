@@ -165,6 +165,8 @@ public class RobotContainer {
 		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
 		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
 		
+		//TODO: Shoot should not need the position passed in
+		//TODO: Rename DBOT to MID_STAGE to be more descriptive
 		driverControllerCommands.a().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.DBOT));
 	}
 
@@ -175,10 +177,14 @@ public class RobotContainer {
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
+		//TODO: Shoot should not need the position passed in
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.AMP));
 		
+		//TODO: This shoud call PrepareShoot with PODIUM and not individually do the actions
+		//TODO: Shoot should not need the position passed in
 		operatorControllerCommands.rightTrigger().onTrue(arm.SetTargets(ShootingPosition.PODIUM).andThen(head.SpinUpShooter(ShootingPosition.PODIUM))).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.PODIUM));
 		
+		//TODO: Shoot should not need the position passed in
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.SUBWOOFER));
 		
 		operatorControllerCommands.povLeft()

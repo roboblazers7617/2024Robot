@@ -259,10 +259,14 @@ public class Arm extends SubsystemBase {
 		elevatorTarget = target;
 	}
 
-
+	//TODO: Would be better to combine into one statement. See my example below.
 	public Command SetTargets(ShootingPosition position) {
-		return Commands.runOnce(() -> setArmTarget(position.arm_angle()))
-			.andThen(() -> setElevatorTarget(position.elevator_target()));
+		//return Commands.runOnce(() -> setArmTarget(position.arm_angle()))
+		//	.andThen(() -> setElevatorTarget(position.elevator_target()));
+		return Commands.runOnce(() -> {
+				setArmTarget(position.arm_angle());
+				setElevatorTarget(position.elevator_target());
+		});
 	}
 	
 	/**
@@ -378,7 +382,9 @@ public class Arm extends SubsystemBase {
 	public MotorTab getMotorTab() {
 		return motorTab;
 	}
-	
+
+
+	//TODO: Will we ever not want to check that both arm and elevator are at target? It would be cleaner to make one function that returns a boolean when they are at target and then a WaitUntil Command can be called with this as the parameter. Something like areArmAndElevaotrInPosition()
 	public Command WaitUntilArmAtTarget() {
 		return new Command() {
 			@Override

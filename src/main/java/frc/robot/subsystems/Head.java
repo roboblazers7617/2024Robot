@@ -34,6 +34,7 @@ public class Head extends SubsystemBase {
 	private final SparkPIDController shooterControllerTop = shooterMotorTop.getPIDController();
 	
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
+	//TODO: Please rename isNoteInSensor as is very ambigious and doesn't say which sensor. If I understand this correctly should be something like isNoteInShootPosition
 	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
 	
@@ -179,6 +180,8 @@ public class Head extends SubsystemBase {
 		// @formatter:on
 	}
 	
+	//TODO: Move the finallyDo to an andThen to avoid the delay that we saw yesterday with the intake
+	//TODO: Why are you spinning down the shooter before stopping the intake? Intake should be first
 	public Command Shoot(double rpm) {
 		return SpinUpShooter(rpm)
 				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
@@ -195,6 +198,7 @@ public class Head extends SubsystemBase {
 				});
 	}
 	
+	//TODO: Move the finallyDo to an andThen to avoid the delay that we saw yesterday with the intake
 	public Command ShootAuto(double rpm) {
 		return SpinUpShooter(rpm)
 				.andThen(Commands.waitUntil(() -> isReadyToShoot()))

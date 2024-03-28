@@ -36,6 +36,7 @@ public final class Constants {
 
 	public static class ShootingConstants {
 		public enum ShootingPosition {
+			//TODO: Rename DBOT to MID_STAGE to be more descriptive
 			AMP(1500.0, 84.5, ElevatorConstants.MAX_HEIGHT),
 			SUBWOOFER(5500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
 			PODIUM(7000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
