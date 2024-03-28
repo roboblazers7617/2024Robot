@@ -35,8 +35,8 @@ public class Head extends SubsystemBase {
 	
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
 	//TODO: Please rename isNoteInSensor as is very ambigious and doesn't say which sensor. If I understand this correctly should be something like isNoteInShootPosition
-	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
-	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
+	private final DigitalInput isNoteInShootPosition = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
+	private final DigitalInput isNoteInIntake = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
 	
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
 	
@@ -182,49 +182,22 @@ public class Head extends SubsystemBase {
 	
 	//TODO: Move the finallyDo to an andThen to avoid the delay that we saw yesterday with the intake
 	//TODO: Why are you spinning down the shooter before stopping the intake? Intake should be first
-	public Command Shoot(double rpm) {
-		return SpinUpShooter(rpm)
-				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
-				.andThen(Commands.waitSeconds(0.1))
-				.andThen(Commands.runOnce(() -> {
-					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
-				}))
+	public Command Shoot() {
+		return 	Commands.waitUntil(() -> isReadyToShoot())
+				.andThen(Commands.runOnce(() -> { setIntakeSpeed(IntakeConstants.FEEDER_SPEED);}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 				.andThen(Commands.waitSeconds(0.5))
 				.andThen(SpinDownShooter())
-				.finallyDo(() -> {
-					setIntakeSpeed(0);
-				});
+				.andThen(() -> setIntakeSpeed(0.0));
 	}
-	
-	//TODO: Move the finallyDo to an andThen to avoid the delay that we saw yesterday with the intake
-	public Command ShootAuto(double rpm) {
-		return SpinUpShooter(rpm)
-				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
-				.andThen(Commands.waitSeconds(0.1))
-				.andThen(Commands.runOnce(() -> {
-					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
-				}))
-				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
-				.andThen(Commands.waitSeconds(0.5))
-				// .andThen(SpinDownShooter())
-				.finallyDo(() -> {
-					setIntakeSpeed(0);
-				});
-	}
-	
-	public Command Shoot(ShootingPosition position) {
-		return Shoot(position.rpm());
-	}
-	
+		
 	public boolean isNoteWithinSensor() {
-		return !isNoteInSensor.get();
+		return !isNoteInShootPosition.get();
 	}
 	
 	public boolean isNoteWithinAlignmentSensor() {
-		return !isNoteInAlignmentSensor.get();
+		return !isNoteInIntake.get();
 	}
 	
 	public Command ToggleBreakModes() {

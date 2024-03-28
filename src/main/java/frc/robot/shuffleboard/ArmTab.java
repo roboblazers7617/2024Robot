@@ -12,10 +12,6 @@ public class ArmTab extends ShuffleboardTabBase {
 	
 	private final DoublePublisher armAbsoluteEncoderPub;
 	private final DoublePublisher elevatorPub;
-	// TODO: (Brandon) There will only be one absolute encoder
-	// private final DoublePublisher odometryYPub;
-	// private final DoublePublisher odometryXPub;
-	// private final DoublePublisher odometryAnglePub;
 	
 	public ArmTab(Arm arm) {
 		this.arm = arm;

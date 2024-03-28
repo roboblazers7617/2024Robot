@@ -79,13 +79,7 @@ public class Arm extends SubsystemBase {
 	private Timer time = new Timer();
 	
 	private final MotorTab motorTab = new MotorTab(4, "arm", 2);
-	
-	// private final Trigger teleopEnabled;
-	
-	// TODO: (Brandon) Putting as something to talk about so we don't forget... the
-	// feedforward values for the elevator may change based on the arm pivot angle,
-	// and the feedforward values for the arm may change based on the elevator
-	// extension. Need to think through this issue...
+
 	/** Creates a new Arm. */
 	public Arm() {
 		// setup arm motors
@@ -259,10 +253,7 @@ public class Arm extends SubsystemBase {
 		elevatorTarget = target;
 	}
 
-	//TODO: Would be better to combine into one statement. See my example below.
 	public Command SetTargets(ShootingPosition position) {
-		//return Commands.runOnce(() -> setArmTarget(position.arm_angle()))
-		//	.andThen(() -> setElevatorTarget(position.elevator_target()));
 		return Commands.runOnce(() -> {
 				setArmTarget(position.arm_angle());
 				setElevatorTarget(position.elevator_target());
@@ -353,7 +344,6 @@ public class Arm extends SubsystemBase {
 			// current elevator target will be the reference set by the PID controller, based on what is currently safe
 			double currentElevatorTarget = elevatorTarget;
 			// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
-			// TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
 			if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 				if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
 					currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
@@ -383,23 +373,8 @@ public class Arm extends SubsystemBase {
 		return motorTab;
 	}
 
-
-	//TODO: Will we ever not want to check that both arm and elevator are at target? It would be cleaner to make one function that returns a boolean when they are at target and then a WaitUntil Command can be called with this as the parameter. Something like areArmAndElevaotrInPosition()
-	public Command WaitUntilArmAtTarget() {
-		return new Command() {
-			@Override
-			public boolean isFinished() {
-				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < ArmConstants.ARM_AT_TARGET_DEADBAND;
-			}
-		};
-	}
-	
-	public Command WaitUntilElevatorAtTarget() {
-		return new Command() {
-			@Override
-			public boolean isFinished() {
-				return Math.abs(elevatorTarget - elevatorEncoder.getPosition()) < ElevatorConstants.ELEVATOR_AT_TARGET_DEADBAND || ElevatorConstants.KILL_IT_ALL;
-			}
-		};
+	public boolean areArmAndElevatorAtTarget(){
+		return (Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < ArmConstants.ARM_AT_TARGET_DEADBAND)
+			&& (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) < ElevatorConstants.ELEVATOR_AT_TARGET_DEADBAND || ElevatorConstants.KILL_IT_ALL);
 	}
 }

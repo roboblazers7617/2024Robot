@@ -95,9 +95,9 @@ public class RobotContainer {
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
-		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.Shoot(arm, head, drivetrain));
-		NamedCommands.registerCommand("shootAmp", MechanismCommands.Shoot(arm, head, ShootingPosition.AMP));
-		NamedCommands.registerCommand("Stow", MechanismCommands.Stow(arm, head));
+		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.Shoot(arm,head));
+		NamedCommands.registerCommand("shootAmp", MechanismCommands.AutonomousShoot(arm, head, ShootingPosition.AMP));
+		NamedCommands.registerCommand("Stow", MechanismCommands.StowStopIntakeAndShooter(arm, head));
 		NamedCommands.registerCommand("turnSideways", turnSideways());
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
@@ -167,7 +167,8 @@ public class RobotContainer {
 		
 		//TODO: Shoot should not need the position passed in
 		//TODO: Rename DBOT to MID_STAGE to be more descriptive
-		driverControllerCommands.a().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.DBOT));
+		driverControllerCommands.a().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.DBOT))
+				.onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 	}
 
 	private void configureOperatorBindings(){
@@ -177,22 +178,19 @@ public class RobotContainer {
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
-		//TODO: Shoot should not need the position passed in
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.AMP));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
-		//TODO: This shoud call PrepareShoot with PODIUM and not individually do the actions
-		//TODO: Shoot should not need the position passed in
-		operatorControllerCommands.rightTrigger().onTrue(arm.SetTargets(ShootingPosition.PODIUM).andThen(head.SpinUpShooter(ShootingPosition.PODIUM))).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.PODIUM));
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
-		//TODO: Shoot should not need the position passed in
-		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head, ShootingPosition.SUBWOOFER));
+
+		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.povLeft()
 				.and(() -> (!isClimbMode))
 				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.Shoot(ShootingPosition.SUBWOOFER));
+				.onTrue(head.Shoot());
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
