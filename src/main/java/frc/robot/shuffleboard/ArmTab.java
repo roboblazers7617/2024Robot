@@ -12,10 +12,6 @@ public class ArmTab extends ShuffleboardTabBase {
 	
 	private final DoublePublisher armAbsoluteEncoderPub;
 	private final DoublePublisher elevatorPub;
-	// TODO: (Brandon) There will only be one absolute encoder
-	// private final DoublePublisher odometryYPub;
-	// private final DoublePublisher odometryXPub;
-	// private final DoublePublisher odometryAnglePub;
 	
 	public ArmTab(Arm arm) {
 		this.arm = arm;
@@ -40,12 +36,10 @@ public class ArmTab extends ShuffleboardTabBase {
 		// TODO: (Brandon) Can you remove all the .ignoringDisable(true) as we don't want those to accidentally
 		// get put back in the code as it could be an arm safety issue
 		// tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()).ignoringDisable(true));
-		tab.add("raise arm ", arm.RaiseArm());
 		// tab.add("add elevator feed foward values", arm.addElevatorFeedFowardValuesCommand());
 		// tab.add("generate new arm feed foward values", arm.generateNewArmFeedFoward());
 		// tab.add("generate new elevator feed foward values", arm.generateNewElevatorFeedFoward());
 		tab.add("arm subsystem", arm);
-		tab.add("lower arm", arm.lowerArm());
 		tab.add("toggle brake modes", arm.ToggleBrakeModes());
 		tab.add("extend elevator", arm.RaiseElevator());
 		tab.add("retract elevator", arm.lowerElevator());

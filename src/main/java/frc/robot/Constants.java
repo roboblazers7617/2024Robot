@@ -28,10 +28,43 @@ public final class Constants {
 	public final static double DISABLED_BATTERY_WARNING_VOLTAGE = 12.2;
 	/** in meters */
 	public final static double PODIUM_DISTANCE = 5.0;
+	public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
 	// public static class TestNumber{
 	// 	public static int number = 5;
 	// }
+
+	public static class ShootingConstants {
+		public enum ShootingPosition {
+			//TODO: Rename DBOT to MID_STAGE to be more descriptive
+			AMP(1500.0, 84.5, ElevatorConstants.MAX_HEIGHT),
+			SUBWOOFER(5500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			PODIUM(7000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
+			DBOT(8000.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
+		
+			ShootingPosition(double rpm, double arm_angle, double elevator_target) {
+				this.rpm = rpm;
+				this.arm_angle = arm_angle;
+				this.elevator_target = elevator_target;
+			}
+		
+			private final double rpm;
+			private final double arm_angle;
+			private final double elevator_target;
+		
+			public double rpm(){
+				return rpm;
+			}
+
+			public double arm_angle(){
+				return arm_angle;
+			}
+
+			public double elevator_target(){
+				return elevator_target;
+			}
+		}
+	}
 
 	public static class ArmConstants {
 		public static final int RIGHT_MOTOR_ID = 25; 
@@ -55,12 +88,8 @@ public final class Constants {
 		public static final double MAX_ANGLE = 90;
 		public static final double MIN_ANGLE = 2.5;
 		public static final double SOURCE_ANGLE = 64.5; //64 to compensate for change of ABEncoder offset hack;
-		public static final double AMP_ANGLE = 84.5;
 		public static final double FLOOR_PICKUP = 3.75;
 		public static final double STOW_ANGLE = 20.0;
-		public static final double SPEAKER_SUBWOOFER_ANGLE = 14;
-		public static final double SPEAKER_PODIUM_ANGLE = 32.0;
-		public static final double DBOT_ANGLE = 37.520;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
 		public static final double MIN_ABOVE_PASS_ANGLE = 20;
 
@@ -78,18 +107,11 @@ public final class Constants {
 		public static final double KD = 0;
 		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1;
-		public static final double minVel = 0;
-		// public static final double POSITION_CONVERSION_FACTOR = 16;
-		// public static final double VELOCITY_CONVERSION_FACTOR = 0;
-		public static final double GEAR_RATIO = 1/100.0;
 		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
 		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 		public static final double MAX_MANNUAL_ARM_SPEED = 45.0;
-		
-		public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
-
-
-		
+		public static final double ARM_VELOCITY_DEADBAND = 0.75;
+		public static final double ARM_AT_TARGET_DEADBAND = 1.5;
 		
 	}
 
@@ -104,13 +126,8 @@ public final class Constants {
 		public static final double KP = 0.3; // was .2 more recently 1.9
 		public static final double KI = 0;
 		public static final double KD = 0.0;
-		public static final double kIz = 0; //izone
 		public static final double kMinOutput = -.35;
 		public static final double kMaxOutput = 0.60;
-		public static final double minVel = 0;
-		public static final double GEAR_RATIO = 1.0/12;
-		public static final double ABS_POSITION_CONVERSION_FACTOR = 360;
-		public static final double ABS_VELOCITY_CONVERSION_FACTOR = ABS_POSITION_CONVERSION_FACTOR / 60;
 
 		
 		/** the maximum height the elevator can safely reach */
@@ -120,12 +137,8 @@ public final class Constants {
 		/** the mininum height the elevator reaches when its retracted */
 		public static final double MIN_HEIGHT = 1;
 		/** the maximum height the elevator can be, but still be safely inside the bumber of the robot */
-		// public static final double MAX_BELOW_PASS_HEIGHT = 10; // REMOVE THIS, IT DOES NOT EXIST
-		public static final int RIGHT_POTIENTIOMETER_PORT = 3;
-		// public static final int LEFT_POTIENTIOMETER_PORT = 45;
 		public static final double MAX_MANUAL_SPEED = 20;
-		/** for potentiometer */
-		public static final double OFFSET = 0.999;
+		public static final double ELEVATOR_AT_TARGET_DEADBAND = 2.0;
 
 	}
 
@@ -178,8 +191,10 @@ public final class Constants {
 		public static final int MOTOR_CAN_ID = 21;
 		
 		public static final int NOTE_SENSOR_DIO = 9;
+		public static final int NOTE_ALIGNMENT_SENSOR_DIO = 6;
 		
-		public static final double INTAKE_SPEED = 0.5;
+		public static final double INTAKE_SPEED = 0.95;
+		public static final double ALIGMNMENT_SPEED = 0.080;
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double FEEDER_SPEED = 0.25; // What speed should a note be fed into the shooter at?
 	}
@@ -203,15 +218,9 @@ public final class Constants {
 		public static final double TOP_kMinOutput = -1;
 		public static final double TOP_kMaxOutput = 1;
 		
-		public static final double IDLE_SPEED = 0.0;
-		public static final double AMP_SPEED = 1500.0;
-		public static final double SPEAKER_SPEED = 5500.0;
-		public static final double PODIUM_SPEED = 7000.0;
-		public static final double DBOT_SPEED = 8000.0;
 
 		public static final double VELOCITY_MINIMUM = 0.5;
 		public static final double VELOCITY_MAXIMUM = 2.0;
-		public static final double AUTO_SPEED = 6000;
 	}
 
 	public static class ClimberConstants {
