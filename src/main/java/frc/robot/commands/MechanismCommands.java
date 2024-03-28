@@ -123,7 +123,7 @@ public class MechanismCommands {
 	}
 
 	public static Command AutonomousPrepareShoot(Arm arm, Head head, Supplier<Double> distance) {
-		return arm.SetTargetsAuto(distance.get())
+		return arm.SetTargetsAuto(distance)
 				.andThen(head.SpinUpShooter(ShootingConstants.AUTO_SHOOT_SPEED));
 	}
 	

@@ -260,9 +260,9 @@ public class Arm extends SubsystemBase {
 		});
 	}
 
-	public Command SetTargetsAuto(double distance) {
+	public Command SetTargetsAuto(Supplier<Double> distance) {
 		return Commands.runOnce(() -> {
-				setArmTargetByDistance(distance);
+				setArmTargetByDistance(distance.get());
 				setElevatorTarget(ElevatorConstants.MAX_HEIGHT);
 		});
 	}
