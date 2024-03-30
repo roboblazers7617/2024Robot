@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -174,6 +175,7 @@ public class RobotContainer {
 		//TODO: Rename DBOT to MID_STAGE to be more descriptive
 		driverControllerCommands.a().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.DBOT))
 				.onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		// driverControllerCommands.b().onTrue(MechanismCommands.AutonomousShoot(arm,head,drivetrain));
 	}
 
 	private void configureOperatorBindings(){
@@ -258,9 +260,9 @@ public class RobotContainer {
 	
 	public Command turnToSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
-			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(1));
+			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(0.5));
 		}
-		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(1));
+		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(0.5));
 	}
 	
 	public Command turnToSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
@@ -279,9 +281,9 @@ public class RobotContainer {
 	 */
 	public Command pointAwayFromSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
-			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180));
+			return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180)),Commands.waitSeconds(0.5));
 		}
-		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
+		return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)),Commands.waitSeconds(0.5));
 	}
 
 	public Command turnSideways(){
