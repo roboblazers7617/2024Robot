@@ -94,7 +94,7 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
-		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
+		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head, false));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.AutonomousShoot(arm,head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.AutonomousShoot(arm, head, ShootingPosition.AMP));
 		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStowAndStopIntake(arm, head));
