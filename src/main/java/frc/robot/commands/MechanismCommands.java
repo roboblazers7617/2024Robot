@@ -152,16 +152,19 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command Shoot(Arm arm, Head head) {
-		return Commands.waitUntil(() -> arm.areArmAndElevatorAtTarget())
-				.andThen(head.Shoot());
+		return Shoot(arm, head, true);
 	}
+
+	public static Command Shoot(Arm arm, Head head, boolean stopShooter)
+    {
+		return Commands.waitUntil(() -> arm.areArmAndElevatorAtTarget())
+				.andThen(head.Shoot(stopShooter));
+    }
 
 	public static Command AutonomousShoot(Arm arm, Head head, ShootingPosition position){
 
         return PrepareShoot(arm, head, position)
-
             .andThen(Shoot(arm, head, false));
-
     }
 
  
@@ -195,13 +198,6 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-	public static Command Shoot(Arm arm, Head head, boolean stopShooter)
-
-    {
-
-        return Shoot(arm, head, stopShooter);
-
-    }
 
 
 
