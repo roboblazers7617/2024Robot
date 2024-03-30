@@ -61,13 +61,14 @@ public class MechanismCommands {
 	 *            subsystem
 	 * @return Command
 	 */
-	public static Command IntakeGround(Arm arm, Head head) {
-		return head.SpinDownShooter()
+	public static Command IntakeGround(Arm arm, Head head, boolean stopShooter) {
+		return 
+				Commands.either(head.SpinDownShooter(), Commands.none(), () ->stopShooter)
 				.andThen(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
 				.andThen(head.IntakePiece());
 	}
-	
+
 	/**
 	 * will finish after piece has been intaken
 	 * 
@@ -82,7 +83,7 @@ public class MechanismCommands {
 	 * @return Command
 	 */
 	public static Command IntakeGround(XboxController driverController, XboxController operatorController, Arm arm, Head head) {
-		return IntakeGround(arm, head)
+		return IntakeGround(arm, head, true)
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
