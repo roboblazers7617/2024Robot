@@ -152,6 +152,18 @@
           "data": {
             "name": "turnTo0"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
         }
       ]
     }

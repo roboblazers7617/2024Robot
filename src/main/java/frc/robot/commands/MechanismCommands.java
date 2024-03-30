@@ -157,14 +157,22 @@ public class MechanismCommands {
 	}
 
 	public static Command AutonomousShoot(Arm arm, Head head, ShootingPosition position){
-		return PrepareShoot(arm, head, position)
-			.andThen(Shoot(arm, head));
-	}
 
-	public static Command AutonomousShoot(Arm arm, Head head, Drivetrain drivetrain){
-		return AutonomousPrepareShoot(arm, head, () -> drivetrain.getDistanceToSpeaker())
-			.andThen(Shoot(arm, head));
-	}
+        return PrepareShoot(arm, head, position)
+
+            .andThen(Shoot(arm, head, false));
+
+    }
+
+ 
+
+    public static Command AutonomousShoot(Arm arm, Head head, Drivetrain drivetrain){
+
+        return AutonomousPrepareShoot(arm, head, () -> drivetrain.getDistanceToSpeaker())
+
+            .andThen(Shoot(arm, head, false));
+
+    }
 	
 	/**
 	 * will finish after piece has been shot
@@ -187,5 +195,15 @@ public class MechanismCommands {
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
-	
+	public static Command Shoot(Arm arm, Head head, boolean stopShooter)
+
+    {
+
+        return Shoot(arm, head, stopShooter);
+
+    }
+
+
+
+
 }
