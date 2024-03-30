@@ -9,18 +9,18 @@
       "prevControl": null,
       "nextControl": {
         "x": 7.510960937720486,
-        "y": 0.7699999999999996
+        "y": 0.77
       },
       "isLocked": false,
       "linkedName": "bot bot intake"
     },
     {
       "anchor": {
-        "x": 7.8,
+        "x": 8.001290988336962,
         "y": 0.77
       },
       "prevControl": {
-        "x": 6.8,
+        "x": 6.901290988336961,
         "y": 0.77
       },
       "nextControl": null,

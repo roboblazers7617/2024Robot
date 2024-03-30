@@ -97,7 +97,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head));
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.AutonomousShoot(arm,head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.AutonomousShoot(arm, head, ShootingPosition.AMP));
-		NamedCommands.registerCommand("Stow", MechanismCommands.StowStopIntakeAndShooter(arm, head));
+		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStowAndStopIntake(arm, head));
 		NamedCommands.registerCommand("turnSideways", turnSideways());
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");

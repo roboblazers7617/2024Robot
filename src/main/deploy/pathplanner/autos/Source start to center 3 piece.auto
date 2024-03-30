@@ -76,6 +76,12 @@
         {
           "type": "named",
           "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Stow"
           }
         },
@@ -86,7 +92,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
