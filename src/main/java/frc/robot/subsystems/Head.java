@@ -197,7 +197,7 @@ public class Head extends SubsystemBase {
 				
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 				
-				.andThen(Commands.waitSeconds(0.5))
+				.andThen(Commands.waitSeconds(0.1))
 				
 				.andThen(Commands.either(SpinDownShooter().andThen(() -> setIntakeSpeed(0.0)),
 						

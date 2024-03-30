@@ -195,8 +195,8 @@ public final class Constants {
 		public static final int NOTE_SENSOR_DIO = 9;
 		public static final int NOTE_ALIGNMENT_SENSOR_DIO = 6;
 		
-		public static final double INTAKE_SPEED = 0.95;
-		public static final double ALIGMNMENT_SPEED = 0.080;
+		public static final double INTAKE_SPEED = 0.75; //0.95
+		public static final double ALIGMNMENT_SPEED = 0.2; //0.08
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double FEEDER_SPEED = 0.25; // What speed should a note be fed into the shooter at?
 	}

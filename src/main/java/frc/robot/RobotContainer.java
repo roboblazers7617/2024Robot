@@ -100,6 +100,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.AutonomousShoot(arm, head, ShootingPosition.AMP));
 		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStowAndStopIntake(arm, head));
 		NamedCommands.registerCommand("turnSideways", turnSideways());
+		NamedCommands.registerCommand("StopShooter", head.SpinDownShooter());
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
