@@ -8,6 +8,7 @@ package frc.robot.subsystems;
 import frc.robot.util.LimelightHelpers;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -140,6 +141,13 @@ public class Drivetrain extends SubsystemBase {
 		// Create a path following command using AutoBuilder. This will also trigger
 		// event markers.
 		return AutoBuilder.followPath(path);
+	}
+
+	public Command driveToPose(Pose2d pose){
+		PathConstraints constraints = new PathConstraints(
+				swerveDrive.getMaximumVelocity(), 4.0, swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
+		return AutoBuilder.pathfindToPose(pose, constraints, 0.0, 0.0);
+		
 	}
 	
 	/**

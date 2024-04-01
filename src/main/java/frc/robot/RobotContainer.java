@@ -35,7 +35,9 @@ import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -176,6 +178,11 @@ public class RobotContainer {
 		//TODO: Rename DBOT to MID_STAGE to be more descriptive
 		driverControllerCommands.a().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.DBOT))
 				.onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+
+		//TODO: This can be turned into a drive to source function
+		/*driverControllerCommands.b().onTrue(drivetrain.driveToPose(
+				new Pose2d(new Translation2d(2.9,4.11), new Rotation2d( Units.degreesToRadians(-60))))
+				.andThen(Commands.runOnce(() ->drivetrain.resetLastAngeScalar())));*/
 		// driverControllerCommands.b().onTrue(MechanismCommands.AutonomousShoot(arm,head,drivetrain));
 	}
 
