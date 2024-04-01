@@ -51,7 +51,8 @@ public class Arm extends SubsystemBase {
 	/** the last actual arm target */
 	private double lastAcutalArmTarget;
 	/** arm angle based on distance interpolation table */
-	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
+	private final InterpolatingDoubleTreeMap armAngleBasedOnDistanceExtended = new InterpolatingDoubleTreeMap();
+	private final InterpolatingDoubleTreeMap armAngleBasedOnDistanceRetracted = new InterpolatingDoubleTreeMap();
 	
 	// Elevator
 	/** the right motor */
@@ -119,9 +120,16 @@ public class Arm extends SubsystemBase {
 		
 		armTarget = armAbsoluteEncoder.getPosition();
 
-		armAngleBasedOnDistance.put(1.27, ShootingPosition.SUBWOOFER.arm_angle());
-		armAngleBasedOnDistance.put(2.7, 31.25);
-		armAngleBasedOnDistance.put(3.24, 35.25);
+		armAngleBasedOnDistanceExtended.put(1.27, ShootingPosition.SUBWOOFER.arm_angle());
+		armAngleBasedOnDistanceExtended.put(2.7, 31.25);
+		armAngleBasedOnDistanceExtended.put(3.24, 35.25);
+
+		//TODO: Add Treemap values
+		armAngleBasedOnDistanceRetracted.put(1.96, 19.6);
+		armAngleBasedOnDistanceRetracted.put(2.47, 29.0);
+		armAngleBasedOnDistanceRetracted.put(2.92, 32.3);
+		armAngleBasedOnDistanceRetracted.put(3.51, 35.1);
+		armAngleBasedOnDistanceRetracted.put(4.11, 37.3);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus1, 1000);
@@ -198,9 +206,14 @@ public class Arm extends SubsystemBase {
 	 * @param distance
 	 *            the distance to the speaker in meters
 	 */
-	public void setArmTargetByDistance(double distance) {
-		armTarget = MathUtil.clamp(armAngleBasedOnDistance.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
+	public void setArmTargetByDistanceExtended(double distance) {
+		armTarget = MathUtil.clamp(armAngleBasedOnDistanceExtended.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
 	}
+
+	public void setArmTargetByDistanceRetracted(double distance) {
+		armTarget = MathUtil.clamp(armAngleBasedOnDistanceRetracted.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
+	}
+
 	
 	public Command RaiseElevator() {
 		return this.runOnce(() -> setElevatorTarget(ElevatorConstants.MAX_HEIGHT));
@@ -260,9 +273,18 @@ public class Arm extends SubsystemBase {
 		});
 	}
 
+	public Command SetTargets(Supplier<Double> distance){
+		return Commands.runOnce(() -> {
+				//TODO: Remove me!
+				System.out.println("Distance is " + distance.get());
+				setArmTargetByDistanceRetracted(distance.get());
+				setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
+		});
+	}
+
 	public Command SetTargetsAuto(Supplier<Double> distance) {
 		return Commands.runOnce(() -> {
-				setArmTargetByDistance(distance.get());
+				setArmTargetByDistanceExtended(distance.get());
 				setElevatorTarget(ElevatorConstants.MAX_HEIGHT);
 		});
 	}

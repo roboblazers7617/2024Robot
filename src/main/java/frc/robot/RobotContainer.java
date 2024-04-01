@@ -170,7 +170,7 @@ public class RobotContainer {
 		driverControllerCommands.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
 		
 		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
-		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.disableVisionUpdates()));
+		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.doVisionUpdates(false)));
 		
 		//TODO: Shoot should not need the position passed in
 		//TODO: Rename DBOT to MID_STAGE to be more descriptive
@@ -186,7 +186,7 @@ public class RobotContainer {
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
-		operatorControllerCommands.leftBumper().onTrue(Commands.race(new LockWheelsState(drivetrain),MechanismCommands.Shoot(driverController, operatorController, arm, head)));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
@@ -198,7 +198,7 @@ public class RobotContainer {
 				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.Shoot());
+				.onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).alongWith(Commands.runOnce(() -> System.out.println(outputValues(drivetrain::getDistanceToSpeaker, arm::getArmAbsoluteEncoderPosition)))));
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
@@ -225,6 +225,10 @@ public class RobotContainer {
 			isClimbMode = !isClimbMode;
 		}));
 	}
+
+	public String outputValues(Supplier<Double> distance, Supplier<Double> armAngle){
+		return "distance: " + distance.get() + "\n arm angle: " + armAngle.get();
+	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
 		if (DriverStation.getAlliance().isPresent()) {
@@ -244,6 +248,11 @@ public class RobotContainer {
 	private double processJoystickAngularButFree(double joystickInput) {
 		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
 	}
+
+		public void doVisionUpdates(boolean doVisionUpdates){
+			drivetrain.doVisionUpdates(doVisionUpdates);
+		}
+	
 	
 	/**
 	 * Use this to pass the autonomous command to the main {@link Robot} class.

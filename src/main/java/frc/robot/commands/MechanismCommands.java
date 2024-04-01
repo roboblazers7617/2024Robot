@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ShootingConstants;
@@ -122,6 +121,17 @@ public class MechanismCommands {
 		return arm.SetTargets(position)
 				.andThen(head.SpinUpShooter(position));
 	}
+	
+	/**
+	 * will finish when ready
+	 * @param arm
+	 * @param head
+	 * @param position
+	 */
+	public static Command PrepareShoot(Arm arm, Head head, Supplier<Double> distance) {
+		return arm.SetTargets(distance)
+				.andThen(head.SpinUpShooter(ShootingConstants.VARIABLE_DISTANCE_SHOT));
+	}
 
 	public static Command AutonomousPrepareShoot(Arm arm, Head head, Supplier<Double> distance) {
 		return arm.SetTargetsAuto(distance)
@@ -138,6 +148,19 @@ public class MechanismCommands {
 	 */
 	public static Command PrepareShoot(XboxController operatorController, Arm arm, Head head, ShootingPosition position) {
 		return PrepareShoot(arm, head, position)
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+
+	/**
+	 * will finish when ready
+	 * @param operatorController
+	 * @param arm
+	 * @param head
+	 * @param position
+	 * @return
+	 */
+	public static Command PrepareShoot(XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
+		return PrepareShoot(arm, head, distance)
 				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 

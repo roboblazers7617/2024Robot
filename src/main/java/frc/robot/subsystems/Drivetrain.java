@@ -4,17 +4,14 @@
 
 package frc.robot.subsystems;
 
-import java.util.Optional;
 
-import org.photonvision.EstimatedRobotPose;
+import frc.robot.util.LimelightHelpers;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -34,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.shuffleboard.MotorTab;
 
@@ -53,31 +49,29 @@ public class Drivetrain extends SubsystemBase {
 	 * Swerve drive object.
 	 */
 	private final SwerveDrive swerveDrive;
-	//private final Vision vision;
 	
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
-	private Optional<EstimatedRobotPose> visionMeasurement;
 	
-	private boolean doVisionUpdates = false;
-	
+	private boolean doVisionUpdates = true;
+
+	private Timer timer = new Timer();
+
+	private LimelightHelpers.PoseEstimate poseData;
+
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
 	 * @param directory
 	 *            Directory of swerve drive config files.
 	 */
-	public Drivetrain(/*Vision vision*/) {
+	public Drivetrain() {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
 		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
-			// Alternative method if you don't want to supply the conversion factor via JSON
-			// files.
-			// swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
-			// angleConversionFactor, driveConversionFactor);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -92,12 +86,7 @@ public class Drivetrain extends SubsystemBase {
 													// via angle.
 		
 		setupPathPlanner();
-		//this.vision = vision;
-		
-		// for (int i = 0; i < 4; i++) {
-		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getDriveMotor().getMotor() });
-		// 	motorTab.addMotor(new CANSparkMax[] { (CANSparkMax) swerveDrive.getModules()[i].getAngleMotor().getMotor() });
-		// }
+		timer.start();
 	}
 	
 	/**
@@ -167,7 +156,6 @@ public class Drivetrain extends SubsystemBase {
 	 * @return Drive command.
 	 */
 	public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY) {
-		// swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
 		return run(() -> {
 			double xInput = translationX.getAsDouble();
 			double yInput = translationY.getAsDouble();
@@ -188,7 +176,6 @@ public class Drivetrain extends SubsystemBase {
 	 * @return Drive command.
 	 */
 	public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
-		// swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
 		return run(() -> {
 			// Make the robot move
 			driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(), translationY.getAsDouble(), rotation.getAsDouble() * Math.PI, swerveDrive.getOdometryHeading().getRadians(), swerveDrive.getMaximumVelocity()));
@@ -266,7 +253,10 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 		if (doVisionUpdates) {
+			try{
 			processVision();
+			}
+			catch(Exception e){}
 		}
 		motorTab.update();
 	}
@@ -275,10 +265,12 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-		//visionMeasurement = vision.updateOdometry();
-		//if (visionMeasurement.isPresent()) {
-		//	swerveDrive.addVisionMeasurement(visionMeasurement.get().estimatedPose.toPose2d(), visionMeasurement.get().//timestampSeconds);
-		//}
+			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+			if (poseData.tagCount > 0 ) {
+				if( fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().getDistance(getPose().getTranslation()) < SwerveConstants.MAX_DETECTION_RANGE){
+			  swerveDrive.addVisionMeasurement(poseData.pose,poseData.timestampSeconds);
+				}
+			}
 	}
 	
 	/**
@@ -354,8 +346,8 @@ public class Drivetrain extends SubsystemBase {
 		swerveDrive.zeroGyro();
 	}
 	
-	public void disableVisionUpdates() {
-		doVisionUpdates = false;
+	public void doVisionUpdates(boolean doVisionUpdates) {
+		this.doVisionUpdates = doVisionUpdates;
 	}
 	
 	/**
@@ -486,9 +478,9 @@ public class Drivetrain extends SubsystemBase {
 	public double getDistanceToSpeaker() {
 		if (DriverStation.getAlliance().isPresent()) {
 			if (DriverStation.getAlliance().get() == Alliance.Red) {
-				return getPose().getTranslation().minus(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d()).getNorm();
+				return getPose().getTranslation().getDistance(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d());
 			}
-			return getPose().getTranslation().minus(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d()).getNorm();
+			return getPose().getTranslation().getDistance(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d());
 		}
 		return -1;
 	}
