@@ -186,7 +186,7 @@ public class RobotContainer {
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
-		operatorControllerCommands.leftBumper().onTrue(Commands.race(new LockWheelsState(drivetrain),MechanismCommands.Shoot(driverController, operatorController, arm, head)));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
@@ -198,7 +198,7 @@ public class RobotContainer {
 				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.Shoot());
+				.onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).alongWith(Commands.runOnce(() -> System.out.println(outputValues(drivetrain::getDistanceToSpeaker, arm::getArmAbsoluteEncoderPosition)))));
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
@@ -224,6 +224,10 @@ public class RobotContainer {
 		operatorControllerCommands.back().onTrue(Commands.runOnce(() -> {
 			isClimbMode = !isClimbMode;
 		}));
+	}
+
+	public String outputValues(Supplier<Double> distance, Supplier<Double> armAngle){
+		return "distance: " + distance.get() + "\n arm angle: " + armAngle.get();
 	}
 	
 	private boolean checkAllianceColors(Alliance checkAgainst) {

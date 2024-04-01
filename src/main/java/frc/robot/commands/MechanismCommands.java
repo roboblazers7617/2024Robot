@@ -121,6 +121,17 @@ public class MechanismCommands {
 		return arm.SetTargets(position)
 				.andThen(head.SpinUpShooter(position));
 	}
+	
+	/**
+	 * will finish when ready
+	 * @param arm
+	 * @param head
+	 * @param position
+	 */
+	public static Command PrepareShoot(Arm arm, Head head, Supplier<Double> distance) {
+		return arm.SetTargets(distance)
+				.andThen(head.SpinUpShooter(ShootingConstants.VARIABLE_DISTANCE_SHOT));
+	}
 
 	public static Command AutonomousPrepareShoot(Arm arm, Head head, Supplier<Double> distance) {
 		return arm.SetTargetsAuto(distance)
@@ -141,6 +152,19 @@ public class MechanismCommands {
 	}
 
 	/**
+	 * will finish when ready
+	 * @param operatorController
+	 * @param arm
+	 * @param head
+	 * @param position
+	 * @return
+	 */
+	public static Command PrepareShoot(XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
+		return PrepareShoot(arm, head, distance)
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+	}
+
+	/**
 	 * will finish after piece has been shot
 	 * 
 	 * @param arm
@@ -157,8 +181,8 @@ public class MechanismCommands {
 
 	public static Command Shoot(Arm arm, Head head, boolean stopShooter)
     {
-		return /*Commands.waitUntil(() -> arm.areArmAndElevatorAtTarget())
-				.andThen*/(head.Shoot(stopShooter));
+		return Commands.waitUntil(() -> arm.areArmAndElevatorAtTarget())
+				.andThen(head.Shoot(stopShooter));
     }
 
 	public static Command AutonomousShoot(Arm arm, Head head, ShootingPosition position){

@@ -253,7 +253,10 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 		if (doVisionUpdates) {
+			try{
 			processVision();
+			}
+			catch(Exception e){}
 		}
 		motorTab.update();
 	}

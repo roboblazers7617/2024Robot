@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -67,6 +69,7 @@ public final class Constants {
 		}
 
 		public static final int AUTO_SHOOT_SPEED = 6000;
+		public static final int VARIABLE_DISTANCE_SHOT = 6000;
 	}
 
 	public static class ArmConstants {
