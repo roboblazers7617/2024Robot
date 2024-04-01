@@ -264,7 +264,7 @@ public class Drivetrain extends SubsystemBase {
 	private void processVision() {
 			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
 			
-			if (poseData.tagCount > 0) {
+			if (poseData.tagCount > 0 && fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().getDistance(getPose().getTranslation()) < SwerveConstants.MAX_DETECTION_RANGE) {
 			  swerveDrive.addVisionMeasurement(poseData.pose, Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline("") - LimelightHelpers.getLatency_Capture(""));
 
 			}

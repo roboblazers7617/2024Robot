@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -172,6 +173,7 @@ public final class Constants {
 		public static final double TURN_TO_TAG_RANGE_FOR_END = 1.0;
 		public static final double TURN_TO_ANGLE_RANGE_FOR_END = 2.0;
 		public static final double FAST_TURN_TIME = 2.0;
+		public static final double MAX_DETECTION_RANGE = 6.0;
 	}
 	
 	public static class IntakeConstants {
