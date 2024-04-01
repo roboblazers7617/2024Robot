@@ -157,8 +157,8 @@ public class MechanismCommands {
 
 	public static Command Shoot(Arm arm, Head head, boolean stopShooter)
     {
-		return Commands.waitUntil(() -> arm.areArmAndElevatorAtTarget())
-				.andThen(head.Shoot(stopShooter));
+		return /*Commands.waitUntil(() -> arm.areArmAndElevatorAtTarget())
+				.andThen*/(head.Shoot(stopShooter));
     }
 
 	public static Command AutonomousShoot(Arm arm, Head head, ShootingPosition position){

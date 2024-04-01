@@ -188,7 +188,7 @@ public final class Constants {
 		public static final double TURN_TO_TAG_RANGE_FOR_END = 1.0;
 		public static final double TURN_TO_ANGLE_RANGE_FOR_END = 2.0;
 		public static final double FAST_TURN_TIME = 2.0;
-		public static final double MAX_DETECTION_RANGE = 6.0;
+		public static final double MAX_DETECTION_RANGE = 3.2;
 	}
 	
 	public static class IntakeConstants {

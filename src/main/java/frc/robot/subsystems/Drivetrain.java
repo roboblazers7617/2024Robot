@@ -263,10 +263,10 @@ public class Drivetrain extends SubsystemBase {
 	
 	private void processVision() {
 			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
-			
-			if (poseData.tagCount > 0 && fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().getDistance(getPose().getTranslation()) < SwerveConstants.MAX_DETECTION_RANGE) {
-			  swerveDrive.addVisionMeasurement(poseData.pose, Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Pipeline("") - LimelightHelpers.getLatency_Capture(""));
-
+			if (poseData.tagCount > 0 ) {
+				if( fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().getDistance(getPose().getTranslation()) < SwerveConstants.MAX_DETECTION_RANGE){
+			  swerveDrive.addVisionMeasurement(poseData.pose,poseData.timestampSeconds);
+				}
 			}
 	}
 	
@@ -475,9 +475,9 @@ public class Drivetrain extends SubsystemBase {
 	public double getDistanceToSpeaker() {
 		if (DriverStation.getAlliance().isPresent()) {
 			if (DriverStation.getAlliance().get() == Alliance.Red) {
-				return getPose().getTranslation().minus(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d()).getNorm();
+				return getPose().getTranslation().getDistance(fieldLayout.getTagPose(4).get().getTranslation().toTranslation2d());
 			}
-			return getPose().getTranslation().minus(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d()).getNorm();
+			return getPose().getTranslation().getDistance(fieldLayout.getTagPose(7).get().getTranslation().toTranslation2d());
 		}
 		return -1;
 	}
