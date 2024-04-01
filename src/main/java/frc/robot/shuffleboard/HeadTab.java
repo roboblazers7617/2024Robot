@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.ShootingConstants;
+import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.subsystems.Head;
 
 public class HeadTab extends ShuffleboardTabBase {
@@ -51,7 +53,6 @@ public class HeadTab extends ShuffleboardTabBase {
 	public void update() {
 		noteWithinSensorPublisher.set(head.isNoteWithinSensor());
 		// noteInShooterPublisher.set(head.isNoteInShooter());
-		noteAcquiredPublisher.set(head.isNoteAcquired());
 		
 		shooterBottomSpeedPublisher.set(head.getShooterBottomSpeed());
 		shooterTopSpeedPublisher.set(head.getShooterTopSpeed());
@@ -66,7 +67,6 @@ public class HeadTab extends ShuffleboardTabBase {
 		// Intake
 		ShuffleboardLayout intakeLayout = tab.getLayout("Intake", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 0);
 		intakeLayout.add("Note Within Sensor", false).withPosition(0, 0);
-		intakeLayout.add("Note Acquired", false).withPosition(0, 1);
 		
 		intakeLayout.add("Intake", head.IntakePiece()).withPosition(1, 0);
 		intakeLayout.add("Manual Intake", head.StartIntake()).withPosition(2, 0);
@@ -85,9 +85,9 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		shooterLayout.add("Ready to Shoot", false).withPosition(1, 0);
 		
-		shooterLayout.add("Spin Up (speaker)", head.SpinUpShooterForSpeaker()).withPosition(2, 0);
+		shooterLayout.add("Spin Up (speaker)", head.SpinUpShooter(ShootingConstants.ShootingPosition.SUBWOOFER)).withPosition(2, 0);
 		shooterLayout.add("Spin Down", head.SpinDownShooter()).withPosition(2, 1);
-		shooterLayout.add("Shoot (speaker)", head.ShootInSpeaker()).withPosition(2, 2);
+		//shooterLayout.add("Shoot (speaker)", head.Shoot(ShootingConstants.ShootingPosition.SUBWOOFER)).withPosition(2, 2);
 	}
 	
 	@Override

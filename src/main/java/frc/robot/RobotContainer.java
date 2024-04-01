@@ -8,6 +8,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Head;
@@ -29,6 +30,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -45,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -81,7 +84,7 @@ public class RobotContainer {
 
 	private final Command rotationDriveFast = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()*SwerveConstants.FAST_TURN_TIME));
 	
-	private final DigitalInput brakeToggleButton = new DigitalInput(ArmConstants.BRAKE_TOGGLE_BUTTON_DIO);
+	private final DigitalInput brakeToggleButton = new DigitalInput(Constants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -92,16 +95,19 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
-		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(driverController, operatorController, arm, head));
-		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
-		NamedCommands.registerCommand("shootAmp", MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
-		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStow(arm, head));
+		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head, false));
+		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.AutonomousShoot(arm,head, drivetrain));
+		NamedCommands.registerCommand("shootAmp", MechanismCommands.AutonomousShoot(arm, head, ShootingPosition.AMP));
+		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStowAndStopIntake(arm, head));
 		NamedCommands.registerCommand("turnSideways", turnSideways());
+		NamedCommands.registerCommand("StopShooter", head.SpinDownShooter());
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
 		// Configure the trigger bindings
-		configureBindings();
+		configureDefaultCommands();
+		configureDriverBindings();
+		configureOperatorBindings();
 		shuffleboard = ShuffleboardInfo.getInstance();
 		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
 		// YOUR CODE HERE | | |
@@ -122,28 +128,19 @@ public class RobotContainer {
 		shuffleboard.addTabs(tabs);
 	}
 
-
-	/**
-	 * Use this method to define your trigger->command mappings. Triggers can be
-	 * created via the
-	 * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-	 * an arbitrary
-	 * predicate, or via the named factories in {@link
-	 * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-	 * {@link
-	 * CommandXboxController
-	 * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-	 * PS4} controllers or
-	 * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-	 * joysticks}.
-	 */
-	private void configureBindings() {
-		// TODO: (Lukas) There seems to be a bug that if the robot is facing toward the driver station
-		// rather than away from it, even if the pose is updated to have the correct angle
-		// the joysticks do not correctly drive the robot forward. Everything is reversed.
+	private void configureDefaultCommands(){
 		drivetrain.setDefaultCommand(absoluteDrive);
-		
-		// driverControllerCommands.povRight().toggleOnTrue(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-15)));
+		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
+		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
+		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes().andThen(head.ToggleBreakModes()));
+		Trigger enableTrigger = new Trigger(() -> DriverStation.isEnabled());
+		enableTrigger.onTrue(Commands.runOnce(() -> {
+			arm.EnableBrakeMode();
+			head.EnableBrakeMode();
+		}));
+	}
+
+	private void configureDriverBindings(){
 		driverControllerCommands.povRight().whileTrue(turnToSpeaker(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX())));
 		
 		driverControllerCommands.leftBumper()
@@ -175,32 +172,33 @@ public class RobotContainer {
 		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
 		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.doVisionUpdates(false)));
 		
-		driverControllerCommands.a().onTrue(MechanismCommands.ShootOverDBot(driverController, operatorController, arm, head));
-		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeakerAuto(arm, head, drivetrain));
-		
-		// driverControllerCommands.a().onTrue(MechanismCommands.ShootSpeaker(arm, head, 2.97));
-		// driverControllerCommands.b().onTrue(MechanismCommands.ShootSpeaker(arm, head, 4.27));
-		
-		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
-		
+		//TODO: Shoot should not need the position passed in
+		//TODO: Rename DBOT to MID_STAGE to be more descriptive
+		driverControllerCommands.a().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.DBOT))
+				.onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		// driverControllerCommands.b().onTrue(MechanismCommands.AutonomousShoot(arm,head,drivetrain));
+	}
+
+	private void configureOperatorBindings(){
 		operatorControllerCommands.x().and(() -> !isClimbMode).onTrue(arm.Stow());
 		operatorControllerCommands.y().and(() -> !isClimbMode).whileTrue(head.StartOutake()).onFalse(head.StopIntake());
 		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShootAmp(operatorController, arm, head));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.ShootAmp(driverController, operatorController, arm, head));
+		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
+		operatorControllerCommands.leftBumper().onTrue(Commands.race(new LockWheelsState(drivetrain),MechanismCommands.Shoot(driverController, operatorController, arm, head)));
 		
-		operatorControllerCommands.rightTrigger().onTrue(Commands.runOnce(() -> arm.setArmTarget(ArmConstants.SPEAKER_PODIUM_ANGLE)).andThen(Commands.runOnce(() -> arm.setElevatorTarget(ElevatorConstants.MIN_HEIGHT))).andThen(head.SpinUpShooterForPodium())).onFalse(MechanismCommands.ShootSpeakerPodium(driverController, operatorController, arm, head));
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShootSpeakerSubwoofer(driverController, operatorController, arm, head)).onFalse(MechanismCommands.ShootSpeakerSubwoofer(driverController, operatorController, arm, head));
+
+		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.povLeft()
 				.and(() -> (!isClimbMode))
 				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight()
 				.and(() -> (!isClimbMode))
-				.onTrue(head.ShootInSpeaker());
+				.onTrue(head.Shoot());
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
@@ -225,14 +223,6 @@ public class RobotContainer {
 		operatorControllerCommands.start().onTrue(head.IntakePiece());
 		operatorControllerCommands.back().onTrue(Commands.runOnce(() -> {
 			isClimbMode = !isClimbMode;
-		}));
-		
-		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
-		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes().andThen(head.ToggleBreakModes()));
-		Trigger enableTrigger = new Trigger(() -> DriverStation.isEnabled());
-		enableTrigger.onTrue(Commands.runOnce(() -> {
-			arm.EnableBrakeMode();
-			head.EnableBrakeMode();
 		}));
 	}
 	
@@ -276,9 +266,9 @@ public class RobotContainer {
 	
 	public Command turnToSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
-			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(1));
+			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(0.5));
 		}
-		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(1));
+		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(0.5));
 	}
 	
 	public Command turnToSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
@@ -297,9 +287,9 @@ public class RobotContainer {
 	 */
 	public Command pointAwayFromSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
-			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180));
+			return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180)),Commands.waitSeconds(0.5));
 		}
-		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0));
+		return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)),Commands.waitSeconds(0.5));
 	}
 
 	public Command turnSideways(){
