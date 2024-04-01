@@ -54,7 +54,7 @@ public class Drivetrain extends SubsystemBase {
 	private final MotorTab motorTab = new MotorTab(8, "swerveDrive");
 	private AprilTagFieldLayout fieldLayout;
 	
-	private boolean doVisionUpdates = true;
+	private boolean doVisionUpdates = false;
 
 	private Timer timer = new Timer();
 

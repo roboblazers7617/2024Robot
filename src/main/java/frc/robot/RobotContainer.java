@@ -52,6 +52,7 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -101,8 +102,10 @@ public class RobotContainer {
 		NamedCommands.registerCommand("ShootSpeaker", MechanismCommands.AutonomousShoot(arm,head, drivetrain));
 		NamedCommands.registerCommand("shootAmp", MechanismCommands.AutonomousShoot(arm, head, ShootingPosition.AMP));
 		NamedCommands.registerCommand("Stow", MechanismCommands.AutoStowAndStopIntake(arm, head));
-		NamedCommands.registerCommand("turnSideways", turnSideways());
+		NamedCommands.registerCommand("TurnUp", turnSideways());
 		NamedCommands.registerCommand("StopShooter", head.SpinDownShooter());
+		NamedCommands.registerCommand("TurnDown", turnAwayFromAmp());
+		NamedCommands.registerCommand("TurnAndShoot", Commands.sequence(turnToSpeaker(),MechanismCommands.AutonomousShoot(arm, head, drivetrain)));
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
@@ -128,18 +131,21 @@ public class RobotContainer {
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
-	}
 
-	private void configureDefaultCommands(){
-		drivetrain.setDefaultCommand(absoluteDrive);
-		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
-		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes().andThen(head.ToggleBreakModes()));
+		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
+		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
 		Trigger enableTrigger = new Trigger(() -> DriverStation.isEnabled());
 		enableTrigger.onTrue(Commands.runOnce(() -> {
 			arm.EnableBrakeMode();
 			head.EnableBrakeMode();
 		}));
+	}
+
+	private void configureDefaultCommands(){
+		drivetrain.setDefaultCommand(absoluteDrive);
+		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
+
 	}
 
 	private void configureDriverBindings(){
@@ -300,7 +306,7 @@ public class RobotContainer {
 		if (checkAllianceColors(Alliance.Red)) {
 			return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180)),Commands.waitSeconds(0.5));
 		}
-		return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)),Commands.waitSeconds(0.5));
+		return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)),Commands.waitSeconds(1));
 	}
 
 	public Command turnSideways(){
@@ -308,6 +314,13 @@ public class RobotContainer {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
 		}
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
+	}
+
+	public Command turnAwayFromAmp(){
+		if (checkAllianceColors(Alliance.Red)) {
+			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
+		}
+		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
 	}
 
 

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.54,
-      "y": 5.55
+      "x": 1.5338787698652874,
+      "y": 4.112577405249212
     },
     "rotation": 0
   },
@@ -14,7 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootSpeaker"
+            "name": "TurnAndShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
           }
         },
         {
@@ -28,13 +34,13 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.1
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "mid start to mid ring"
+                        "pathName": "bot front start to bot ring"
                       }
                     }
                   ]
@@ -52,7 +58,44 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootSpeaker"
+            "name": "TurnAndShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bot ring to mid ring"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TurnAndShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
           }
         },
         {
@@ -84,6 +127,24 @@
           "type": "named",
           "data": {
             "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
           }
         }
       ]

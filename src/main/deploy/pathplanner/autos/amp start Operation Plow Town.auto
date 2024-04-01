@@ -26,7 +26,13 @@
         {
           "type": "named",
           "data": {
-            "name": "turnSideways"
+            "name": "StopShooter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TurnDown"
           }
         },
         {

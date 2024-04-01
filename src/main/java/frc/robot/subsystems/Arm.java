@@ -121,8 +121,8 @@ public class Arm extends SubsystemBase {
 		armTarget = armAbsoluteEncoder.getPosition();
 
 		armAngleBasedOnDistanceExtended.put(1.27, ShootingPosition.SUBWOOFER.arm_angle());
-		armAngleBasedOnDistanceExtended.put(2.7, 31.25);
-		armAngleBasedOnDistanceExtended.put(3.24, 35.25);
+		armAngleBasedOnDistanceExtended.put(2.7, 33.0); //31.25
+		armAngleBasedOnDistanceExtended.put(3.24, 37.5);//35.25
 
 		//TODO: Add Treemap values
 		armAngleBasedOnDistanceRetracted.put(1.96, 19.6);
