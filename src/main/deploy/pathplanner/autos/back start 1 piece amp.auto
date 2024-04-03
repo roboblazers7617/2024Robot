@@ -24,9 +24,27 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "side amp to top ring"
+            "pathName": "I amp and I out"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TurnDown"
           }
         }
       ]

@@ -99,13 +99,14 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		m_robotContainer.doVisionUpdates(false);
 		m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
 		// schedule the autonomous command (example)
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
 		}
-		m_robotContainer.doVisionUpdates(false);
+		
 
 
 	}
@@ -125,8 +126,9 @@ public class Robot extends TimedRobot {
 			m_autonomousCommand.cancel();
 		}
 
+		m_robotContainer.StopShooter();
 		m_robotContainer.doVisionUpdates(true);
-
+		
 		m_robotContainer.setMotorBrake(true);
 		// m_robotContainer.teleopInit();
 

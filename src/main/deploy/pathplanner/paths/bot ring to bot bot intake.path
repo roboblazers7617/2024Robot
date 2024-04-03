@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.25,
-        "y": 4.11
+        "x": 2.3521533028814288,
+        "y": 4.112577405249212
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.184896542874667,
-        "y": 4.11
+        "x": 1.2870498457560957,
+        "y": 4.112577405249212
       },
       "isLocked": false,
       "linkedName": "bot ring"

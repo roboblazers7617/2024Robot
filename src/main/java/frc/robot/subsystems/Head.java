@@ -139,6 +139,12 @@ public class Head extends SubsystemBase {
 		shooterControllerBottom.setReference(shooterSetPoint, ControlType.kVelocity);
 		shooterControllerTop.setReference(shooterSetPoint, ControlType.kVelocity);
 	}
+
+	public void stopShooter(){
+			shooterSetPoint = 0.0;
+			shooterMotorBottom.setVoltage(0);
+			shooterMotorTop.setVoltage(0);
+	}
 	
 	public double getShooterBottomSpeed() {
 		return shooterEncoderBottom.getVelocity();
@@ -199,7 +205,7 @@ public class Head extends SubsystemBase {
 				
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
 				
-				.andThen(Commands.waitSeconds(0.1))
+				.andThen(Commands.waitSeconds(0.2))
 				
 				.andThen(Commands.either(SpinDownShooter().andThen(() -> setIntakeSpeed(0.0)),
 						
@@ -221,7 +227,7 @@ public class Head extends SubsystemBase {
 			} else {
 				intakeMotor.setIdleMode(IdleMode.kBrake);
 			}
-		});
+		}).ignoringDisable(true);
 	}
 	
 	public Command EnableBrakeMode() {

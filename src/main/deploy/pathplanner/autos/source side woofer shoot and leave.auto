@@ -5,7 +5,7 @@
       "x": 0.66,
       "y": 4.41
     },
-    "rotation": 120.0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -33,6 +33,18 @@
           "type": "named",
           "data": {
             "name": "turnTo0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
           }
         }
       ]
