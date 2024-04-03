@@ -106,6 +106,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("StopShooter", head.SpinDownShooter());
 		NamedCommands.registerCommand("TurnDown", turnAwayFromAmp());
 		NamedCommands.registerCommand("TurnAndShoot", Commands.sequence(turnToSpeaker(),MechanismCommands.AutonomousShoot(arm, head, drivetrain)));
+		NamedCommands.registerCommand("variableShoot", MechanismCommands.PrepareShoot(arm, head, ()->drivetrain.getDistanceToSpeaker()).andThen(MechanismCommands.Shoot(arm, head)));
 		
 		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
 		
@@ -283,9 +284,9 @@ public class RobotContainer {
 	
 	public Command turnToSpeaker() {
 		if (checkAllianceColors(Alliance.Red)) {
-			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(0.75));
+			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(1));
 		}
-		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(0.75));
+		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(1));
 	}
 	
 	public Command turnToSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
