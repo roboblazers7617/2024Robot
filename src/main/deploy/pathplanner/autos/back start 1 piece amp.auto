@@ -24,12 +24,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "I amp and I out"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Stow"
@@ -42,9 +36,15 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "I amp and I out"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "TurnUp"
+            "name": "TurnDown"
           }
         }
       ]

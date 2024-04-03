@@ -64,6 +64,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "turnToSpeaker"
           }
         },

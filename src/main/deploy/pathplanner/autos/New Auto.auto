@@ -2,21 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.54,
-      "y": 7.0
+      "x": 0.6573619984846805,
+      "y": 4.408696224799858
     },
-    "rotation": 0.0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "turnToSpeaker"
-          }
-        },
         {
           "type": "named",
           "data": {
@@ -32,26 +26,13 @@
         {
           "type": "named",
           "data": {
-            "name": "TurnDown"
+            "name": "Stow"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stow"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "disrupt"
-                }
-              }
-            ]
+            "pathName": "Copy of bot woofer"
           }
         }
       ]
