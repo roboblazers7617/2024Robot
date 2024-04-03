@@ -139,6 +139,12 @@ public class Head extends SubsystemBase {
 		shooterControllerBottom.setReference(shooterSetPoint, ControlType.kVelocity);
 		shooterControllerTop.setReference(shooterSetPoint, ControlType.kVelocity);
 	}
+
+	public void stopShooter(){
+			shooterSetPoint = 0.0;
+			shooterMotorBottom.setVoltage(0);
+			shooterMotorTop.setVoltage(0);
+	}
 	
 	public double getShooterBottomSpeed() {
 		return shooterEncoderBottom.getVelocity();

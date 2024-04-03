@@ -126,8 +126,9 @@ public class Robot extends TimedRobot {
 			m_autonomousCommand.cancel();
 		}
 
+		m_robotContainer.StopShooter();
 		m_robotContainer.doVisionUpdates(true);
-
+		
 		m_robotContainer.setMotorBrake(true);
 		// m_robotContainer.teleopInit();
 

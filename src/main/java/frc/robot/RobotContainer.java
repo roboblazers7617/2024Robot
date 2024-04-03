@@ -323,5 +323,10 @@ public class RobotContainer {
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
 	}
 
+	public void StopShooter()
+	{
+		head.stopShooter();
+	}
+
 
 }
