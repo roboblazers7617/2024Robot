@@ -16,12 +16,15 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -59,6 +62,8 @@ public class Drivetrain extends SubsystemBase {
 	private Timer timer = new Timer();
 
 	private LimelightHelpers.PoseEstimate poseData;
+
+	private Vector<N3> kalmanStdDevs = VecBuilder.fill(.7, .7, Integer.MAX_VALUE);
 
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
@@ -276,7 +281,7 @@ public class Drivetrain extends SubsystemBase {
 			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
 			if (poseData.tagCount > 0 ) {
 				if( fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().getDistance(getPose().getTranslation()) < SwerveConstants.MAX_DETECTION_RANGE){
-			  swerveDrive.addVisionMeasurement(poseData.pose,poseData.timestampSeconds);
+			  swerveDrive.addVisionMeasurement(poseData.pose,poseData.timestampSeconds, kalmanStdDevs);
 				}
 			}
 	}
