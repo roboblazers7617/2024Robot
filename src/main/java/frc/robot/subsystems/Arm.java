@@ -128,8 +128,13 @@ public class Arm extends SubsystemBase {
 		armAngleBasedOnDistanceRetracted.put(1.96, 19.6);
 		armAngleBasedOnDistanceRetracted.put(2.47, 29.0);
 		armAngleBasedOnDistanceRetracted.put(2.92, 32.3);
+		armAngleBasedOnDistanceRetracted.put(2.96, 30.9);
 		armAngleBasedOnDistanceRetracted.put(3.51, 35.1);
+		armAngleBasedOnDistanceRetracted.put(3.61,32.7);
 		armAngleBasedOnDistanceRetracted.put(4.11, 37.3);
+		armAngleBasedOnDistanceRetracted.put(4.25, 38.3);
+		armAngleBasedOnDistanceRetracted.put(4.29, 38.3);
+		armAngleBasedOnDistanceRetracted.put(4.31, 37.6);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus1, 1000);
