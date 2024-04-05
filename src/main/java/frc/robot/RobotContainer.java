@@ -200,19 +200,16 @@ public class RobotContainer {
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker));
 		
 		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.povLeft()
-				.and(() -> (!isClimbMode))
-				.whileTrue(head.StopIntake().andThen(head.SpinDownShooter()));
-		operatorControllerCommands.povRight()
-				.and(() -> (!isClimbMode))
-				.onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).alongWith(Commands.runOnce(() -> System.out.println(outputValues(drivetrain::getDistanceToSpeaker, arm::getArmAbsoluteEncoderPosition)))));
+		operatorControllerCommands.povLeft().onTrue(head.StopIntake().andThen(head.SpinDownShooter()));
+		operatorControllerCommands.povRight().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+				
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
 		operatorControllerCommands.povDown().onTrue(Commands.runOnce(() -> climber.setSpeed(-ClimberConstants.CLIMB_RATE, -ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
