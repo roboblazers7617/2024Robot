@@ -69,7 +69,7 @@ public final class Constants {
 		}
 
 		public static final int AUTO_SHOOT_SPEED = 6000;
-		public static final int VARIABLE_DISTANCE_SHOT = 6000;
+		public static final int VARIABLE_DISTANCE_SHOT = 6500;
 	}
 
 	public static class ArmConstants {
@@ -97,7 +97,7 @@ public final class Constants {
 		public static final double FLOOR_PICKUP = 3.75;
 		public static final double STOW_ANGLE = 20.0;
 		/** the mininum angle the arm can be where the elevator can pass over the bumper */
-		public static final double MIN_ABOVE_PASS_ANGLE = 20;
+		public static final double MIN_ABOVE_PASS_ANGLE = 18.5;
 
 		// Constants for extended state
 		public static final double EXTENDED_KS = 0.17; //these values are based on the test arm

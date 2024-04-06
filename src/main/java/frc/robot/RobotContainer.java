@@ -200,15 +200,15 @@ public class RobotContainer {
 		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker));
+		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
-		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
-		
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker))
+				.onFalse(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).andThen(MechanismCommands.Shoot(arm, head)));	
 
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.povLeft().onTrue(head.StopIntake().andThen(head.SpinDownShooter()));
-		operatorControllerCommands.povRight().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		operatorControllerCommands.povRight().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 				
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
