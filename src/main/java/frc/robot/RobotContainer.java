@@ -108,7 +108,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("TurnAndShoot", Commands.sequence(turnToSpeaker(),MechanismCommands.AutonomousShoot(arm, head, drivetrain)));
 		NamedCommands.registerCommand("variableShoot", MechanismCommands.PrepareShoot(arm, head, ()->drivetrain.getDistanceToSpeaker()).andThen(MechanismCommands.Shoot(arm, head)));
 		
-		autoChooser = AutoBuilder.buildAutoChooser("Default Path");
+		autoChooser = AutoBuilder.buildAutoChooser("mid start 2 piece");
 		
 		// Configure the trigger bindings
 		configureDefaultCommands();
@@ -203,7 +203,7 @@ public class RobotContainer {
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker))
-				.onFalse(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).andThen(MechanismCommands.Shoot(arm, head)));	
+				.onFalse(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).andThen(MechanismCommands.Shoot(arm, head)).andThen(arm.Stow()));	
 
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		

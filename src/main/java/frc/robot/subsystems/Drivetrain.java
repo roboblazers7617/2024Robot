@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.shuffleboard.MotorTab;
 
 import java.io.File;
@@ -278,12 +279,28 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+			//if(checkAllianceColors(Alliance.Blue)){
+			LimelightHelpers.SetRobotOrientation("", getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+			//}
+			/*else{
+				LimelightHelpers.SetRobotOrientation("", getPose().getRotation().plus(Rotation2d.fromDegrees(180)).getDegrees(), 0, 0, 0, 0, 0);
+			}*/
+
+			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
 			if (poseData.tagCount > 0 ) {
-				if( fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().getDistance(getPose().getTranslation()) < SwerveConstants.MAX_DETECTION_RANGE){
+				if( fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().
+				getDistance(getPose().getTranslation()) < VisionConstants.MAX_DETECTION_RANGE){
 			  swerveDrive.addVisionMeasurement(poseData.pose,poseData.timestampSeconds, kalmanStdDevs);
+			  
 				}
 			}
+	}
+
+	private boolean checkAllianceColors(Alliance checkAgainst) {
+		if (DriverStation.getAlliance().isPresent()) {
+			return DriverStation.getAlliance().get() == checkAgainst;
+		}
+		return false;
 	}
 	
 	/**

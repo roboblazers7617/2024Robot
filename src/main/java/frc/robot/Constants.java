@@ -191,7 +191,6 @@ public final class Constants {
 		public static final double TURN_TO_TAG_RANGE_FOR_END = 1.0;
 		public static final double TURN_TO_ANGLE_RANGE_FOR_END = 2.0;
 		public static final double FAST_TURN_TIME = 2.0;
-		public static final double MAX_DETECTION_RANGE = 3.2;
 	}
 	
 	public static class IntakeConstants {
@@ -244,6 +243,7 @@ public final class Constants {
 	public static final int NUMBER_OF_MOTORS = 10;
 	
 	public static class VisionConstants {
+		public static final double MAX_DETECTION_RANGE = 5.5;//TODO 3.2
 		public static final Transform3d INTAKE_CAMERA_POSITION = new Transform3d(Units.inchesToMeters(10.0 + 5.0 / 8.0), -Units.inchesToMeters(-(11.0 + 3.0/6.0)), Units.inchesToMeters(9.0 + 1.0 / 4.0), new Rotation3d(0, Units.degreesToRadians(-45), 0));
 		public static final Transform3d SHOOTER_CAMERA_POSITION = new Transform3d(-Units.inchesToMeters(-(10.0 + 5.0 / 8.0)), Units.inchesToMeters(11.0 + 3.0/6.0), Units.inchesToMeters(9.0 + 1.0 / 4.0), new Rotation3d(0, Units.degreesToRadians(45), Units.degreesToRadians(180)));
 	}
