@@ -125,9 +125,9 @@ public class Arm extends SubsystemBase {
 		armAngleBasedOnDistanceExtended.put(3.1, 37.0);//35.25
 
 		//TODO: Add Treemap values
-		armAngleBasedOnDistanceRetracted.put(1.96, 19.6);
-		armAngleBasedOnDistanceRetracted.put(2.47, 29.0);
-		armAngleBasedOnDistanceRetracted.put(2.92, 32.3);
+		armAngleBasedOnDistanceRetracted.put(1.96, 18.6);
+		armAngleBasedOnDistanceRetracted.put(2.47, 27.0);
+		armAngleBasedOnDistanceRetracted.put(2.92, 31.8);
 		armAngleBasedOnDistanceRetracted.put(2.96, 30.9);
 		armAngleBasedOnDistanceRetracted.put(3.51, 35.1);
 		armAngleBasedOnDistanceRetracted.put(3.61,32.7);
