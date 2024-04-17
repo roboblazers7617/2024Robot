@@ -41,9 +41,9 @@ public final class Constants {
 		public enum ShootingPosition {
 			//TODO: Rename DBOT to MID_STAGE to be more descriptive
 			AMP(1500.0, 84.5, ElevatorConstants.MAX_HEIGHT),
-			SUBWOOFER(5500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
-			PODIUM(7000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
-			DBOT(8000.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
+			SUBWOOFER(3500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			PODIUM(4000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
+			DBOT(4000.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
 		
 			ShootingPosition(double rpm, double arm_angle, double elevator_target) {
 				this.rpm = rpm;
@@ -68,8 +68,8 @@ public final class Constants {
 			}
 		}
 
-		public static final int AUTO_SHOOT_SPEED = 6000;
-		public static final int VARIABLE_DISTANCE_SHOT = 6750;
+		public static final int AUTO_SHOOT_SPEED = 4000;
+		public static final int VARIABLE_DISTANCE_SHOT = 4000;
 	}
 
 	public static class ArmConstants {
