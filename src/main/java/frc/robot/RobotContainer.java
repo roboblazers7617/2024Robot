@@ -21,6 +21,7 @@ import frc.robot.shuffleboard.ShuffleboardTabBase;
 import frc.robot.shuffleboard.SwerveTab;
 import frc.robot.shuffleboard.HeadTab;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ButtonBox;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -60,6 +61,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
 	private final ShuffleboardInfo shuffleboard;
+	private final ButtonBox buttonBox = new ButtonBox();
 	private final Head head = new Head();
 	private final LED led = new LED(SerialPort.Port.kMXP, head);
 	private final Arm arm = new Arm();
@@ -74,10 +76,8 @@ public class RobotContainer {
 	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
 	// private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(/* vision */);
-	
-	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngular(driverControllerCommands.getRightX()), () -> processJoystickAngular(driverControllerCommands.getRightY()));
-	
-	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()));
+
+	private final Command wheelDrive = drivetrain.simDriveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> buttonBox.getWheelPosition());
 	
 	private final DigitalInput brakeToggleButton = new DigitalInput(Constants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
@@ -126,7 +126,7 @@ public class RobotContainer {
 	}
 
 	private void configureDefaultCommands(){
-		drivetrain.setDefaultCommand(absoluteDrive);
+		drivetrain.setDefaultCommand(wheelDrive);
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes().andThen(head.ToggleBreakModes()));
@@ -140,9 +140,6 @@ public class RobotContainer {
 	private void configureDriverBindings(){
 		driverControllerCommands.povRight().whileTrue(turnToSpeaker(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX())));
 		
-		driverControllerCommands.leftBumper()
-				.onTrue(new ScheduleCommand(rotationDrive))
-				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
 		driverControllerCommands.rightBumper()
 				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.SLOW_SPEED_DECREMENT)))
 				.onFalse(Commands.runOnce(() -> speedMultiplier += SwerveConstants.SLOW_SPEED_DECREMENT));
