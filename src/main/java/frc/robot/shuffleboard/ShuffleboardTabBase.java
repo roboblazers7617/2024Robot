@@ -12,15 +12,4 @@ public abstract class ShuffleboardTabBase {
 	 */
 	public abstract void update();
 
-	/**
-	 * This will be called when the tab is added to shuffleboard. Prior to this data
-	 * can be written to network tables but a shuffleboard tab can never be created.
-	 */
-	public abstract void activateShuffleboard();
-
-	/**
-	 * return the name of the network table being pushed to (not including the
-	 * logging/)
-	 */
-	public abstract String getNetworkTable();
 }
