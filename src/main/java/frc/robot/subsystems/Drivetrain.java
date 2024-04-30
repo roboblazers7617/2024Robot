@@ -5,7 +5,9 @@
 package frc.robot.subsystems;
 
 
+import frc.robot.util.FieldHelpers;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.FieldHelpers.TagLocation;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
@@ -21,12 +23,14 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -66,6 +70,8 @@ public class Drivetrain extends SubsystemBase {
 
 	private Vector<N3> kalmanStdDevs = VecBuilder.fill(.7, .7, Integer.MAX_VALUE);
 
+	private final double DISTANCE_FROM_TARGET = Units.inchesToMeters(20);
+
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
@@ -75,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
 	public Drivetrain() {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
 		// objects being created.
-		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
+		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 		try {
 			swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
 					.createSwerveDrive(SwerveConstants.MAX_VELOCITY_METER_PER_SEC);
@@ -149,11 +155,57 @@ public class Drivetrain extends SubsystemBase {
 		return AutoBuilder.followPath(path);
 	}
 
-	public Command driveToPose(Pose2d pose){
+	public Command DriveToPose(Pose2d pose){
+		DataLogManager.log("DriveToPose: " + pose);
 		PathConstraints constraints = new PathConstraints(
 				swerveDrive.getMaximumVelocity(), 4.0, swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
 		return AutoBuilder.pathfindToPose(pose, constraints, 0.0, 0.0);
 		
+	}
+
+	public Command DriveToLocation(TagLocation location){
+		return DriveToPose(calculateRobotPose(location));
+	}
+
+	public Command ResetPose(TagLocation location)
+	{
+		DataLogManager.log("ResetPose: " + location.toString());
+		return Commands.run(() ->resetOdometry(calculateRobotPose(location)));
+	}
+	
+	/* 
+	 *  Calculates that Pose for the robot from the given location. Subtracts/adds the size of the 
+	 *  robot from the pose because the robot cannot be on top of the location.
+	 */
+	private Pose2d calculateRobotPose(TagLocation location)
+	{
+		Pose2d targetPose = FieldHelpers.getInstance().getPose(location);
+
+		switch (location) {
+			case SPEAKER -> {
+						if (checkAllianceColors(Alliance.Blue)){
+							//When blue, robot needs to be in front of the tag (add x)
+							targetPose  = new Pose2d(targetPose.getX()+ DISTANCE_FROM_TARGET, targetPose.getY(), targetPose.getRotation());
+						} else {
+							// when red, the robot needs to be behind the tag (subtract x)
+							targetPose = new Pose2d(targetPose.getX()- DISTANCE_FROM_TARGET, targetPose.getY(), targetPose.getRotation());						}
+					}
+			case AMP -> {
+							targetPose = new Pose2d(targetPose.getX(), targetPose.getY()- DISTANCE_FROM_TARGET, targetPose.getRotation());					
+					}
+			case SOURCE_CLOSE, SOURCE_FAR -> {
+						if (checkAllianceColors(Alliance.Blue)){
+							//When blue, robot needs to be in front of the tag (add x)
+							targetPose  = new Pose2d(targetPose.getX() - DISTANCE_FROM_TARGET, targetPose.getY() + DISTANCE_FROM_TARGET, targetPose.getRotation());
+						} else {
+							// when red, the robot needs to be behind the tag (subtract x)
+							targetPose = new Pose2d(targetPose.getX()+ DISTANCE_FROM_TARGET, targetPose.getY() + DISTANCE_FROM_TARGET, targetPose.getRotation());
+						}
+
+					}
+			default -> {}
+		}
+		return targetPose;
 	}
 	
 	/**

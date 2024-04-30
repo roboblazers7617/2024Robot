@@ -90,23 +90,25 @@ public class MotorTab{
 	 * this method must be called in activateShuffleboard() to add the motors to the shuffleboard in the correct position
 	 */
 	public void activateShuffleboard(){
-		for (int i = 0; i < motors.length; i++) {
+	/* 	for (int i = 0; i < motors.length; i++) {
 			tab.add("Motor: " + (motors[i].getDeviceId()) + " Bus Voltage", busVoltagePublishers[i]).withPosition(0, i + rowOffset);
 			tab.add("Motor: " + (motors[i].getDeviceId()) + " Total Current", optionCurrentPublishers[i]).withPosition(1, i + rowOffset);
 			tab.add("Motor: " + (motors[i].getDeviceId()) + " Sticky Faults", stickyFaultPublisher[i]).withPosition(2, i + rowOffset);
 			tab.add("Motor: " + (motors[i].getDeviceId()) + " Motor Temperature", motorTemperaturePublishers[i]).withPosition(3, i + rowOffset);
 			tab.add("Motor: " + (motors[i].getDeviceId()) + " Encoder Position", motorEncoderPublishers[i]).withPosition(4, i + rowOffset);
 		}
+		*/
 	}
 	/** this MUST be called in periodic() */
 	public void update() {
-		for (int i = 0; i < numberOfMotors; i++) {
+	/* 	for (int i = 0; i < numberOfMotors; i++) {
 			busVoltagePublishers[i].set(motors[i].getBusVoltage());
 			optionCurrentPublishers[i].set(motors[i].getOutputCurrent());
 			stickyFaultPublisher[i].set(motors[i].getStickyFaults());
 			motorTemperaturePublishers[i].set(motors[i].getMotorTemperature());
 			motorEncoderPublishers[i].set(motors[i].getEncoder().getPosition());
 		}
+*/
 	}
 
 	

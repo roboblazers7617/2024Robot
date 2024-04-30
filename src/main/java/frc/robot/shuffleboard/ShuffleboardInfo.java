@@ -57,7 +57,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// if robot is not connected to the field system, enable shuffleboard
-		if (false) {
+		if (true) {
 			activateTabs();
 		}
 		// This method will be called once per scheduler run

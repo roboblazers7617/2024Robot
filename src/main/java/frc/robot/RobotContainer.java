@@ -11,9 +11,11 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
+import frc.robot.util.FieldHelpers;
+import frc.robot.util.FieldHelpers.TagLocation;
 import frc.robot.subsystems.Head;
+import frc.robot.shuffleboard.TestCommandsTab;
 import frc.robot.shuffleboard.ArmTab;
-
 import frc.robot.shuffleboard.ClimberTab;
 import frc.robot.shuffleboard.DriverStationTab;
 import frc.robot.shuffleboard.LEDTab;
@@ -45,6 +47,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -71,6 +74,7 @@ public class RobotContainer {
 	private final Arm arm = new Arm();
 	private final Climber climber = new Climber();
 	public final SendableChooser<Command> autoChooser;
+	private final FieldHelpers myFieldHelper = FieldHelpers.getInstance();
 	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandXboxController driverControllerCommands = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
@@ -86,6 +90,10 @@ public class RobotContainer {
 	private final Command rotationDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()));
 
 	private final Command rotationDriveFast = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngularButFree(driverControllerCommands.getRightX()*SwerveConstants.FAST_TURN_TIME));
+
+	Command driveFieldOrientedDirectAngleSim = drivetrain.simDriveCommand(
+        () -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()),
+        () -> driverController.getRawAxis(2));
 	
 	private final DigitalInput brakeToggleButton = new DigitalInput(Constants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
@@ -129,6 +137,8 @@ public class RobotContainer {
 		tabs.add(new HeadTab(head));
 		
 		tabs.add(new ClimberTab(climber));
+
+		tabs.add(new TestCommandsTab(drivetrain));
 		
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
@@ -141,10 +151,14 @@ public class RobotContainer {
 			arm.EnableBrakeMode();
 			head.EnableBrakeMode();
 		}));
+
+
+		PointAwayFromLocation(TagLocation.AMP);
 	}
 
 	private void configureDefaultCommands(){
-		drivetrain.setDefaultCommand(absoluteDrive);
+
+		drivetrain.setDefaultCommand(!RobotBase.isSimulation() ? absoluteDrive : driveFieldOrientedDirectAngleSim);
 		arm.setDefaultCommand(arm.ArmDefaultCommand(() -> Math.abs(operatorController.getRightY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getRightY() * ArmConstants.MAX_MANNUAL_ARM_SPEED : 0, () -> Math.abs(operatorController.getLeftY()) > OperatorConstants.OPERATOR_JOYSTICK_DEADBAND ? -operatorController.getLeftY() * ElevatorConstants.MAX_MANUAL_SPEED : 0));
 
 	}
@@ -191,6 +205,10 @@ public class RobotContainer {
 				new Pose2d(new Translation2d(2.9,4.11), new Rotation2d( Units.degreesToRadians(-60))))
 				.andThen(Commands.runOnce(() ->drivetrain.resetLastAngeScalar())));*/
 		// driverControllerCommands.b().onTrue(MechanismCommands.AutonomousShoot(arm,head,drivetrain));
+		driverControllerCommands.x().whileTrue(turnToSpeaker(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX())));
+		
+		//Turn to source 
+		driverControllerCommands.y().whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.sin(Units.degreesToRadians(150)), () -> Math.cos(Units.degreesToRadians(150))));
 	}
 
 	private void configureOperatorBindings(){
@@ -280,33 +298,42 @@ public class RobotContainer {
 	}
 	
 	public Command turnToSpeaker() {
-		if (checkAllianceColors(Alliance.Red)) {
-			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(1));
-		}
-		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(1));
+		return new ParallelRaceGroup(new TurnToTag(drivetrain, FieldHelpers.TagLocation.SPEAKER.id(), true), Commands.waitSeconds(1));
 	}
 	
 	public Command turnToSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
-		if (checkAllianceColors(Alliance.Red)) {
-			return new TurnToTag(drivetrain, 4, true, yMovement, xMovement);
-		}
-		return new TurnToTag(drivetrain, 7, true, yMovement, xMovement);
+		return new TurnToTag(drivetrain, FieldHelpers.TagLocation.SPEAKER.id(), true, yMovement, xMovement);
+	}
+
+	public Command turnToSource(Supplier<Double> yMovement, Supplier<Double> xMovement) {
+
+		return new TurnToTag(drivetrain, FieldHelpers.TagLocation.SOURCE_CLOSE.id(), true, yMovement, xMovement);
+	
 	}
 	
 	public void teleopInit() {
 		// arm.teleopInit();
+	
 	}
 	
 	/**
 	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
 	 */
 	public Command pointAwayFromSpeaker() {
+		
+		return new ParallelRaceGroup(PointAwayFromLocation(TagLocation.SPEAKER),Commands.waitSeconds(0.5));
+		/* 
 		if (checkAllianceColors(Alliance.Red)) {
 			return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180)),Commands.waitSeconds(0.5));
 		}
 		return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)),Commands.waitSeconds(1));
+		*/
 	}
 
+	public Command PointAwayFromLocation(FieldHelpers.TagLocation location){
+		return drivetrain.turnToAngleCommand(myFieldHelper.getPose(location).getRotation().rotateBy(new Rotation2d(Units.degreesToRadians(180))));
+
+	}
 	public Command turnSideways(){
 		if (checkAllianceColors(Alliance.Red)) {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
@@ -315,10 +342,14 @@ public class RobotContainer {
 	}
 
 	public Command turnAwayFromAmp(){
+
+		return PointAwayFromLocation(TagLocation.AMP);
+		/* 
 		if (checkAllianceColors(Alliance.Red)) {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
 		}
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
+		*/
 	}
 
 	public void StopShooter()

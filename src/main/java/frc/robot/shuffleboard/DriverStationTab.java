@@ -33,6 +33,8 @@ public class DriverStationTab extends ShuffleboardTabBase {
 	private final BooleanPublisher isBrownedOut;
 	private final BooleanPublisher isButtonPushed;
 	private final DigitalInput button;
+
+	private Alert canErrorAlert = new Alert("CAN errors", AlertType.ERROR);
 	
 	private SendableChooser<Command> autoChooser = new SendableChooser<>();
 	
@@ -66,6 +68,7 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		isDriverStationConnected.set(DriverStation.isDSAttached());
 		isBrownedOut.set(RobotController.isBrownedOut());
 		isButtonPushed.set(button.get());
+
 	}
 	
 	@Override
