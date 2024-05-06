@@ -21,25 +21,26 @@ public class Logging {
 	private final DoubleLogEntry log;
 	private DoublePublisher publisher;
 	
-	/*
+	/**
 	 * Creates a new Logging object with for specified field and will not automatically push to network tables.
-	 * <br>
+	 * 
+	 * @param table The network table to publish the logging message to.
 	 * @param field The root of the logging message.
 	 */
 	public Logging(String table, String field) {
 		this(table, field, false);
 	}
 	
-	/*
+	/**
 	 * Creates a new Logging object for specified field and will push to network tables based on alwaysDisplay.
-	 * <br>
+	 * 
+	 * @param table The network table to publish the logging message to.
 	 * @param field The root of the logging message.
 	 * @param alwaysDisplay Whether the message should always be pushed to network tables.
 	 */
 	public Logging(String table, String field, boolean alwaysDisplay) {
 		this.field = field;
 		this.table = table;
-		// System.out.println("field: " + field);
 		publishing = alwaysDisplay || Constants.debugMode;
 		
 		DataLog logRoot = DataLogManager.getLog();
@@ -49,23 +50,19 @@ public class Logging {
 		}
 	}
 	
-	/*
+	/**
 	 * Activates network tables for this logging object.
 	 */
 	private void activateNetworkTables() {
-		// publishing = true;
-		
 		publisher = NetworkTableInstance.getDefault().getTable("Shuffleboard/" + table).getDoubleTopic(field).publish();
-		// System.out.println("activated network tables: " + field);
-		// DoubleSubscriber subscriber = new DoubleTopic(field).subscribe(0, null);
 	}
 	
-	/*
+	/**
 	 * Logs the message to the console and network tables if alwaysDisplay is true.
-	 * @param message The message to log.
+	 * 
+	 * @param value The value to log.
 	 */
 	public void log(double value) {
-		// System.out.println("logging");
 		log.append(value);
 		
 		if (!publishing && Constants.debugMode) {
@@ -75,7 +72,6 @@ public class Logging {
 		
 		if (publishing) {
 			publisher.set(value);
-			// System.out.println("")
 		}
 	}
 }
