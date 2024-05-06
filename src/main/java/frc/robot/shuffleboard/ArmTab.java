@@ -18,10 +18,11 @@ public class ArmTab extends ShuffleboardTabBase {
 		
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		
-		NetworkTable networkTable = inst.getTable("logging/arm");
+		NetworkTable networkTable = inst.getTable("Shuffleboard/arm");
 		
 		armAbsoluteEncoderPub = networkTable.getDoubleTopic("Arm Absolute Encoder").publish();
 		elevatorPub = networkTable.getDoubleTopic("Elevator").publish();
+		Shuffleboard.getTab("arm").add("toggle brake modes", arm.ToggleBrakeModes());
 	}
 	
 	@Override
@@ -30,28 +31,8 @@ public class ArmTab extends ShuffleboardTabBase {
 		elevatorPub.set(arm.getElevatorAbsoluteEncoderPosition());
 	}
 	
-	@Override
-	public void activateShuffleboard() {
-		ShuffleboardTab tab = Shuffleboard.getTab("arm");
-		// TODO: (Brandon) Can you remove all the .ignoringDisable(true) as we don't want those to accidentally
-		// get put back in the code as it could be an arm safety issue
-		// tab.add("raise arm", new InstantCommand(() -> arm.raiseArm()).ignoringDisable(true));
-		// tab.add("add elevator feed foward values", arm.addElevatorFeedFowardValuesCommand());
-		// tab.add("generate new arm feed foward values", arm.generateNewArmFeedFoward());
-		// tab.add("generate new elevator feed foward values", arm.generateNewElevatorFeedFoward());
-		tab.add("arm subsystem", arm);
-		tab.add("toggle brake modes", arm.ToggleBrakeModes());
-		tab.add("extend elevator", arm.RaiseElevator());
-		tab.add("retract elevator", arm.lowerElevator());
-		tab.add("stow", arm.Stow());
-		// tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
-		// tab.add("foward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kForward));
-		// tab.add("backward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kReverse));
-		arm.getMotorTab().activateShuffleboard();
-	}
-	
-	@Override
-	public String getNetworkTable() {
-		return "arm";
-	}
+		// tab.add("toggle brake modes", arm.ToggleBrakeModes());
+		// tab.add("extend elevator", arm.RaiseElevator());
+		// tab.add("retract elevator", arm.lowerElevator());
+		// tab.add("stow", arm.Stow());
 }

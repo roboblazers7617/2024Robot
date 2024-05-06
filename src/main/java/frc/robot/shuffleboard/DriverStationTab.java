@@ -68,15 +68,5 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		isButtonPushed.set(button.get());
 	}
 	
-	@Override
-	public void activateShuffleboard() {
-		// this should be called immediately
-		ShuffleboardTab tab = Shuffleboard.getTab("Driver Station");
-		tab.add("Auto Path", autoChooser);
-	}
-	
-	@Override
-	public String getNetworkTable() {
-		return null;
-	}
+
 }

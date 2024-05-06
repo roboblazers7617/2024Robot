@@ -1,10 +1,12 @@
 package frc.robot.shuffleboard;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import frc.robot.subsystems.Drivetrain;
 
 public class SwerveTab extends ShuffleboardTabBase {
@@ -15,13 +17,15 @@ public class SwerveTab extends ShuffleboardTabBase {
 	private final DoubleArrayPublisher posePublisher;
 	private int number = 0;
 	private final IntegerPublisher numPublisher;
+	private final StructPublisher<Pose2d> newPosePublisher;
+	private final DoubleArrayPublisher poseArrayPublisher;
 	
 	public SwerveTab(Drivetrain swerveDrive) {
 		this.swerveDrive = swerveDrive;
 		
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		
-		NetworkTable networkTable = inst.getTable("logging/swerveDrive");
+		NetworkTable networkTable = inst.getTable("Shuffleboard/swerveDrive");
 		
 		odometryXPub = networkTable.getDoubleTopic("X Odometry").publish();
 		
@@ -32,6 +36,11 @@ public class SwerveTab extends ShuffleboardTabBase {
 		numPublisher = networkTable.getIntegerTopic("number").publish();
 		
 		posePublisher = networkTable.getDoubleArrayTopic("Pose").publish();
+		
+		newPosePublisher = networkTable
+				.getStructTopic("MyPose", Pose2d.struct)
+				.publish();
+		poseArrayPublisher = networkTable.getDoubleArrayTopic("PoseArray").publish();
 	}
 	
 	@Override
@@ -47,15 +56,7 @@ public class SwerveTab extends ShuffleboardTabBase {
 		pose[1] = swerveDrive.getPose().getY();
 		pose[2] = swerveDrive.getPose().getRotation().getDegrees();
 		posePublisher.set(pose);
-	}
-	
-	@Override
-	public void activateShuffleboard() {
-		// shuffleboardTab.add(this.swerveDrive);
-	}
-	
-	@Override
-	public String getNetworkTable() {
-		return "swerveDrive";
+		newPosePublisher.set(swerveDrive.getPose());
+		poseArrayPublisher.set(new double[] {swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), swerveDrive.getPose().getRotation().getDegrees()});
 	}
 }

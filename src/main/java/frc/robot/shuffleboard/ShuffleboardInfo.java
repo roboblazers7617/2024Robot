@@ -37,29 +37,14 @@ public class ShuffleboardInfo extends SubsystemBase {
 
 	public void addTabs(ArrayList<ShuffleboardTabBase> tabs) {
 		this.tabs = tabs;
-
-		tabs.get(0).activateShuffleboard();
 		copyTables = new String[tabs.size() - 1]; // subtract one because driverstation doesn't need to be copied
 	}
 
-	public void activateTabs() {
-		if (isActivated == false) {
-			isActivated = true;
-			for (int i = 1; i < tabs.size(); i++) {
-				if (tabs.get(i) != null) {
-					tabs.get(i).activateShuffleboard();
-					copyTables[i - 1] = tabs.get(i).getNetworkTable();
-				}
-			}
-		}
-	}
+
 
 	@Override
 	public void periodic() {
-		// if robot is not connected to the field system, enable shuffleboard
-		if (false) {
-			activateTabs();
-		}
+
 		// This method will be called once per scheduler run
 		// it will update every tab
 		if (tabs != null) {

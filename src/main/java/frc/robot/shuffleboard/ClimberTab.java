@@ -19,7 +19,7 @@ public class ClimberTab extends ShuffleboardTabBase {
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-		NetworkTable networkTable = inst.getTable("logging/climber");
+		NetworkTable networkTable = inst.getTable("Shuffleboard/climber");
 
 		 leftMotorPosition = networkTable.getDoubleTopic("Left Motor Position").publish();
 
@@ -43,13 +43,6 @@ public class ClimberTab extends ShuffleboardTabBase {
 		motorTab.update();
 	}
 
-	@Override
-	public void activateShuffleboard() {
-	}
 
-	@Override
-	public String getNetworkTable() {
-		return "climber";
-	}
 
 }
