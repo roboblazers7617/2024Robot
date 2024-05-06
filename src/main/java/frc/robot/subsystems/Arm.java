@@ -280,8 +280,6 @@ public class Arm extends SubsystemBase {
 
 	public Command SetTargets(Supplier<Double> distance){
 		return Commands.runOnce(() -> {
-				//TODO: Remove me!
-				System.out.println("Distance is " + distance.get());
 				setArmTargetByDistanceRetracted(distance.get());
 				setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
 		});

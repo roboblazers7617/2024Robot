@@ -515,36 +515,36 @@ public class LimelightHelpers {
 
     private static void printPoseEstimate(PoseEstimate pose) {
         if (pose == null) {
-            System.out.println("No PoseEstimate available.");
+            // System.out.println("No PoseEstimate available.");
             return;
         }
     
-        System.out.printf("Pose Estimate Information:%n");
-        System.out.printf("Timestamp (Seconds): %.3f%n", pose.timestampSeconds);
-        System.out.printf("Latency: %.3f ms%n", pose.latency);
-        System.out.printf("Tag Count: %d%n", pose.tagCount);
-        System.out.printf("Tag Span: %.2f meters%n", pose.tagSpan);
-        System.out.printf("Average Tag Distance: %.2f meters%n", pose.avgTagDist);
-        System.out.printf("Average Tag Area: %.2f%% of image%n", pose.avgTagArea);
-        System.out.println();
+        // System.out.printf("Pose Estimate Information:%n");
+        // System.out.printf("Timestamp (Seconds): %.3f%n", pose.timestampSeconds);
+        // System.out.printf("Latency: %.3f ms%n", pose.latency);
+        // System.out.printf("Tag Count: %d%n", pose.tagCount);
+        // System.out.printf("Tag Span: %.2f meters%n", pose.tagSpan);
+        // System.out.printf("Average Tag Distance: %.2f meters%n", pose.avgTagDist);
+        // System.out.printf("Average Tag Area: %.2f%% of image%n", pose.avgTagArea);
+        // System.out.println();
     
         if (pose.rawFiducials == null || pose.rawFiducials.length == 0) {
-            System.out.println("No RawFiducials data available.");
+            // System.out.println("No RawFiducials data available.");
             return;
         }
     
-        System.out.println("Raw Fiducials Details:");
+        // System.out.println("Raw Fiducials Details:");
         for (int i = 0; i < pose.rawFiducials.length; i++) {
             RawFiducial fiducial = pose.rawFiducials[i];
-            System.out.printf(" Fiducial #%d:%n", i + 1);
-            System.out.printf("  ID: %d%n", fiducial.id);
-            System.out.printf("  TXNC: %.2f%n", fiducial.txnc);
-            System.out.printf("  TYNC: %.2f%n", fiducial.tync);
-            System.out.printf("  TA: %.2f%n", fiducial.ta);
-            System.out.printf("  Distance to Camera: %.2f meters%n", fiducial.distToCamera);
-            System.out.printf("  Distance to Robot: %.2f meters%n", fiducial.distToRobot);
-            System.out.printf("  Ambiguity: %.2f%n", fiducial.ambiguity);
-            System.out.println();
+            // System.out.printf(" Fiducial #%d:%n", i + 1);
+            // System.out.printf("  ID: %d%n", fiducial.id);
+            // System.out.printf("  TXNC: %.2f%n", fiducial.txnc);
+            // System.out.printf("  TYNC: %.2f%n", fiducial.tync);
+            // System.out.printf("  TA: %.2f%n", fiducial.ta);
+            // System.out.printf("  Distance to Camera: %.2f meters%n", fiducial.distToCamera);
+            // System.out.printf("  Distance to Robot: %.2f meters%n", fiducial.distToRobot);
+            // System.out.printf("  Ambiguity: %.2f%n", fiducial.ambiguity);
+            // System.out.println();
         }
     }
 
@@ -583,7 +583,7 @@ public class LimelightHelpers {
             url = new URL(urlString);
             return url;
         } catch (MalformedURLException e) {
-            System.err.println("bad LL URL");
+            // System.err.println("bad LL URL");
         }
         return null;
     }
@@ -955,10 +955,10 @@ public class LimelightHelpers {
             if (responseCode == 200) {
                 return true;
             } else {
-                System.err.println("Bad LL Request");
+                // System.err.println("Bad LL Request");
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            // System.err.println(e.getMessage());
         }
         return false;
     }
@@ -984,7 +984,7 @@ public class LimelightHelpers {
         double millis = (end - start) * .000001;
         results.targetingResults.latency_jsonParse = millis;
         if (profileJSON) {
-            System.out.printf("lljson: %.2f\r\n", millis);
+            // System.out.printf("lljson: %.2f\r\n", millis);
         }
 
         return results;

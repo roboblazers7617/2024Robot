@@ -22,17 +22,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.util.Alert;
+import frc.robot.util.Logging;
 import frc.robot.util.Alert.AlertType;
 
 /** Add your docs here. */
 public class DriverStationTab extends ShuffleboardTabBase {
-	private final DoublePublisher voltagePublisher;
-	private final BooleanPublisher isDriverStationConnected;
-	private final BooleanPublisher isBrownedOut;
-	private final BooleanPublisher isButtonPushed;
-	private final DigitalInput button;
+	// private final DoublePublisher voltagePublisher;
+	// private final BooleanPublisher isDriverStationConnected;
+	// private final BooleanPublisher isBrownedOut;
+	// private final BooleanPublisher isButtonPushed;
+	// private final DigitalInput button;
+	private final Logging number;
+	private double counter = 0;
 	
 	private SendableChooser<Command> autoChooser = new SendableChooser<>();
 	
@@ -45,11 +49,15 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		
 		NetworkTable networkTable = inst.getTable("Shuffleboard/Driver Station");
 		
-		voltagePublisher = networkTable.getDoubleTopic("Battery Voltage").publish();
-		isDriverStationConnected = networkTable.getBooleanTopic("Is Driver Station Connected").publish();
-		isBrownedOut = networkTable.getBooleanTopic("Is Browned Out").publish();
-		this.button = button;
-		isButtonPushed = networkTable.getBooleanTopic("is brake button pushed").publish();
+		// voltagePublisher = networkTable.getDoubleTopic("Battery Voltage").publish();
+		// isDriverStationConnected = networkTable.getBooleanTopic("Is Driver Station Connected").publish();
+		// isBrownedOut = networkTable.getBooleanTopic("Is Browned Out").publish();
+		// this.button = button;
+		// isButtonPushed = networkTable.getBooleanTopic("is brake button pushed").publish();
+		number = new Logging("Driver Station", "number", false);
+
+		// create a command to set Constants.debugMode to true
+		Shuffleboard.getTab("Driver Station").add(new InstantCommand(() -> Constants.debugMode = true));
 		
 		// camera = CameraServer.startAutomaticCapture();
 		/*
@@ -62,10 +70,12 @@ public class DriverStationTab extends ShuffleboardTabBase {
 	
 	@Override
 	public void update() {
-		voltagePublisher.set(RobotController.getBatteryVoltage());
-		isDriverStationConnected.set(DriverStation.isDSAttached());
-		isBrownedOut.set(RobotController.isBrownedOut());
-		isButtonPushed.set(button.get());
+		// voltagePublisher.set(RobotController.getBatteryVoltage());
+		// isDriverStationConnected.set(DriverStation.isDSAttached());
+		// isBrownedOut.set(RobotController.isBrownedOut());
+		// isButtonPushed.set(button.get());
+		number.log(counter);
+		counter++;
 	}
 	
 
