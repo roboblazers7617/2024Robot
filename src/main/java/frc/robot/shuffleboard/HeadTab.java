@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -35,13 +36,13 @@ public class HeadTab extends ShuffleboardTabBase {
 		
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		
-		NetworkTable networkTable = inst.getTable("logging/Head");
+		NetworkTable networkTable = inst.getTable("Shuffleboard/Head");
 		
-		NetworkTable intakeNetworkTable = inst.getTable("logging/Head/Intake");
+		NetworkTable intakeNetworkTable = inst.getTable("Shuffleboard/Head");
 		noteWithinSensorPublisher = intakeNetworkTable.getBooleanTopic("Note Within Sensor").publish();
 		noteAcquiredPublisher = intakeNetworkTable.getBooleanTopic("Note Acquired").publish();
 		
-		NetworkTable shooterNetworkTable = inst.getTable("logging/Head/Shooter");
+		NetworkTable shooterNetworkTable = inst.getTable("Shuffleboard/Head");
 		shooterBottomSpeedPublisher = shooterNetworkTable.getDoubleTopic("Bottom Speed").publish();
 		shooterTopSpeedPublisher = shooterNetworkTable.getDoubleTopic("Top Speed").publish();
 		shooterSetPointPublisher = shooterNetworkTable.getDoubleTopic("Setpoint").publish();
@@ -65,28 +66,30 @@ public class HeadTab extends ShuffleboardTabBase {
 	public void activateShuffleboard() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Head");
 		// Intake
-		ShuffleboardLayout intakeLayout = tab.getLayout("Intake", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 0);
-		intakeLayout.add("Note Within Sensor", false).withPosition(0, 0);
-		
-		intakeLayout.add("Intake", head.IntakePiece()).withPosition(1, 0);
-		intakeLayout.add("Manual Intake", head.StartIntake()).withPosition(2, 0);
-		intakeLayout.add("Outake", head.OutakePiece()).withPosition(3, 0);
-		intakeLayout.add("Manual Outake", head.StartOutake()).withPosition(3, 1);
-		
-		intakeLayout.add("Stop Intake", head.StopIntake()).withPosition(4, 0);
-		
-		intakeLayout.add("Feeder Speed", 0.0).withPosition(1, 2);
-		
+		tab.add("Note Within Sensor", false).withPosition(0, 2).withSize(2,1);
+		tab.add("Ready to Shoot", false).withPosition(0, 3).withSize(2,1);
 		// Shooter
-		ShuffleboardLayout shooterLayout = tab.getLayout("Shooter", BuiltInLayouts.kGrid).withSize(5, 2).withPosition(0, 2);
-		shooterLayout.add("Top Speed", 0.0).withPosition(0, 0);
-		shooterLayout.add("Bottom Speed", 0.0).withPosition(0, 1);
-		shooterLayout.add("Setpoint", 0.0).withPosition(0, 2);
+		tab.add("Top Speed", 0.0).withPosition(2, 0)
+				.withWidget(BuiltInWidgets.kGraph).withSize(3, 2);
+		tab.add("Bottom Speed", 0.0).withPosition(2, 2)
+				.withWidget(BuiltInWidgets.kGraph).withSize(3, 2);
+		tab.add("Setpoint", 0.0).withPosition(1, 0);
+		// tab.add("Feeder Speed", 0.0).withPosition(0, 0);
 		
-		shooterLayout.add("Ready to Shoot", false).withPosition(1, 0);
+		tab.add("Intake", head.IntakePiece()).withPosition(5, 0);
+		tab.add("Manual Intake", head.StartIntake()).withPosition(5, 1);
+		tab.add("Outake", head.OutakePiece()).withPosition(5, 2);
+		tab.add("Manual Outake", head.StartOutake()).withPosition(5, 3);
 		
-		shooterLayout.add("Spin Up (speaker)", head.SpinUpShooter(ShootingConstants.ShootingPosition.SUBWOOFER)).withPosition(2, 0);
-		shooterLayout.add("Spin Down", head.SpinDownShooter()).withPosition(2, 1);
+		tab.add("Stop Intake", head.StopIntake()).withPosition(5, 4);
+		tab.add("Spin Up 875", head.SpinUpShooter(875)).withPosition(7, 0);
+		tab.add("Spin Up 3250", head.SpinUpShooter(3250)).withPosition(7, 1);
+		tab.add("Spin Up 4150", head.SpinUpShooter(4150)).withPosition(7, 2);
+		tab.add("Spin Up 4700", head.SpinUpShooter(4700)).withPosition(7, 3);
+		tab.add("Spin Up 3500", head.SpinUpShooter(3500)).withPosition(7, 4);
+		tab.add("Spin Up 4000", head.SpinUpShooter(4000)).withPosition(7, 5);
+
+		tab.add("Spin Down", head.SpinDownShooter()).withPosition(9, 0);
 		//shooterLayout.add("Shoot (speaker)", head.Shoot(ShootingConstants.ShootingPosition.SUBWOOFER)).withPosition(2, 2);
 	}
 	

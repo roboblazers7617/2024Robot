@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 
 public class HapticCommands {
 	/**
@@ -23,5 +24,14 @@ public class HapticCommands {
 				.andThen(Commands.waitSeconds(length))
 				.finallyDo(() -> controller.setRumble(RumbleType.kBothRumble, 0))
 				.ignoringDisable(true);
+	}
+
+	public static Command RumbleOne(XboxController controller){
+		return new ScheduleCommand(HapticCommands.HapticTap(controller, RumbleType.kBothRumble, 0.3, 0.3));
+	}
+
+	public static Command RumbleTwo(XboxController controllerOne, XboxController controllerTwo){
+		return new ScheduleCommand(HapticCommands.HapticTap(controllerOne, RumbleType.kBothRumble, 0.3, 0.3))
+				.andThen(new ScheduleCommand(HapticCommands.HapticTap(controllerTwo, RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 }

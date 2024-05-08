@@ -46,6 +46,8 @@ import frc.robot.shuffleboard.MotorTab;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -98,14 +100,13 @@ public class Drivetrain extends SubsystemBase {
 		swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot
 													// via angle.
 		
-		setupPathPlanner();
 		timer.start();
 	}
 	
 	/**
 	 * Setup AutoBuilder for PathPlanner.
 	 */
-	public void setupPathPlanner() {
+	public void setupPathPlanner(Alliance allianceColor) {
 		AutoBuilder.configureHolonomic(this::getPose, // Robot pose supplier
 				this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
 				this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -127,8 +128,7 @@ public class Drivetrain extends SubsystemBase {
 					// alliance
 					// This will flip the path being followed to the red side of the field.
 					// THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-					var alliance = DriverStation.getAlliance();
-					return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+					return allianceColor == Alliance.Red ? true:  false;
 				}, this // Reference to this subsystem to set requirements
 		);
 	}
@@ -156,21 +156,24 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public Command DriveToPose(Pose2d pose){
-		DataLogManager.log("DriveToPose: " + pose);
 		PathConstraints constraints = new PathConstraints(
-				swerveDrive.getMaximumVelocity(), 4.0, swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
+				swerveDrive.getMaximumVelocity(), 4, swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
 		return AutoBuilder.pathfindToPose(pose, constraints, 0.0, 0.0);
 		
 	}
 
 	public Command DriveToLocation(TagLocation location){
-		return DriveToPose(calculateRobotPose(location));
+		return DriveToPose(calculateRobotPose(location));	
 	}
 
-	public Command ResetPose(TagLocation location)
+	public Command ResetPose(Supplier<TagLocation> location)
 	{
-		DataLogManager.log("ResetPose: " + location.toString());
-		return Commands.run(() ->resetOdometry(calculateRobotPose(location)));
+		return Commands.runOnce(() ->
+			{
+				Pose2d newPose = calculateRobotPose(location.get());
+				resetOdometry(newPose);
+				resetLastAngeScalar(newPose.getRotation().getRadians());
+			}).ignoringDisable(true);
 	}
 	
 	/* 
@@ -183,12 +186,13 @@ public class Drivetrain extends SubsystemBase {
 
 		switch (location) {
 			case SPEAKER -> {
+						System.out.println("Color is Blue " + checkAllianceColors(Alliance.Blue));
 						if (checkAllianceColors(Alliance.Blue)){
 							//When blue, robot needs to be in front of the tag (add x)
-							targetPose  = new Pose2d(targetPose.getX()+ DISTANCE_FROM_TARGET, targetPose.getY(), targetPose.getRotation());
+							targetPose  = new Pose2d(targetPose.getX()+ DISTANCE_FROM_TARGET + Units.inchesToMeters(37), targetPose.getY(), targetPose.getRotation());
 						} else {
 							// when red, the robot needs to be behind the tag (subtract x)
-							targetPose = new Pose2d(targetPose.getX()- DISTANCE_FROM_TARGET, targetPose.getY(), targetPose.getRotation());						}
+							targetPose = new Pose2d(targetPose.getX()- DISTANCE_FROM_TARGET -Units.inchesToMeters(37), targetPose.getY(), targetPose.getRotation());						}
 					}
 			case AMP -> {
 							targetPose = new Pose2d(targetPose.getX(), targetPose.getY()- DISTANCE_FROM_TARGET, targetPose.getRotation());					
@@ -546,6 +550,9 @@ public class Drivetrain extends SubsystemBase {
 
 	public void resetLastAngeScalar(){
 		swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
+	}
+	private void resetLastAngeScalar(Double angleRadians){
+		swerveDrive.swerveController.lastAngleScalar = angleRadians;
 	}
 	
 	/**

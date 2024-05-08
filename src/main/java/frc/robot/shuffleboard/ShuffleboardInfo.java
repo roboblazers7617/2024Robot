@@ -6,14 +6,7 @@ package frc.robot.shuffleboard;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.util.Alert;
-import frc.robot.util.Alert.AlertType;
 
 public class ShuffleboardInfo extends SubsystemBase {
 	ArrayList<ShuffleboardTabBase> tabs;
@@ -21,8 +14,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 	private static ShuffleboardInfo instance;
 	private String[] copyTables;
 	private boolean isActivated = false;
-	private Alert enabledAlert = new Alert("Enabled batter voltage is below " + Constants.ENABLED_BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
-	private Alert disabledAlert = new Alert("Disabled batter voltage is below " + Constants.DISABLED_BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
+
 
 	public static ShuffleboardInfo getInstance() {
 		if (instance == null) {
@@ -82,10 +74,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 		// }
 
 
-		// create an Alert if the battery voltage is below BATTERY_WARNING_VOLTAGE
-		enabledAlert.set(RobotController.getBatteryVoltage() < Constants.ENABLED_BATTERY_WARNING_VOLTAGE && DriverStation.isEnabled());
-		disabledAlert.set(RobotController.getBatteryVoltage() < Constants.DISABLED_BATTERY_WARNING_VOLTAGE && !DriverStation.isEnabled());
-		//batter voltage is displayed on the driver station tab
+
 
 	}
 }

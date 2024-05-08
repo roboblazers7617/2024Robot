@@ -35,6 +35,8 @@ public class Robot extends TimedRobot {
 	private static final double canErrorTimeThreshold = 0.5; // Seconds to disable alert
 
 	private final  Alert canErrorAlert = 	new Alert("CAN errors detected, robot may not be controllable.", AlertType.ERROR);
+	private final Alert batteryEnabledAlert = new Alert("Enabled battery voltage is below " + Constants.ENABLED_BATTERY_WARNING_VOLTAGE, AlertType.WARNING);
+	private final Alert batteryDisabledAlert = new Alert("Disabled battery voltage is below " + Constants.DISABLED_BATTERY_WARNING_VOLTAGE, AlertType.WARNING);
 
 
 	/**
@@ -63,6 +65,7 @@ public class Robot extends TimedRobot {
 		// Reset alert timers
 		canInitialErrorTimer.restart();
 		canErrorTimer.restart();
+		DriverStation.silenceJoystickConnectionWarning(true);
 		
 
 	}
@@ -95,6 +98,11 @@ public class Robot extends TimedRobot {
 		canErrorAlert.set(
 			!canErrorTimer.hasElapsed(canErrorTimeThreshold)
 				&& !canInitialErrorTimer.hasElapsed(canErrorTimeThreshold));
+
+		// create an Alert if the battery voltage is below BATTERY_WARNING_VOLTAGE
+		batteryEnabledAlert.set(RobotController.getBatteryVoltage() < Constants.ENABLED_BATTERY_WARNING_VOLTAGE && DriverStation.isEnabled());
+		batteryDisabledAlert.set(RobotController.getBatteryVoltage() < Constants.DISABLED_BATTERY_WARNING_VOLTAGE && !DriverStation.isEnabled());
+		//batter voltage is displayed on the driver station tab
 
 	}
 

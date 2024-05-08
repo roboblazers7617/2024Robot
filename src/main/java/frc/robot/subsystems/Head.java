@@ -10,10 +10,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import java.util.function.Supplier;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,6 +41,9 @@ public class Head extends SubsystemBase {
 	// TODO: Please rename isNoteInSensor as is very ambigious and doesn't say which sensor. If I understand this correctly should be something like isNoteInShootPosition
 	private final DigitalInput isNoteInShootPosition = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private final DigitalInput isNoteInIntake = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
+
+	private final SimpleMotorFeedforward shooterTopFeedforward = new SimpleMotorFeedforward(ShooterConstants.TOP_KS, ShooterConstants.TOP_KV);
+	private final SimpleMotorFeedforward shooterBottomFeedforward = new SimpleMotorFeedforward(ShooterConstants.BOTTOM_KS, ShooterConstants.BOTTOM_KV);
 	
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
 	
@@ -136,8 +141,8 @@ public class Head extends SubsystemBase {
 	
 	private void setShooterSpeed(double rpm) {
 		shooterSetPoint = rpm;
-		shooterControllerBottom.setReference(shooterSetPoint, ControlType.kVelocity);
-		shooterControllerTop.setReference(shooterSetPoint, ControlType.kVelocity);
+		shooterControllerBottom.setReference(shooterSetPoint, CANSparkBase.ControlType.kVelocity, 0,shooterBottomFeedforward.calculate(rpm));
+		shooterControllerTop.setReference(shooterSetPoint, CANSparkBase.ControlType.kVelocity, 0,shooterTopFeedforward.calculate(rpm));
 	}
 
 	public void stopShooter(){

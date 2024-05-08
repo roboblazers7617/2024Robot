@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
 import swervelib.math.Matter;
 
 /**
@@ -40,10 +42,10 @@ public final class Constants {
 	public static class ShootingConstants {
 		public enum ShootingPosition {
 			//TODO: Rename DBOT to MID_STAGE to be more descriptive
-			AMP(1500.0, 84.5, ElevatorConstants.MAX_HEIGHT),
-			SUBWOOFER(5500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
-			PODIUM(7000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
-			DBOT(8000.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
+			AMP(875.0, 84.5, ElevatorConstants.MAX_HEIGHT),
+			SUBWOOFER(3250.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			PODIUM(4150.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
+			DBOT(4700.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
 		
 			ShootingPosition(double rpm, double arm_angle, double elevator_target) {
 				this.rpm = rpm;
@@ -68,8 +70,8 @@ public final class Constants {
 			}
 		}
 
-		public static final int AUTO_SHOOT_SPEED = 6000;
-		public static final int VARIABLE_DISTANCE_SHOT = 6750;
+		public static final int AUTO_SHOOT_SPEED = 3500;
+		public static final int VARIABLE_DISTANCE_SHOT = 4000;
 	}
 
 	public static class ArmConstants {
@@ -161,6 +163,9 @@ public final class Constants {
 		public static final double LINEAR_AUTO_KI = 0;
 		public static final double LINEAR_AUTO_KD = 0;
 		public static final double MAX_MODULE_SPEED = 15;
+		public static SendableChooser<Command> AUTO_CHOOSER = new SendableChooser<>();
+		public static boolean AUTOS_LOADED = false;
+	
 	}
 	
 	public static class SwerveConstants {
@@ -216,6 +221,8 @@ public final class Constants {
 		public static final double BOTTOM_kF = 0.004;
 		public static final double BOTTOM_kMinOutput = -1;
 		public static final double BOTTOM_kMaxOutput = 1;
+		public static final double BOTTOM_KS = 0;
+		public static final double BOTTOM_KV = 0.0021;
 
 		public static final double TOP_kP = 0.00026;
 		public static final double TOP_kI = 0;
@@ -223,10 +230,12 @@ public final class Constants {
 		public static final double TOP_kF = 0.004;
 		public static final double TOP_kMinOutput = -1;
 		public static final double TOP_kMaxOutput = 1;
-		
+		public static final double TOP_KS = 0;
+		public static final double TOP_KV = 0.0021;
 
-		public static final double VELOCITY_MINIMUM = 0.5;
-		public static final double VELOCITY_MAXIMUM = 2.0;
+		public static final double VELOCITY_MINIMUM = 0.90;
+		public static final double VELOCITY_MAXIMUM = 1.1;
+
 	}
 
 	public static class ClimberConstants {

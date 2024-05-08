@@ -5,16 +5,18 @@
 package frc.robot;
 
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
+import frc.robot.util.AutoCreator;
 import frc.robot.util.FieldHelpers;
 import frc.robot.util.FieldHelpers.TagLocation;
 import frc.robot.subsystems.Head;
-import frc.robot.shuffleboard.TestCommandsTab;
+import frc.robot.shuffleboard.AutoDriveCommandsTab;
 import frc.robot.shuffleboard.ArmTab;
 import frc.robot.shuffleboard.ClimberTab;
 import frc.robot.shuffleboard.DriverStationTab;
@@ -31,6 +33,7 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import frc.robot.commands.HapticCommands;
 import frc.robot.commands.MechanismCommands;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
@@ -73,7 +76,7 @@ public class RobotContainer {
 	private final LED led = new LED(SerialPort.Port.kMXP, head);
 	private final Arm arm = new Arm();
 	private final Climber climber = new Climber();
-	public final SendableChooser<Command> autoChooser;
+	private final RobotStatus robotStatus = new RobotStatus(arm, head);
 	private final FieldHelpers myFieldHelper = FieldHelpers.getInstance();
 	
 	// Replace with CommandPS4Controller or CommandJoystick if needed
@@ -95,15 +98,49 @@ public class RobotContainer {
         () -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()),
         () -> driverController.getRawAxis(2));
 	
-	private final DigitalInput brakeToggleButton = new DigitalInput(Constants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
+
+	private final AutoCreator autoCreator = new AutoCreator(this, drivetrain, "Autonomous");
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		// NamedCommands.registerCommand("SayHi", Commands.runOnce(() -> System.out.println("Hi")));
-		// NamedCommands.registerCommand("gotoShoot", TempHead.gotoShoot());
-		// NamedCommands.registerCommand("Start Intake", TempHead.deployIntake());z
+
+		
+		// Configure the trigger bindings
+		configureDefaultCommands();
+		configureDriverBindings();
+		configureOperatorBindings();
+		shuffleboard = ShuffleboardInfo.getInstance();
+		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
+		// YOUR CODE HERE | | |
+		// \/ \/ \/
+		tabs.add(new DriverStationTab(drivetrain, robotStatus));
+		
+		tabs.add(new ArmTab(arm));
+		
+		tabs.add(new SwerveTab(drivetrain));
+		
+		tabs.add(new LEDTab(led));
+		
+		tabs.add(new HeadTab(head));
+		
+		tabs.add(new ClimberTab(climber));
+
+		tabs.add(new AutoDriveCommandsTab(drivetrain));
+		
+		// STOP HERE
+		shuffleboard.addTabs(tabs);
+
+		
+
+
+		PointAwayFromLocation(TagLocation.AMP);
+	}
+
+	public void configureAutoBuilder(Alliance allianceColor)
+	{
+		drivetrain.setupPathPlanner(allianceColor);
 		NamedCommands.registerCommand("turnToSpeaker", turnToSpeaker());
 		NamedCommands.registerCommand("turnTo0", pointAwayFromSpeaker());
 		NamedCommands.registerCommand("IntakeGround", MechanismCommands.IntakeGround(arm, head, false));
@@ -116,46 +153,9 @@ public class RobotContainer {
 		NamedCommands.registerCommand("TurnAndShoot", Commands.sequence(turnToSpeaker(),MechanismCommands.AutonomousShoot(arm, head, drivetrain)));
 		NamedCommands.registerCommand("variableShoot", MechanismCommands.PrepareShoot(arm, head, ()->drivetrain.getDistanceToSpeaker()).andThen(MechanismCommands.Shoot(arm, head)));
 		
-		autoChooser = AutoBuilder.buildAutoChooser("mid start 2 piece");
-		
-		// Configure the trigger bindings
-		configureDefaultCommands();
-		configureDriverBindings();
-		configureOperatorBindings();
-		shuffleboard = ShuffleboardInfo.getInstance();
-		ArrayList<ShuffleboardTabBase> tabs = new ArrayList<>();
-		// YOUR CODE HERE | | |
-		// \/ \/ \/
-		tabs.add(new DriverStationTab(autoChooser, brakeToggleButton));
-		
-		tabs.add(new ArmTab(arm));
-		
-		tabs.add(new SwerveTab(drivetrain));
-		
-		tabs.add(new LEDTab(led));
-		
-		tabs.add(new HeadTab(head));
-		
-		tabs.add(new ClimberTab(climber));
-
-		tabs.add(new TestCommandsTab(drivetrain));
-		
-		// STOP HERE
-		shuffleboard.addTabs(tabs);
-
-		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
-		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
-		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
-		Trigger enableTrigger = new Trigger(() -> DriverStation.isEnabled());
-		enableTrigger.onTrue(Commands.runOnce(() -> {
-			arm.EnableBrakeMode();
-			head.EnableBrakeMode();
-		}));
-
-
-		PointAwayFromLocation(TagLocation.AMP);
+		AutoConstants.AUTO_CHOOSER = AutoBuilder.buildAutoChooser("mid start 2 piece");
+	
 	}
-
 	private void configureDefaultCommands(){
 
 		drivetrain.setDefaultCommand(!RobotBase.isSimulation() ? absoluteDrive : driveFieldOrientedDirectAngleSim);
@@ -197,8 +197,11 @@ public class RobotContainer {
 		
 		//TODO: Shoot should not need the position passed in
 		//TODO: Rename DBOT to MID_STAGE to be more descriptive
-		driverControllerCommands.a().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.DBOT))
-				.onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		driverControllerCommands.a()
+				.onTrue(MechanismCommands.PrepareShoot(arm, head, ShootingPosition.DBOT)
+					.andThen(HapticCommands.RumbleOne(driverController)))
+				.onFalse(MechanismCommands.Shoot(arm, head)
+					.andThen(HapticCommands.RumbleTwo(operatorController, driverController)));
 
 		//TODO: This can be turned into a drive to source function
 		/*driverControllerCommands.b().onTrue(drivetrain.driveToPose(
@@ -214,19 +217,44 @@ public class RobotContainer {
 	private void configureOperatorBindings(){
 		operatorControllerCommands.x().and(() -> !isClimbMode).onTrue(arm.Stow());
 		operatorControllerCommands.y().and(() -> !isClimbMode).whileTrue(head.StartOutake()).onFalse(head.StopIntake());
-		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeGround(driverController, operatorController, arm, head).andThen(arm.Stow()));
-		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(MechanismCommands.IntakeSource(driverController, operatorController, arm, head));
+		operatorControllerCommands.a().and(() -> !isClimbMode)
+			.onTrue(MechanismCommands.IntakeGround(arm, head, true)
+				.andThen(HapticCommands.RumbleTwo(operatorController, driverController))
+				.andThen(arm.Stow())
+			);
+		operatorControllerCommands.b().and(() -> !isClimbMode)
+			.onTrue(MechanismCommands.IntakeSource(arm, head)
+				.andThen(HapticCommands.RumbleTwo(operatorController, driverController)));
 		
-		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
-		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		operatorControllerCommands.leftTrigger()
+			.onTrue(MechanismCommands.PrepareShoot(arm, head, ShootingPosition.AMP)
+				.andThen(HapticCommands.RumbleOne(operatorController)));
+;
+		operatorControllerCommands.leftBumper()
+			.onTrue(MechanismCommands.Shoot(arm, head)
+				.andThen(HapticCommands.RumbleTwo(operatorController, driverController)));
 		
-		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker))
-				.onFalse(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).andThen(MechanismCommands.Shoot(arm, head)).andThen(arm.Stow()));	
+		operatorControllerCommands.rightTrigger()
+			.onTrue(MechanismCommands.PrepareShoot(arm, head, drivetrain::getDistanceToSpeaker)
+					.andThen(HapticCommands.RumbleOne(operatorController)))
+				.onFalse(MechanismCommands.PrepareShoot(arm, head, drivetrain::getDistanceToSpeaker)
+					.andThen(HapticCommands.RumbleOne(operatorController))
+					.andThen(MechanismCommands.Shoot(arm, head))
+					.andThen(HapticCommands.RumbleTwo(operatorController, driverController))
+					.andThen(arm.Stow()));	
 
-		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		operatorControllerCommands.rightBumper()
+			.onTrue(MechanismCommands.PrepareShoot(arm, head, ShootingPosition.SUBWOOFER)
+					.andThen(HapticCommands.RumbleOne(operatorController)))
+			.onFalse(MechanismCommands.Shoot(arm, head)
+					.andThen(HapticCommands.RumbleTwo(operatorController, driverController)));
 		
 		operatorControllerCommands.povLeft().onTrue(head.StopIntake().andThen(head.SpinDownShooter()));
-		operatorControllerCommands.povRight().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+		operatorControllerCommands.povRight()
+			.onTrue(MechanismCommands.PrepareShoot(arm, head, ShootingPosition.PODIUM)
+				.andThen(HapticCommands.RumbleOne(operatorController)))
+			.onFalse(MechanismCommands.Shoot(arm, head)
+				.andThen(HapticCommands.RumbleTwo(operatorController, driverController)));
 				
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));
@@ -290,7 +318,7 @@ public class RobotContainer {
 	 */
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return autoChooser.getSelected();
+		return AutoConstants.AUTO_CHOOSER.getSelected();
 	}
 	
 	public void setMotorBrake(boolean isBraked) {

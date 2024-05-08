@@ -54,7 +54,7 @@ public class FieldHelpers {
 		
 		public int id ()
 		{
-			return checkAllianceColors(Alliance.Red) ? blueId : redId;
+			return checkAllianceColors(Alliance.Red) ? redId : blueId;
 		}
 	}
 	
@@ -79,8 +79,6 @@ public class FieldHelpers {
 	 */
 	private Pose2d getPose(int tagId) {
 		Pose2d tagPose = fieldLayout.getTagPose(tagId).get().toPose2d();
-
-		// Because the tag faces into the field, we need to rotate the angle by 180 degrees to find what way the robot should face when seeing the tag
-		return new Pose2d(tagPose.getTranslation(), tagPose.getRotation()/* .rotateBy(new Rotation2d(Units.degreesToRadians(180)))*/);
+		return tagPose;
 	}
 }
