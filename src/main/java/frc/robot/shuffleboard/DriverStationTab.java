@@ -35,7 +35,7 @@ public class DriverStationTab extends ShuffleboardTabBase {
 	// private final BooleanPublisher isBrownedOut;
 	// private final BooleanPublisher isButtonPushed;
 	// private final DigitalInput button;
-	private final Logging number;
+	// private final Logging[] numbers = new Logging[1000]; // STRESS TEST CODE
 	private double counter = 0;
 	
 	private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -54,10 +54,12 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		// isBrownedOut = networkTable.getBooleanTopic("Is Browned Out").publish();
 		// this.button = button;
 		// isButtonPushed = networkTable.getBooleanTopic("is brake button pushed").publish();
-		number = new Logging("Driver Station", "number", false);
+		// for (int i = 0; i < numbers.length; i++) { // STRESS TEST CODE
+		// 	numbers[i] = new Logging("Driver Station", "number: " + i, false); // STRESS TEST CODE
+		// } // STRESS TEST CODE
 
 		// create a command to set Constants.debugMode to true
-		Shuffleboard.getTab("Driver Station").add(new InstantCommand(() -> Constants.debugMode = true));
+		Shuffleboard.getTab("Driver Station").add(new InstantCommand(() -> Constants.debugMode = true).ignoringDisable(true));
 		
 		// camera = CameraServer.startAutomaticCapture();
 		/*
@@ -74,8 +76,10 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		// isDriverStationConnected.set(DriverStation.isDSAttached());
 		// isBrownedOut.set(RobotController.isBrownedOut());
 		// isButtonPushed.set(button.get());
-		number.log(counter);
-		counter++;
+		// for (Logging number : numbers) { // STRESS TEST CODE
+		// 	number.log(counter); // STRESS TEST CODE
+		// } // STRESS TEST CODE
+		// counter++; // STRESS TEST CODE
 	}
 	
 

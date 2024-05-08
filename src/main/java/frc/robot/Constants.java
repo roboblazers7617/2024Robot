@@ -33,7 +33,7 @@ public final class Constants {
 	public final static double PODIUM_DISTANCE = 5.0;
 	public static final int BRAKE_TOGGLE_BUTTON_DIO = 7; 
 
-	public static boolean debugMode = true;
+	public static boolean debugMode = false;
 
 	// public static class TestNumber{
 	// 	public static int number = 5;
