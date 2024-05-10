@@ -41,9 +41,9 @@ public final class Constants {
 		public enum ShootingPosition {
 			//TODO: Rename DBOT to MID_STAGE to be more descriptive
 			AMP(1500.0, 84.5, ElevatorConstants.MAX_HEIGHT),
-			SUBWOOFER(3000.0, 14.0, ElevatorConstants.MAX_HEIGHT),
-			PODIUM(3000.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
-			DBOT(3000.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
+			SUBWOOFER(4500.0, 14.0, ElevatorConstants.MAX_HEIGHT),
+			PODIUM(5500.0, 32.0, ElevatorConstants.MIN_HEIGHT), // todo where should elevator be?
+			DBOT(4500.0, 37.520, ElevatorConstants.MIN_HEIGHT); // todo where should elevator be?
 		
 			ShootingPosition(double rpm, double arm_angle, double elevator_target) {
 				this.rpm = rpm;
@@ -68,7 +68,7 @@ public final class Constants {
 			}
 		}
 
-		public static final int AUTO_SHOOT_SPEED = 3000;
+		public static final int AUTO_SHOOT_SPEED = 4500;
 		public static final int VARIABLE_DISTANCE_SHOT = 3000;
 	}
 
@@ -185,7 +185,7 @@ public final class Constants {
 		public static final double MAX_VELOCITY_METER_PER_SEC = Units.feetToMeters(14.5);
 		public static final double SLOW_SPEED_DECREMENT = 0.3;
 		public static final double THE_NUMBER_THREE_TWO = THE_NUMBER_THREE;
-		public static final double REGULAR_SPEED = 0.8;
+		public static final double REGULAR_SPEED = 0.5;
 		public static final double FAST_SPEED_INCREMENT = .2;
 		public static final double PRECISE_INCREMENT = .1;
 		public static final double TURN_TO_TAG_RANGE_FOR_END = 1.0;
@@ -199,7 +199,7 @@ public final class Constants {
 		public static final int NOTE_SENSOR_DIO = 9;
 		public static final int NOTE_ALIGNMENT_SENSOR_DIO = 6;
 		
-		public static final double INTAKE_SPEED = 0.75; //0.95
+		public static final double INTAKE_SPEED = 0.5; //0.95
 		public static final double ALIGMNMENT_SPEED = 0.2; //0.08
 		public static final double OUTAKE_SPEED = -0.25;
 		public static final double FEEDER_SPEED = 0.25; // What speed should a note be fed into the shooter at?

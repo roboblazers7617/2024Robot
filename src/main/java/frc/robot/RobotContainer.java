@@ -65,6 +65,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
  */
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
+
+	private final boolean DEMO_MODE = true;
 	private final ShuffleboardInfo shuffleboard;
 	private final Head head = new Head();
 	private final LED led = new LED(SerialPort.Port.kMXP, head);
@@ -156,36 +158,40 @@ public class RobotContainer {
 				.onTrue(new ScheduleCommand(rotationDrive))
 				.onFalse(Commands.runOnce(() -> rotationDrive.cancel()));
 
-		driverControllerCommands.leftTrigger()
-				.onTrue(new ScheduleCommand(rotationDriveFast))
-				.onFalse(Commands.runOnce(() -> rotationDriveFast.cancel()));
-				
-		driverControllerCommands.rightBumper()
-				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.SLOW_SPEED_DECREMENT)))
-				.onFalse(Commands.runOnce(() -> speedMultiplier += SwerveConstants.SLOW_SPEED_DECREMENT));
-		driverControllerCommands.rightTrigger()
-				.onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.FAST_SPEED_INCREMENT)))
-				.onFalse(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.FAST_SPEED_INCREMENT));
-		
-		driverControllerCommands.povLeft()
-				.and(() -> checkAllianceColors(Alliance.Red))
-				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(-150)), () -> Math.sin(Units.degreesToRadians(-150))));
-		
-		driverControllerCommands.povLeft()
-				.and(() -> checkAllianceColors(Alliance.Blue))
-				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(150)), () -> Math.sin(Units.degreesToRadians(150))));
-		
-		driverControllerCommands.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
-		driverControllerCommands.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
-		
-		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
-		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.doVisionUpdates(false)));
-		
-		//TODO: Shoot should not need the position passed in
-		//TODO: Rename DBOT to MID_STAGE to be more descriptive
-		driverControllerCommands.a().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.DBOT))
+		if (!DEMO_MODE){
+			driverControllerCommands.leftTrigger()
+					.onTrue(new ScheduleCommand(rotationDriveFast))
+					.onFalse(Commands.runOnce(() -> rotationDriveFast.cancel()));
+					
+			driverControllerCommands.rightBumper()
+					.onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.SLOW_SPEED_DECREMENT)))
+					.onFalse(Commands.runOnce(() -> speedMultiplier += SwerveConstants.SLOW_SPEED_DECREMENT));
+			driverControllerCommands.rightTrigger()
+					.onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.FAST_SPEED_INCREMENT)))
+					.onFalse(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.FAST_SPEED_INCREMENT));
+			
+			driverControllerCommands.povLeft()
+					.and(() -> checkAllianceColors(Alliance.Red))
+					.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(-150)), () -> Math.sin(Units.degreesToRadians(-150))));
+			
+			driverControllerCommands.povLeft()
+					.and(() -> checkAllianceColors(Alliance.Blue))
+					.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(150)), () -> Math.sin(Units.degreesToRadians(150))));
+			
+			driverControllerCommands.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
+			driverControllerCommands.povDown().onTrue(Commands.runOnce(() -> speedMultiplier = Math.max(.1, speedMultiplier - SwerveConstants.PRECISE_INCREMENT)));
+
+			//TODO: Shoot should not need the position passed in
+			//TODO: Rename DBOT to MID_STAGE to be more descriptive
+			driverControllerCommands.a().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.DBOT))
 				.onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 
+
+		}
+		driverControllerCommands.start().onTrue(Commands.runOnce(() -> drivetrain.zeroGyro()));
+
+		driverControllerCommands.back().onTrue(Commands.runOnce(() -> drivetrain.doVisionUpdates(false)));
+		
 		//TODO: This can be turned into a drive to source function
 		/*driverControllerCommands.b().onTrue(drivetrain.driveToPose(
 				new Pose2d(new Translation2d(2.9,4.11), new Rotation2d( Units.degreesToRadians(-60))))
@@ -201,11 +207,10 @@ public class RobotContainer {
 		
 		operatorControllerCommands.leftTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.AMP));
 		operatorControllerCommands.leftBumper().onTrue(MechanismCommands.Shoot(driverController, operatorController, arm, head));
-		
-		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker))
-				.onFalse(MechanismCommands.PrepareShoot(operatorController, arm, head, drivetrain::getDistanceToSpeaker).andThen(MechanismCommands.Shoot(arm, head)).andThen(arm.Stow()));	
 
 		operatorControllerCommands.rightBumper().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.SUBWOOFER)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
+
+		operatorControllerCommands.rightTrigger().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
 		
 		operatorControllerCommands.povLeft().onTrue(head.StopIntake().andThen(head.SpinDownShooter()));
 		operatorControllerCommands.povRight().onTrue(MechanismCommands.PrepareShoot(operatorController, arm, head, ShootingPosition.PODIUM)).onFalse(MechanismCommands.Shoot(driverController, operatorController, arm, head));
