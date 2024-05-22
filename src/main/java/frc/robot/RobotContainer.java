@@ -30,6 +30,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.HapticController;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
@@ -77,11 +78,13 @@ public class RobotContainer {
 	private final CommandXboxController operatorControllerCommands = new CommandXboxController(OperatorConstants.OPERATOR_CONTROLLER_PORT);
 	private final XboxController driverController = driverControllerCommands.getHID();
 	private final XboxController operatorController = operatorControllerCommands.getHID();
+	private final HapticController driverControllerHaptics = new HapticController(driverController);
+	private final HapticController operatorControllerHaptics = new HapticController(operatorController);
 	private double speedMultiplier = SwerveConstants.REGULAR_SPEED;
 	// private final Vision vision = new Vision();
 	private final Drivetrain drivetrain = new Drivetrain(/* vision */);
 	
-	private final MechanismCommands mechanismCommands = new MechanismCommands(arm, head, driverController, operatorController);
+	private final MechanismCommands mechanismCommands = new MechanismCommands(arm, head, driverControllerHaptics, operatorControllerHaptics);
 	
 	private final Command absoluteDrive = drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> processJoystickAngular(driverControllerCommands.getRightX()), () -> processJoystickAngular(driverControllerCommands.getRightY()));
 	

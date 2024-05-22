@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import java.util.function.Supplier;
 
@@ -14,12 +13,13 @@ import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Head;
+import frc.robot.commands.HapticController;
 
 public class MechanismCommands {
 	private final Arm arm;
 	private final Head head;
-	private final XboxController driverController;
-	private final XboxController operatorController;
+	private final HapticController driverController;
+	private final HapticController operatorController;
 	
 	/**
 	 * Creates a new MechanismCommands
@@ -29,11 +29,11 @@ public class MechanismCommands {
 	 * @param head
 	 *                head subsystem
 	 * @param driverController
-	 *                driver controller (for haptics)
+	 *                haptic controller for the driver controller
 	 * @param operatorController
-	 *                operator controller (for haptics)
+	 *                haptic controller for the operator controller
 	 */
-	public MechanismCommands(Arm arm, Head head, XboxController driverController, XboxController operatorController) {
+	public MechanismCommands(Arm arm, Head head, HapticController driverController, HapticController operatorController) {
 		this.arm = arm;
 		this.head = head;
 		this.driverController = driverController;
@@ -60,8 +60,8 @@ public class MechanismCommands {
 	 */
 	public Command IntakeSourceWithHaptics() {
 		return IntakeSource()
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+				.andThen(new ScheduleCommand(driverController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	/**
@@ -83,8 +83,8 @@ public class MechanismCommands {
 	 */
 	public Command IntakeGroundWithHaptics() {
 		return IntakeGround(true)
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+				.andThen(new ScheduleCommand(driverController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public class MechanismCommands {
 	 */
 	public Command PrepareShootWithHaptics(ShootingPosition position) {
 		return PrepareShoot(position)
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public class MechanismCommands {
 	 */
 	public Command PrepareShootWithHaptics(Supplier<Double> distance) {
 		return PrepareShoot(distance)
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	/**
@@ -192,7 +192,7 @@ public class MechanismCommands {
 	 */
 	public Command ShootWithHaptics() {
 		return Shoot()
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(driverController, RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(HapticCommands.HapticTap(operatorController, RumbleType.kBothRumble, 0.3, 0.3)));
+				.andThen(new ScheduleCommand(driverController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 }
