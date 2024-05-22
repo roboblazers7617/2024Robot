@@ -188,8 +188,8 @@ public class RobotContainer {
 		
 		//TODO: Shoot should not need the position passed in
 		//TODO: Rename DBOT to MID_STAGE to be more descriptive
-		driverControllerCommands.a().onTrue(mechanismCommands.PrepareShootWithHaptics(ShootingPosition.DBOT))
-				.onFalse(mechanismCommands.ShootWithHaptics());
+		driverControllerCommands.a().onTrue(mechanismCommands.PrepareShoot(ShootingPosition.DBOT))
+				.onFalse(mechanismCommands.Shoot());
 
 		//TODO: This can be turned into a drive to source function
 		/*driverControllerCommands.b().onTrue(drivetrain.driveToPose(
@@ -201,19 +201,19 @@ public class RobotContainer {
 	private void configureOperatorBindings(){
 		operatorControllerCommands.x().and(() -> !isClimbMode).onTrue(arm.Stow());
 		operatorControllerCommands.y().and(() -> !isClimbMode).whileTrue(head.StartOutake()).onFalse(head.StopIntake());
-		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(mechanismCommands.IntakeGroundWithHaptics().andThen(arm.Stow()));
-		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(mechanismCommands.IntakeSourceWithHaptics());
+		operatorControllerCommands.a().and(() -> !isClimbMode).onTrue(mechanismCommands.IntakeGround(true).andThen(arm.Stow()));
+		operatorControllerCommands.b().and(() -> !isClimbMode).onTrue(mechanismCommands.IntakeSource());
 		
-		operatorControllerCommands.leftTrigger().onTrue(mechanismCommands.PrepareShootWithHaptics(ShootingPosition.AMP));
-		operatorControllerCommands.leftBumper().onTrue(mechanismCommands.ShootWithHaptics());
+		operatorControllerCommands.leftTrigger().onTrue(mechanismCommands.PrepareShoot(ShootingPosition.AMP));
+		operatorControllerCommands.leftBumper().onTrue(mechanismCommands.Shoot());
 		
-		operatorControllerCommands.rightTrigger().onTrue(mechanismCommands.PrepareShootWithHaptics(drivetrain::getDistanceToSpeaker))
-				.onFalse(mechanismCommands.PrepareShootWithHaptics(drivetrain::getDistanceToSpeaker).andThen(mechanismCommands.Shoot()).andThen(arm.Stow()));	
+		operatorControllerCommands.rightTrigger().onTrue(mechanismCommands.PrepareShoot(drivetrain::getDistanceToSpeaker))
+				.onFalse(mechanismCommands.PrepareShoot(drivetrain::getDistanceToSpeaker).andThen(mechanismCommands.Shoot()).andThen(arm.Stow()));	
 
-		operatorControllerCommands.rightBumper().onTrue(mechanismCommands.PrepareShootWithHaptics(ShootingPosition.SUBWOOFER)).onFalse(mechanismCommands.ShootWithHaptics());
+		operatorControllerCommands.rightBumper().onTrue(mechanismCommands.PrepareShoot(ShootingPosition.SUBWOOFER)).onFalse(mechanismCommands.Shoot());
 		
 		operatorControllerCommands.povLeft().onTrue(head.StopIntake().andThen(head.SpinDownShooter()));
-		operatorControllerCommands.povRight().onTrue(mechanismCommands.PrepareShootWithHaptics(ShootingPosition.PODIUM)).onFalse(mechanismCommands.ShootWithHaptics());
+		operatorControllerCommands.povRight().onTrue(mechanismCommands.PrepareShoot(ShootingPosition.PODIUM)).onFalse(mechanismCommands.Shoot());
 				
 		
 		operatorControllerCommands.povUp().onTrue(Commands.runOnce(() -> climber.setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE), climber)).onFalse(Commands.runOnce(() -> climber.setSpeed(0, 0), climber));

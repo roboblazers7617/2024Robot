@@ -41,7 +41,8 @@ public class MechanismCommands {
 	}
 	
 	/**
-	 * will finish after piece has been intaken
+	 * Intake from the source
+	 * Finishes after piece has been intaken
 	 * 
 	 * @return {@link Command}
 	 */
@@ -49,46 +50,30 @@ public class MechanismCommands {
 		return head.SpinDownShooter()
 				.andThen(() -> arm.setArmTarget(ArmConstants.SOURCE_ANGLE))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(head.IntakePiece());
-	}
-	
-	/**
-	 * Intakes from the source and triggers haptics once done.
-	 * will finish after piece has been intaken
-	 * 
-	 * @return {@link Command}
-	 */
-	public Command IntakeSourceWithHaptics() {
-		return IntakeSource()
+				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(driverController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	/**
-	 * will finish after piece has been intaken
+	 * Intake from the ground
+	 * Finishes after piece has been intaken
 	 * 
+	 * @param stopShooter
+	 *                should the shooter be stopped before intaking?
 	 * @return {@link Command}
 	 */
 	public Command IntakeGround(boolean stopShooter) {
 		return Commands.either(head.SpinDownShooter(), Commands.none(), () -> stopShooter)
 				.andThen(() -> arm.setArmTarget(ArmConstants.FLOOR_PICKUP))
 				.andThen(() -> arm.setElevatorTarget(ElevatorConstants.MAX_HEIGHT))
-				.andThen(head.IntakePiece());
-	}
-	
-	/**
-	 * will finish after piece has been intaken
-	 * 
-	 * @return {@link Command}
-	 */
-	public Command IntakeGroundWithHaptics() {
-		return IntakeGround(true)
+				.andThen(head.IntakePiece())
 				.andThen(new ScheduleCommand(driverController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)))
 				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	/**
-	 * cancel shoot and intake and stow
+	 * Cancel shoot, intake, and stow
 	 * 
 	 * @return {@link Command}
 	 */
@@ -99,15 +84,15 @@ public class MechanismCommands {
 	}
 	
 	// THIS ISNT CODE DUPLICATION IT DOES A FUNDAMENTALLY DIFFERENT THING!!!!!
-	// TODO: I see that this is different, but when would it be used? Should be renamed to better describe
-	// what it does. Why doesn't it stop the shooter? Will it be used for auto?
+	// TODO: I see that this is different, but when would it be used? Should be renamed to better describe what it does. Why doesn't it stop the shooter? Will it be used for auto?
 	public Command AutoStowAndStopIntake() {
 		return arm.Stow()
 				.andThen(head.StopIntake());
 	}
 	
 	/**
-	 * will finish when ready
+	 * Prepare to shoot from a {@link ShootingPosition}
+	 * Finishes when ready
 	 * 
 	 * @param position
 	 *                position to shoot from
@@ -115,11 +100,13 @@ public class MechanismCommands {
 	 */
 	public Command PrepareShoot(ShootingPosition position) {
 		return arm.SetTargets(position)
-				.andThen(head.SpinUpShooter(position));
+				.andThen(head.SpinUpShooter(position))
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	/**
-	 * will finish when ready
+	 * Prepare to shoot from a distance
+	 * Finishes when ready
 	 * 
 	 * @param distance
 	 *                distance to shoot from
@@ -127,7 +114,8 @@ public class MechanismCommands {
 	 */
 	public Command PrepareShoot(Supplier<Double> distance) {
 		return arm.SetTargets(distance)
-				.andThen(head.SpinUpShooter(ShootingConstants.VARIABLE_DISTANCE_SHOT));
+				.andThen(head.SpinUpShooter(ShootingConstants.VARIABLE_DISTANCE_SHOT))
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	public Command AutonomousPrepareShoot(Supplier<Double> distance) {
@@ -136,33 +124,8 @@ public class MechanismCommands {
 	}
 	
 	/**
-	 * Prepare to shoot and trigger haptics when ready.
-	 * will finish when ready
-	 * 
-	 * @param position
-	 *                position to shoot from
-	 * @return {@link Command}
-	 */
-	public Command PrepareShootWithHaptics(ShootingPosition position) {
-		return PrepareShoot(position)
-				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	/**
-	 * Prepare to shoot and trigger haptics when ready.
-	 * will finish when ready
-	 * 
-	 * @param distance
-	 *                distance to shoot from
-	 * @return {@link Command}
-	 */
-	public Command PrepareShootWithHaptics(Supplier<Double> distance) {
-		return PrepareShoot(distance)
-				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
-	}
-	
-	/**
-	 * will finish after piece has been shot
+	 * Shoot a note
+	 * Finishes after piece has been shot
 	 * 
 	 * @return {@link Command}
 	 */
@@ -170,9 +133,19 @@ public class MechanismCommands {
 		return Shoot(true);
 	}
 	
+	/**
+	 * Shoot a note
+	 * Finishes after piece has been shot
+	 * 
+	 * @param stopShooter
+	 *                should the shooter be stopped after shooting?
+	 * @return {@link Command}
+	 */
 	public Command Shoot(boolean stopShooter) {
 		return Commands.waitUntil(() -> arm.areArmAndElevatorAtTarget())
-				.andThen(head.Shoot(stopShooter));
+				.andThen(head.Shoot(stopShooter))
+				.andThen(new ScheduleCommand(driverController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)))
+				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 	
 	public Command AutonomousShoot(ShootingPosition position) {
@@ -183,16 +156,5 @@ public class MechanismCommands {
 	public Command AutonomousShoot(Drivetrain drivetrain) {
 		return AutonomousPrepareShoot(() -> drivetrain.getDistanceToSpeaker())
 				.andThen(Shoot(false));
-	}
-	
-	/**
-	 * will finish after piece has been shot
-	 * 
-	 * @return {@link Command}
-	 */
-	public Command ShootWithHaptics() {
-		return Shoot()
-				.andThen(new ScheduleCommand(driverController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)))
-				.andThen(new ScheduleCommand(operatorController.HapticTap(RumbleType.kBothRumble, 0.3, 0.3)));
 	}
 }
