@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,8 +20,9 @@ public class HapticController {
 	}
 	
 	/**
-	 * Trigger rumble on the controller for a specified amount of time.
-	 * 
+	 * Trigger rumble on the controller for a specified amount of time
+	 * Does not trigger in Autonomous
+	 *
 	 * @param type
 	 *                rumble type
 	 * @param strength
@@ -32,6 +34,7 @@ public class HapticController {
 		return Commands.runOnce(() -> controller.setRumble(type, strength))
 				.andThen(Commands.waitSeconds(length))
 				.finallyDo(() -> controller.setRumble(RumbleType.kBothRumble, 0))
+				.unless(() -> DriverStation.isAutonomous())
 				.ignoringDisable(true);
 	}
 }
