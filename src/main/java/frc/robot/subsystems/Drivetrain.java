@@ -68,9 +68,6 @@ public class Drivetrain extends SubsystemBase {
 
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
-	 *
-	 * @param directory
-	 *            Directory of swerve drive config files.
 	 */
 	public Drivetrain() {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary

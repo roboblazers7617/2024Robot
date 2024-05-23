@@ -126,7 +126,7 @@ public class MechanismCommands {
 	 * will finish when ready
 	 * @param arm
 	 * @param head
-	 * @param position
+	 * @param distance
 	 */
 	public static Command PrepareShoot(Arm arm, Head head, Supplier<Double> distance) {
 		return arm.SetTargets(distance)
@@ -156,7 +156,7 @@ public class MechanismCommands {
 	 * @param operatorController
 	 * @param arm
 	 * @param head
-	 * @param position
+	 * @param distance
 	 * @return
 	 */
 	public static Command PrepareShoot(XboxController operatorController, Arm arm, Head head, Supplier<Double> distance) {
@@ -171,8 +171,6 @@ public class MechanismCommands {
 	 *            subsystem
 	 * @param head
 	 *            subsystem
-	 * @param position
-	 *            position to shoot from
 	 * @return Command
 	 */
 	public static Command Shoot(Arm arm, Head head) {
@@ -212,8 +210,6 @@ public class MechanismCommands {
 	 *            subsystem
 	 * @param head
 	 *            subsystem
-	 * @param position
-	 *            position to shoot from
 	 * @return Command
 	 */
 	//TODO: Shoot should not take in the position
