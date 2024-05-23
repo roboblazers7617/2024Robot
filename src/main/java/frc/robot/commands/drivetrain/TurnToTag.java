@@ -27,7 +27,6 @@ public class TurnToTag extends Command {
 	private boolean invertFacing = false;
 	private final Supplier<Double> xMovement;
 	private final Supplier<Double> yMovement;
-
 	
 	public TurnToTag(Drivetrain drivetrain, int tagID) {
 		// Use addRequirements() here to declare subsystem dependencies.
@@ -46,11 +45,12 @@ public class TurnToTag extends Command {
 		xMovement = () -> 0.0;
 		yMovement = () -> 0.0;
 	}
-	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing){
+	
+	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing) {
 		this(drivetrain, tagID);
 		this.invertFacing = invertFacing;
 	}
-
+	
 	public TurnToTag(Drivetrain drivetrain, int tagID, Supplier<Double> yMovement, Supplier<Double> xMovement) {
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(drivetrain);
@@ -68,8 +68,8 @@ public class TurnToTag extends Command {
 		this.xMovement = xMovement;
 		this.yMovement = yMovement;
 	}
-
-	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing, Supplier<Double> yMovement, Supplier<Double> xMovement){
+	
+	public TurnToTag(Drivetrain drivetrain, int tagID, boolean invertFacing, Supplier<Double> yMovement, Supplier<Double> xMovement) {
 		this(drivetrain, tagID, yMovement, xMovement);
 		this.invertFacing = invertFacing;
 	}
@@ -81,14 +81,11 @@ public class TurnToTag extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		if(invertFacing){
-			drivetrain.drive(drivetrain.getTargetSpeeds(xMovement.get(), yMovement.get(), tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));	
+		if (invertFacing) {
+			drivetrain.drive(drivetrain.getTargetSpeeds(xMovement.get(), yMovement.get(), tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))));
+		} else {
+			drivetrain.drive(drivetrain.getTargetSpeeds(xMovement.get(), yMovement.get(), tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
 		}
-		else{
-		drivetrain.drive(drivetrain.getTargetSpeeds(xMovement.get(), yMovement.get(), tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()));
-		
-		}
-	
 	}
 	
 	// Called once the command ends or is interrupted.
@@ -96,17 +93,15 @@ public class TurnToTag extends Command {
 	public void end(boolean interrupted) {
 		drivetrain.drive(new ChassisSpeeds());
 		drivetrain.resetLastAngeScalar();
-
 	}
 	
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		if (invertFacing){
+		if (invertFacing) {
 			return Math.abs(drivetrain.getHeading().minus(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle().plus(Rotation2d.fromDegrees(180))).getDegrees()) <= SwerveConstants.TURN_TO_TAG_RANGE_FOR_END;
-		}
-		else{
-		return Math.abs(drivetrain.getHeading().minus(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()).getDegrees()) <= SwerveConstants.TURN_TO_TAG_RANGE_FOR_END;
+		} else {
+			return Math.abs(drivetrain.getHeading().minus(tagPose.getTranslation().minus(drivetrain.getPose().getTranslation()).getAngle()).getDegrees()) <= SwerveConstants.TURN_TO_TAG_RANGE_FOR_END;
 		}
 	}
 }

@@ -10,20 +10,20 @@ import frc.robot.subsystems.LED;
 
 public class LEDTab extends ShuffleboardTabBase {
 	private final LED led;
-
+	
 	public LEDTab(LED led) {
 		this.led = led;
-
+		
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
+		
 		NetworkTable networkTable = inst.getTable("logging/LED");
 	}
-
+	
 	@Override
 	public void update() {
 		// these functions have not been defined
 	}
-
+	
 	@Override
 	public void activateShuffleboard() {
 		ShuffleboardTab tab = Shuffleboard.getTab("LED");
@@ -34,10 +34,9 @@ public class LEDTab extends ShuffleboardTabBase {
 		tab.add("Teleop Disabled Animation", new InstantCommand(() -> led.setTeleopDisabledAnimation()).ignoringDisable(true));
 		tab.add("Teleop Enabled Animation", new InstantCommand(() -> led.setTeleopEnabledAnimation()).ignoringDisable(true));
 	}
-
+	
 	@Override
 	public String getNetworkTable() {
 		return "LED";
 	}
-
 }

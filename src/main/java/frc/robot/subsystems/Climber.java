@@ -38,17 +38,16 @@ public class Climber extends SubsystemBase {
 		rightClimberEncoder.setPosition(0.0);
 		
 		// balanceController.setSetpoint(0.0);
-
+		
 		burnFlash();
 	}
-
-	private void burnFlash(){
+	
+	private void burnFlash() {
 		Timer.delay(0.005);
 		leftClimber.burnFlash();
 		Timer.delay(0.005);
 		rightClimber.burnFlash();
 		Timer.delay(0.005);
-		
 	}
 	
 	public void setSpeed(double leftSpeed, double rightSpeed) {
@@ -74,8 +73,8 @@ public class Climber extends SubsystemBase {
 	}
 	
 	// public void resetClimberEncoders() {
-	// 	leftClimberEncoder.setPosition(0.0);
-	// 	rightClimberEncoder.setPosition(0.0);
+	// leftClimberEncoder.setPosition(0.0);
+	// rightClimberEncoder.setPosition(0.0);
 	// }
 	
 	public double getPositionRightMotor() {
@@ -87,10 +86,9 @@ public class Climber extends SubsystemBase {
 	}
 	
 	@Override
-	public void periodic() {
-	}
-
-	public CANSparkMax[] getMotors(){
-		return new CANSparkMax[] {leftClimber, rightClimber};
+	public void periodic() {}
+	
+	public CANSparkMax[] getMotors() {
+		return new CANSparkMax[] { leftClimber, rightClimber };
 	}
 }

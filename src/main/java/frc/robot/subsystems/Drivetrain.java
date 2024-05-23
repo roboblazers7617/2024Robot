@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-
 import frc.robot.util.LimelightHelpers;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -59,18 +58,18 @@ public class Drivetrain extends SubsystemBase {
 	private AprilTagFieldLayout fieldLayout;
 	
 	private boolean doVisionUpdates = false;
-
+	
 	private Timer timer = new Timer();
-
+	
 	private LimelightHelpers.PoseEstimate poseData;
-
+	
 	private Vector<N3> kalmanStdDevs = VecBuilder.fill(.7, .7, Integer.MAX_VALUE);
-
+	
 	/**
 	 * Initialize {@link SwerveDrive} with the directory provided.
 	 *
 	 * @param directory
-	 *            Directory of swerve drive config files.
+	 *                Directory of swerve drive config files.
 	 */
 	public Drivetrain() {
 		// Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -90,7 +89,7 @@ public class Drivetrain extends SubsystemBase {
 		}
 		
 		swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot
-													// via angle.
+								// via angle.
 		
 		setupPathPlanner();
 		timer.start();
@@ -105,7 +104,7 @@ public class Drivetrain extends SubsystemBase {
 				this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
 				this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
 				new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
-													// Constants class
+									// Constants class
 						new PIDConstants(Constants.AutoConstants.LINEAR_AUTO_KP, Constants.AutoConstants.LINEAR_AUTO_KI, Constants.AutoConstants.LINEAR_AUTO_KD),
 						// Translation PID constants
 						new PIDConstants(swerveDrive.swerveController.config.headingPIDF.p, swerveDrive.swerveController.config.headingPIDF.i, swerveDrive.swerveController.config.headingPIDF.d),
@@ -131,9 +130,9 @@ public class Drivetrain extends SubsystemBase {
 	 * Get the path follower with events.
 	 *
 	 * @param pathName
-	 *            PathPlanner path name.
+	 *                PathPlanner path name.
 	 * @param setOdomToStart
-	 *            Set the odometry position to the start of the path.
+	 *                Set the odometry position to the start of the path.
 	 * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
 	 */
 	public Command getAutonomousCommand(String pathName, boolean setOdomToStart) {
@@ -148,25 +147,23 @@ public class Drivetrain extends SubsystemBase {
 		// event markers.
 		return AutoBuilder.followPath(path);
 	}
-
-	public Command driveToPose(Pose2d pose){
-		PathConstraints constraints = new PathConstraints(
-				swerveDrive.getMaximumVelocity(), 4.0, swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
+	
+	public Command driveToPose(Pose2d pose) {
+		PathConstraints constraints = new PathConstraints(swerveDrive.getMaximumVelocity(), 4.0, swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
 		return AutoBuilder.pathfindToPose(pose, constraints, 0.0, 0.0);
-		
 	}
 	
 	/**
 	 * Command to drive the robot using translative values and heading as a setpoint.
 	 *
 	 * @param translationX
-	 *            Translation in the X direction. Cubed for smoother controls.
+	 *                Translation in the X direction. Cubed for smoother controls.
 	 * @param translationY
-	 *            Translation in the Y direction. Cubed for smoother controls.
+	 *                Translation in the Y direction. Cubed for smoother controls.
 	 * @param headingX
-	 *            Heading X to calculate angle of the joystick.
+	 *                Heading X to calculate angle of the joystick.
 	 * @param headingY
-	 *            Heading Y to calculate angle of the joystick.
+	 *                Heading Y to calculate angle of the joystick.
 	 * @return Drive command.
 	 */
 	public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX, DoubleSupplier headingY) {
@@ -182,11 +179,11 @@ public class Drivetrain extends SubsystemBase {
 	 * Command to drive the robot using translative values and heading as a setpoint.
 	 *
 	 * @param translationX
-	 *            Translation in the X direction.
+	 *                Translation in the X direction.
 	 * @param translationY
-	 *            Translation in the Y direction.
+	 *                Translation in the Y direction.
 	 * @param rotation
-	 *            Rotation as a value between [-1, 1] converted to radians.
+	 *                Rotation as a value between [-1, 1] converted to radians.
 	 * @return Drive command.
 	 */
 	public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
@@ -200,11 +197,11 @@ public class Drivetrain extends SubsystemBase {
 	 * Command to drive the robot using translative values and heading as angular velocity.
 	 *
 	 * @param translationX
-	 *            Translation in the X direction. Cubed for smoother controls.
+	 *                Translation in the X direction. Cubed for smoother controls.
 	 * @param translationY
-	 *            Translation in the Y direction. Cubed for smoother controls.
+	 *                Translation in the Y direction. Cubed for smoother controls.
 	 * @param angularRotationX
-	 *            Angular velocity of the robot to set. Cubed for smoother controls.
+	 *                Angular velocity of the robot to set. Cubed for smoother controls.
 	 * @return Drive command.
 	 */
 	public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX) {
@@ -229,16 +226,16 @@ public class Drivetrain extends SubsystemBase {
 	 * the wheel velocities. Also has field- and robot-relative modes, which affect how the translation vector is used.
 	 *
 	 * @param translation
-	 *            {@link Translation2d} that is the commanded linear velocity of the robot, in meters per
-	 *            second. In robot-relative mode, positive x is torwards the bow (front) and positive y is
-	 *            torwards port (left). In field-relative mode, positive x is away from the alliance wall
-	 *            (field North) and positive y is torwards the left wall when looking through the driver station
-	 *            glass (field West).
+	 *                {@link Translation2d} that is the commanded linear velocity of the robot, in meters per
+	 *                second. In robot-relative mode, positive x is torwards the bow (front) and positive y is
+	 *                torwards port (left). In field-relative mode, positive x is away from the alliance wall
+	 *                (field North) and positive y is torwards the left wall when looking through the driver station
+	 *                glass (field West).
 	 * @param rotation
-	 *            Robot angular rate, in radians per second. CCW positive. Unaffected by field/robot
-	 *            relativity.
+	 *                Robot angular rate, in radians per second. CCW positive. Unaffected by field/robot
+	 *                relativity.
 	 * @param fieldRelative
-	 *            Drive mode. True for field-relative, false for robot-relative.
+	 *                Drive mode. True for field-relative, false for robot-relative.
 	 */
 	public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
 		swerveDrive.drive(translation, rotation, fieldRelative, false); // Open loop is disabled since it shouldn't be used most of the time.
@@ -248,7 +245,7 @@ public class Drivetrain extends SubsystemBase {
 	 * Drive the robot given a chassis field oriented velocity.
 	 *
 	 * @param velocity
-	 *            Velocity according to the field.
+	 *                Velocity according to the field.
 	 */
 	public void driveFieldOriented(ChassisSpeeds velocity) {
 		swerveDrive.driveFieldOriented(velocity);
@@ -258,7 +255,7 @@ public class Drivetrain extends SubsystemBase {
 	 * Drive according to the chassis robot oriented velocity.
 	 *
 	 * @param velocity
-	 *            Robot oriented {@link ChassisSpeeds}
+	 *                Robot oriented {@link ChassisSpeeds}
 	 */
 	public void drive(ChassisSpeeds velocity) {
 		swerveDrive.drive(velocity);
@@ -267,10 +264,9 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 		if (doVisionUpdates) {
-			try{
-			processVision();
-			}
-			catch(Exception e){}
+			try {
+				processVision();
+			} catch (Exception e) {}
 		}
 		motorTab.update();
 	}
@@ -279,23 +275,23 @@ public class Drivetrain extends SubsystemBase {
 	public void simulationPeriodic() {}
 	
 	private void processVision() {
-			//if(checkAllianceColors(Alliance.Blue)){
-			LimelightHelpers.SetRobotOrientation("", getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-			//}
-			/*else{
-				LimelightHelpers.SetRobotOrientation("", getPose().getRotation().plus(Rotation2d.fromDegrees(180)).getDegrees(), 0, 0, 0, 0, 0);
-			}*/
-
-			poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-			if (poseData.tagCount > 0 ) {
-				if( fieldLayout.getTagPose((int)LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().
-				getDistance(getPose().getTranslation()) < VisionConstants.MAX_DETECTION_RANGE){
-			  swerveDrive.addVisionMeasurement(poseData.pose,poseData.timestampSeconds, kalmanStdDevs);
-			  
-				}
+		// if(checkAllianceColors(Alliance.Blue)){
+		LimelightHelpers.SetRobotOrientation("", getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+		// }
+		/*
+		 * else{
+		 * LimelightHelpers.SetRobotOrientation("", getPose().getRotation().plus(Rotation2d.fromDegrees(180)).getDegrees(), 0, 0, 0, 0, 0);
+		 * }
+		 */
+		
+		poseData = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+		if (poseData.tagCount > 0) {
+			if (fieldLayout.getTagPose((int) LimelightHelpers.getFiducialID("")).orElseThrow().toPose2d().getTranslation().getDistance(getPose().getTranslation()) < VisionConstants.MAX_DETECTION_RANGE) {
+				swerveDrive.addVisionMeasurement(poseData.pose, poseData.timestampSeconds, kalmanStdDevs);
 			}
+		}
 	}
-
+	
 	private boolean checkAllianceColors(Alliance checkAgainst) {
 		if (DriverStation.getAlliance().isPresent()) {
 			return DriverStation.getAlliance().get() == checkAgainst;
@@ -320,11 +316,10 @@ public class Drivetrain extends SubsystemBase {
 	 * keep working.
 	 *
 	 * @param initialHolonomicPose
-	 *            The pose to set the odometry to
+	 *                The pose to set the odometry to
 	 */
 	public void resetOdometry(Pose2d initialHolonomicPose) {
-		
-		swerveDrive.setGyro(new Rotation3d(0,0,initialHolonomicPose.getRotation().getRadians()));
+		swerveDrive.setGyro(new Rotation3d(0, 0, initialHolonomicPose.getRotation().getRadians()));
 		swerveDrive.resetOdometry(initialHolonomicPose);
 	}
 	
@@ -342,7 +337,7 @@ public class Drivetrain extends SubsystemBase {
 	 * Set chassis speeds with closed-loop velocity control.
 	 *
 	 * @param chassisSpeeds
-	 *            Chassis Speeds to set.
+	 *                Chassis Speeds to set.
 	 */
 	public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
 		swerveDrive.setChassisSpeeds(chassisSpeeds);
@@ -352,7 +347,7 @@ public class Drivetrain extends SubsystemBase {
 	 * Post the trajectory to the field.
 	 *
 	 * @param trajectory
-	 *            The trajectory to post.
+	 *                The trajectory to post.
 	 */
 	public void postTrajectory(Trajectory trajectory) {
 		swerveDrive.postTrajectory(trajectory);
@@ -362,7 +357,7 @@ public class Drivetrain extends SubsystemBase {
 	 * Sets the drive motors to brake/coast mode.
 	 *
 	 * @param brake
-	 *            True to set motors to brake mode, false for coast.
+	 *                True to set motors to brake mode, false for coast.
 	 */
 	public void setMotorBrake(boolean brake) {
 		swerveDrive.setMotorIdleMode(brake);
@@ -385,13 +380,13 @@ public class Drivetrain extends SubsystemBase {
 	 * the angle of the robot.
 	 *
 	 * @param xInput
-	 *            X joystick input for the robot to move in the X direction.
+	 *                X joystick input for the robot to move in the X direction.
 	 * @param yInput
-	 *            Y joystick input for the robot to move in the Y direction.
+	 *                Y joystick input for the robot to move in the Y direction.
 	 * @param headingX
-	 *            X joystick which controls the angle of the robot.
+	 *                X joystick which controls the angle of the robot.
 	 * @param headingY
-	 *            Y joystick which controls the angle of the robot.
+	 *                Y joystick which controls the angle of the robot.
 	 * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
 	 */
 	public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY) {
@@ -407,8 +402,8 @@ public class Drivetrain extends SubsystemBase {
 	public Rotation2d getHeading() {
 		return swerveDrive.getOdometryHeading();
 	}
-
-	public void setHeadingCorrection(boolean doHeadingCorrection){
+	
+	public void setHeadingCorrection(boolean doHeadingCorrection) {
 		swerveDrive.setHeadingCorrection(doHeadingCorrection);
 	}
 	
@@ -425,11 +420,11 @@ public class Drivetrain extends SubsystemBase {
 	 * 90deg.
 	 *
 	 * @param xInput
-	 *            X joystick input for the robot to move in the X direction.
+	 *                X joystick input for the robot to move in the X direction.
 	 * @param yInput
-	 *            Y joystick input for the robot to move in the Y direction.
+	 *                Y joystick input for the robot to move in the Y direction.
 	 * @param angle
-	 *            The angle in as a {@link Rotation2d}.
+	 *                The angle in as a {@link Rotation2d}.
 	 * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
 	 */
 	public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle) {
@@ -491,8 +486,8 @@ public class Drivetrain extends SubsystemBase {
 	public Rotation2d getPitch() {
 		return swerveDrive.getPitch();
 	}
-
-	public void resetLastAngeScalar(){
+	
+	public void resetLastAngeScalar() {
 		swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
 	}
 	

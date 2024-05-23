@@ -17,31 +17,29 @@ import frc.robot.util.Alert.AlertType;
 
 public class ShuffleboardInfo extends SubsystemBase {
 	ArrayList<ShuffleboardTabBase> tabs;
-
+	
 	private static ShuffleboardInfo instance;
 	private String[] copyTables;
 	private boolean isActivated = false;
 	private Alert enabledAlert = new Alert("Enabled batter voltage is below " + Constants.ENABLED_BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
 	private Alert disabledAlert = new Alert("Disabled batter voltage is below " + Constants.DISABLED_BATTERY_WARNING_VOLTAGE, AlertType.ERROR);
-
+	
 	public static ShuffleboardInfo getInstance() {
 		if (instance == null) {
 			instance = new ShuffleboardInfo();
 		}
 		return instance;
 	}
-
-	private ShuffleboardInfo() {
-
-	}
-
+	
+	private ShuffleboardInfo() {}
+	
 	public void addTabs(ArrayList<ShuffleboardTabBase> tabs) {
 		this.tabs = tabs;
-
+		
 		tabs.get(0).activateShuffleboard();
 		copyTables = new String[tabs.size() - 1]; // subtract one because driverstation doesn't need to be copied
 	}
-
+	
 	public void activateTabs() {
 		if (isActivated == false) {
 			isActivated = true;
@@ -53,7 +51,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 			}
 		}
 	}
-
+	
 	@Override
 	public void periodic() {
 		// if robot is not connected to the field system, enable shuffleboard
@@ -67,25 +65,23 @@ public class ShuffleboardInfo extends SubsystemBase {
 				tabs.get(i).update();
 			}
 		}
-
+		
 		// copy over values from the logging network table to shuffleboard
 		// NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		// for (String tab : copyTables) {
-		// 	if (tab != null) {
-		// 		for (String key : inst.getTable("logging/" + tab).getKeys()) {
-		// 			NetworkTableEntry sourceEntry = inst.getTable("logging/" + tab).getEntry(key);
-		// 			NetworkTableEntry destinationEntry = inst.getTable("Shuffleboard/" + tab).getEntry(key);
-		// 			destinationEntry.setValue(sourceEntry.getValue());
-
-		// 		}
-		// 	}
+		// if (tab != null) {
+		// for (String key : inst.getTable("logging/" + tab).getKeys()) {
+		// NetworkTableEntry sourceEntry = inst.getTable("logging/" + tab).getEntry(key);
+		// NetworkTableEntry destinationEntry = inst.getTable("Shuffleboard/" + tab).getEntry(key);
+		// destinationEntry.setValue(sourceEntry.getValue());
+		
 		// }
-
-
+		// }
+		// }
+		
 		// create an Alert if the battery voltage is below BATTERY_WARNING_VOLTAGE
 		enabledAlert.set(RobotController.getBatteryVoltage() < Constants.ENABLED_BATTERY_WARNING_VOLTAGE && DriverStation.isEnabled());
 		disabledAlert.set(RobotController.getBatteryVoltage() < Constants.DISABLED_BATTERY_WARNING_VOLTAGE && !DriverStation.isEnabled());
-		//batter voltage is displayed on the driver station tab
-
+		// batter voltage is displayed on the driver station tab
 	}
 }
