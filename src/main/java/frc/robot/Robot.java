@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -45,6 +46,11 @@ public class Robot extends TimedRobot {
 		// Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     	// immediately when disabled, but then also let it be pushed more 
     	disabledTimer = new Timer();
+
+		 for (int port = 5800; port <= 5807; port++) {
+            PortForwarder.add(port, "limelight.local", port);
+        }
+
 	}
 
 	/**
@@ -93,12 +99,14 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		m_robotContainer.doVisionUpdates(false);
 		m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
 		// schedule the autonomous command (example)
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
 		}
+		
 
 
 	}
@@ -118,6 +126,9 @@ public class Robot extends TimedRobot {
 			m_autonomousCommand.cancel();
 		}
 
+		m_robotContainer.StopShooter();
+		m_robotContainer.doVisionUpdates(true);
+		
 		m_robotContainer.setMotorBrake(true);
 		// m_robotContainer.teleopInit();
 

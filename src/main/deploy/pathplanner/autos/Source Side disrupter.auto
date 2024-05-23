@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.66,
-      "y": 6.72
+      "x": 0.6573619984846805,
+      "y": 4.408696224799858
     },
-    "rotation": -120.0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -18,15 +18,21 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Woofer leave"
+            "name": "StopShooter"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "turnTo0"
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of bot woofer"
           }
         }
       ]

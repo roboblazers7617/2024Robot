@@ -2,31 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.52,
-      "y": 7.33
+      "x": 0.7158327706968803,
+      "y": 6.653973877748326
     },
-    "rotation": -90.0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "amp and leave"
+            "name": "ShootSpeaker"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootAmp"
+            "name": "StopShooter"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "side amp to top ring"
+            "name": "Stow"
           }
         }
       ]

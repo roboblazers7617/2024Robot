@@ -5,21 +5,14 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ClimberConstants;
-import frc.robot.shuffleboard.ShuffleboardInfo;
 
 public class Climber extends SubsystemBase {
 	private final CANSparkMax rightClimber = new CANSparkMax(Constants.ClimberConstants.RIGHT_CLIMBER_PORT, MotorType.kBrushless);
@@ -27,8 +20,6 @@ public class Climber extends SubsystemBase {
 	
 	private final CANSparkMax leftClimber = new CANSparkMax(Constants.ClimberConstants.LEFT_CLIMBER_PORT, MotorType.kBrushless);
 	private final RelativeEncoder leftClimberEncoder;
-	
-	private final PIDController balanceController = new PIDController(ClimberConstants.BALANCE_KP, ClimberConstants.BALANCE_KI, ClimberConstants.BALANCE_KD);
 	
 	/** Creates a new Climber. */
 	public Climber() {
@@ -97,26 +88,7 @@ public class Climber extends SubsystemBase {
 	
 	@Override
 	public void periodic() {
-		// This method will be called once per scheduler run
-		//TODO UNTESTED
-		/*if(getPositionRightMotor() < 1.0 && getSpeedRight() < 0.0)
-			setSpeedRight(0.0);
-		if(getPositionLeftMotor() < 1.0 && getSpeedLeft() < 0.0)
-			setSpeedLeft(0.0);*/
 	}
-	
-	// public Command balanceClimb(Drivetrain drivetrain) {
-	// 	return Commands.run(() -> {
-	// 		setSpeedLeft(balanceController.calculate(drivetrain.getRoll().getDegrees()));
-	// 		setSpeedRight(-balanceController.calculate(drivetrain.getRoll().getDegrees()));
-	// 	}, this);
-	// }
-	
-	// public Command climb() {
-	// 	return Commands.deadline(Commands.waitUntil(() -> (getPositionLeftMotor() > ClimberConstants.CLIMB_HEIGHT && getPositionRightMotor() > ClimberConstants.CLIMB_HEIGHT)), Commands.run(() -> {
-	// 		setSpeed(ClimberConstants.CLIMB_RATE, ClimberConstants.CLIMB_RATE);
-	// 	})).finallyDo(() -> setSpeed(0, 0));
-	// }
 
 	public CANSparkMax[] getMotors(){
 		return new CANSparkMax[] {leftClimber, rightClimber};

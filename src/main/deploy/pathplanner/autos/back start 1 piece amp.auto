@@ -2,37 +2,25 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.66,
-      "y": 4.41
+      "x": 0.52,
+      "y": 7.33
     },
-    "rotation": -60.0
+    "rotation": -90.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "ShootSpeaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stow"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "bot woofer"
+            "pathName": "amp and leave"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "turnTo0"
+            "name": "shootAmp"
           }
         },
         {
@@ -45,6 +33,18 @@
           "type": "named",
           "data": {
             "name": "StopShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "I amp and I out"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TurnDown"
           }
         }
       ]

@@ -15,6 +15,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.AsynchronousInterrupt;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShootingConstants;
+import frc.robot.Constants.ShootingConstants.ShootingPosition;
 
 public class Head extends SubsystemBase {
 	// Shooter
@@ -34,14 +37,14 @@ public class Head extends SubsystemBase {
 	private final SparkPIDController shooterControllerTop = shooterMotorTop.getPIDController();
 	
 	private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.MOTOR_CAN_ID, MotorType.kBrushless);
-	private final DigitalInput isNoteInSensor = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
-	private final DigitalInput isNoteInAlignmentSensor = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
-
-	private final AsynchronousInterrupt intakeInterrupt = new AsynchronousInterrupt(isNoteInSensor, (rising, falling) -> {
+	// TODO: Please rename isNoteInSensor as is very ambigious and doesn't say which sensor. If I understand this correctly should be something like isNoteInShootPosition
+	private final DigitalInput isNoteInShootPosition = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
+	private final DigitalInput isNoteInIntake = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
+	
+	private final AsynchronousInterrupt intakeInterrupt = new AsynchronousInterrupt(isNoteInShootPosition, (rising, falling) -> {
 		setIntakeSpeed(0);
 	});
 	
-	private boolean shooterIdle = true; // Is the shooter set to the idle speed?
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
 	
 	/** Creates a new Head. */
@@ -82,7 +85,7 @@ public class Head extends SubsystemBase {
 		shooterMotorBottom.burnFlash();
 		Timer.delay(0.005);
 		shooterMotorTop.burnFlash();
-
+		
 		intakeInterrupt.setInterruptEdges(false, true);
 	}
 	
@@ -141,6 +144,12 @@ public class Head extends SubsystemBase {
 		shooterControllerTop.setReference(shooterSetPoint, ControlType.kVelocity);
 	}
 	
+	public void stopShooter() {
+		shooterSetPoint = 0.0;
+		shooterMotorBottom.setVoltage(0);
+		shooterMotorTop.setVoltage(0);
+	}
+	
 	public double getShooterBottomSpeed() {
 		return shooterEncoderBottom.getVelocity();
 	}
@@ -155,26 +164,16 @@ public class Head extends SubsystemBase {
 	
 	public Command SpinUpShooter(double rpm) {
 		return Commands.runOnce(() -> {
-			shooterIdle = false;
 			setShooterSpeed(rpm);
 		}, this);
 	}
 	
-	public Command SpinUpShooterForSpeaker() {
-		return SpinUpShooter(ShooterConstants.SPEAKER_SPEED);
-	}
-	
-	public Command SpinUpShooterForAmp() {
-		return SpinUpShooter(ShooterConstants.AMP_SPEED);
-	}
-	
-	public Command SpinUpShooterForPodium() {
-		return SpinUpShooter(ShooterConstants.PODIUM_SPEED);
+	public Command SpinUpShooter(ShootingPosition position) {
+		return SpinUpShooter(position.rpm());
 	}
 	
 	public Command SpinDownShooter() {
 		return Commands.runOnce(() -> {
-			shooterIdle = true;
 			shooterSetPoint = 0.0;
 			shooterMotorBottom.setVoltage(0);
 			shooterMotorTop.setVoltage(0);
@@ -189,71 +188,35 @@ public class Head extends SubsystemBase {
 			) && (
 				(getShooterTopSpeed() >= (shooterSetPoint * ShooterConstants.VELOCITY_MINIMUM)) &&
 				(getShooterTopSpeed() <= (shooterSetPoint * ShooterConstants.VELOCITY_MAXIMUM))
-			) && !shooterIdle;
+			);
 		// @formatter:on
 	}
 	
-	public Command Shoot(double rpm) {
-		return SpinUpShooter(rpm)
-				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
-				.andThen(Commands.waitSeconds(0.1))
+	// TODO: Move the finallyDo to an andThen to avoid the delay that we saw yesterday with the intake
+	// TODO: Why are you spinning down the shooter before stopping the intake? Intake should be first
+	public Command Shoot() {
+		return Shoot(true);
+	}
+	
+	public Command Shoot(boolean stopShooter) {
+		return Commands.waitUntil(() -> isReadyToShoot())
 				.andThen(Commands.runOnce(() -> {
 					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
 				}))
 				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
 				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
-				.andThen(Commands.waitSeconds(0.5))
-				.andThen(SpinDownShooter())
-				.finallyDo(() -> {
-					setIntakeSpeed(0);
-				});
-	}
-
-	public Command ShootAuto(double rpm) {
-		return SpinUpShooter(rpm)
-				.andThen(Commands.waitUntil(() -> isReadyToShoot()))
-				.andThen(Commands.waitSeconds(0.1))
-				.andThen(Commands.runOnce(() -> {
-					setIntakeSpeed(IntakeConstants.FEEDER_SPEED);
-				}))
-				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-				.andThen(Commands.waitUntil(() -> !isNoteWithinSensor()))
-				.andThen(Commands.waitSeconds(0.5))
-				// .andThen(SpinDownShooter())
-				.finallyDo(() -> {
-					setIntakeSpeed(0);
-				});
-	}
-
-	
-	public Command ShootInSpeaker() {
-		return Shoot(ShooterConstants.SPEAKER_SPEED);
-	}
-  
-	public Command ShootInSpeakerAuto(){
-		return ShootAuto(ShooterConstants.AUTO_SPEED);
-	}
-	
-	public Command ShootOverDBot() {
-		return Shoot(ShooterConstants.DBOT_SPEED);
-	}
-	
-	public Command ShootPodium() {
-		return Shoot(ShooterConstants.PODIUM_SPEED);
-	}
-	
-	public Command ShootInAmp() {
-		return Shoot(ShooterConstants.AMP_SPEED);
+				.andThen(Commands.waitSeconds(0.2))
+				.andThen(Commands.either(SpinDownShooter().andThen(() -> setIntakeSpeed(0.0)), Commands.none(), () -> stopShooter));
 	}
 	
 	public boolean isNoteWithinSensor() {
-		return !isNoteInSensor.get();
+		return !isNoteInShootPosition.get();
 	}
 	
 	public boolean isNoteWithinAlignmentSensor() {
-		return !isNoteInAlignmentSensor.get();
+		return !isNoteInIntake.get();
 	}
-
+	
 	public Command ToggleBreakModes() {
 		return new InstantCommand(() -> {
 			if (intakeMotor.getIdleMode() == IdleMode.kBrake) {
@@ -261,7 +224,7 @@ public class Head extends SubsystemBase {
 			} else {
 				intakeMotor.setIdleMode(IdleMode.kBrake);
 			}
-		});
+		}).ignoringDisable(true);
 	}
 	
 	public Command EnableBrakeMode() {

@@ -64,6 +64,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "turnToSpeaker"
           }
         },
@@ -71,6 +77,18 @@
           "type": "named",
           "data": {
             "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
           }
         }
       ]

@@ -2,37 +2,37 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.43,
-      "y": 7.3
+      "x": 1.5338787698652874,
+      "y": 4.112577405249212
     },
-    "rotation": -90.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Side Amp"
+            "name": "turnToSpeaker"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootAmp"
+            "name": "ShootSpeaker"
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
+          "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "side amp to top ring"
-                }
-              },
               {
                 "type": "sequential",
                 "data": {
@@ -44,33 +44,33 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "path",
                       "data": {
-                        "name": "IntakeGround"
+                        "pathName": "bot front start to bot ring"
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeGround"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Top ring to side amp"
+            "name": "turnToSpeaker"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootAmp"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "name": "ShootSpeaker"
           }
         },
         {
@@ -83,12 +83,6 @@
           "type": "named",
           "data": {
             "name": "StopShooter"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "TurnUp"
           }
         }
       ]

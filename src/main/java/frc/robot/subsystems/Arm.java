@@ -22,10 +22,12 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.shuffleboard.MotorTab;
 // import frc.robot.util.TunableNumber;
 
@@ -49,7 +51,8 @@ public class Arm extends SubsystemBase {
 	/** the last actual arm target */
 	private double lastAcutalArmTarget;
 	/** arm angle based on distance interpolation table */
-	private final InterpolatingDoubleTreeMap armAngleBasedOnDistance = new InterpolatingDoubleTreeMap();
+	private final InterpolatingDoubleTreeMap armAngleBasedOnDistanceExtended = new InterpolatingDoubleTreeMap();
+	private final InterpolatingDoubleTreeMap armAngleBasedOnDistanceRetracted = new InterpolatingDoubleTreeMap();
 	
 	// Elevator
 	/** the right motor */
@@ -77,13 +80,7 @@ public class Arm extends SubsystemBase {
 	private Timer time = new Timer();
 	
 	private final MotorTab motorTab = new MotorTab(4, "arm", 2);
-	
-	// private final Trigger teleopEnabled;
-	
-	// TODO: (Brandon) Putting as something to talk about so we don't forget... the
-	// feedforward values for the elevator may change based on the arm pivot angle,
-	// and the feedforward values for the arm may change based on the elevator
-	// extension. Need to think through this issue...
+
 	/** Creates a new Arm. */
 	public Arm() {
 		// setup arm motors
@@ -122,10 +119,22 @@ public class Arm extends SubsystemBase {
 		armAbsoluteEncoder.setZeroOffset(ArmConstants.ARM_OFFSET);
 		
 		armTarget = armAbsoluteEncoder.getPosition();
-		
-		armAngleBasedOnDistance.put(1.27, ArmConstants.SPEAKER_SUBWOOFER_ANGLE);
-		armAngleBasedOnDistance.put(2.7, 31.25);
-		armAngleBasedOnDistance.put(3.24, 35.25);
+
+		armAngleBasedOnDistanceExtended.put(1.27, ShootingPosition.SUBWOOFER.arm_angle());
+		armAngleBasedOnDistanceExtended.put(2.9, 33.5);
+		armAngleBasedOnDistanceExtended.put(3.1, 36.0);
+
+		//TODO: Add Treemap values
+		armAngleBasedOnDistanceRetracted.put(1.96, 18.6);
+		armAngleBasedOnDistanceRetracted.put(2.47, 27.0);
+		armAngleBasedOnDistanceRetracted.put(2.92, 31.8);
+		armAngleBasedOnDistanceRetracted.put(2.96, 30.9);
+		armAngleBasedOnDistanceRetracted.put(3.51, 35.1);
+		armAngleBasedOnDistanceRetracted.put(3.61,32.7);
+		armAngleBasedOnDistanceRetracted.put(4.11, 37.3);
+		armAngleBasedOnDistanceRetracted.put(4.25, 38.3);
+		armAngleBasedOnDistanceRetracted.put(4.29, 38.3);
+		armAngleBasedOnDistanceRetracted.put(4.31, 37.6);
 		
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 1000);
 		followerElevatorMotor.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus1, 1000);
@@ -195,16 +204,21 @@ public class Arm extends SubsystemBase {
 		
 		armTarget = targetDegrees;
 	}
-	
+
 	/**
 	 * sets the arm target based on the distance to the speaker and the interpolation table
 	 * 
 	 * @param distance
 	 *            the distance to the speaker in meters
 	 */
-	public void setArmTargetByDistance(double distance) {
-		armTarget = MathUtil.clamp(armAngleBasedOnDistance.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
+	public void setArmTargetByDistanceExtended(double distance) {
+		armTarget = MathUtil.clamp(armAngleBasedOnDistanceExtended.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
 	}
+
+	public void setArmTargetByDistanceRetracted(double distance) {
+		armTarget = MathUtil.clamp(armAngleBasedOnDistanceRetracted.get(distance), ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
+	}
+
 	
 	public Command RaiseElevator() {
 		return this.runOnce(() -> setElevatorTarget(ElevatorConstants.MAX_HEIGHT));
@@ -255,6 +269,29 @@ public class Arm extends SubsystemBase {
 			target = ElevatorConstants.MIN_HEIGHT;
 		}
 		elevatorTarget = target;
+	}
+
+	public Command SetTargets(ShootingPosition position) {
+		return Commands.runOnce(() -> {
+				setArmTarget(position.arm_angle());
+				setElevatorTarget(position.elevator_target());
+		});
+	}
+
+	public Command SetTargets(Supplier<Double> distance){
+		return Commands.runOnce(() -> {
+				//TODO: Remove me!
+				System.out.println("Distance is " + distance.get());
+				setArmTargetByDistanceRetracted(distance.get());
+				setElevatorTarget(ElevatorConstants.MIN_HEIGHT);
+		});
+	}
+
+	public Command SetTargetsAuto(Supplier<Double> distance) {
+		return Commands.runOnce(() -> {
+				setArmTargetByDistanceExtended(distance.get());
+				setElevatorTarget(ElevatorConstants.MAX_HEIGHT);
+		});
 	}
 	
 	/**
@@ -341,7 +378,6 @@ public class Arm extends SubsystemBase {
 			// current elevator target will be the reference set by the PID controller, based on what is currently safe
 			double currentElevatorTarget = elevatorTarget;
 			// if the arm is less than the threshold to go over the bumper, than the elevator needs to stay on its current side of the bumper
-			// TODO:(Brandon) Can you walk me through the two constants? Not sure I understand...
 			if (armAbsoluteEncoder.getPosition() < ArmConstants.MIN_ABOVE_PASS_ANGLE) {
 				if (currentElevatorTarget < ElevatorConstants.MIN_ABOVE_PASS_HEIGHT && elevatorEncoder.getPosition() > ElevatorConstants.MIN_ABOVE_PASS_HEIGHT) {
 					currentElevatorTarget = ElevatorConstants.MIN_ABOVE_PASS_HEIGHT;
@@ -370,22 +406,9 @@ public class Arm extends SubsystemBase {
 	public MotorTab getMotorTab() {
 		return motorTab;
 	}
-	
-	public Command WaitUntilArmAtTarget() {
-		return new Command() {
-			@Override
-			public boolean isFinished() {
-				return Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < ArmConstants.ARM_AT_TARGET_DEADBAND;
-			}
-		};
-	}
-	
-	public Command WaitUntilElevatorAtTarget() {
-		return new Command() {
-			@Override
-			public boolean isFinished() {
-				return Math.abs(elevatorTarget - elevatorEncoder.getPosition()) < ElevatorConstants.ELEVATOR_AT_TARGET_DEADBAND || ElevatorConstants.KILL_IT_ALL;
-			}
-		};
+
+	public boolean areArmAndElevatorAtTarget(){
+		return (Math.abs(armTarget - armAbsoluteEncoder.getPosition()) < ArmConstants.ARM_AT_TARGET_DEADBAND)
+			&& (Math.abs(elevatorTarget - elevatorEncoder.getPosition()) < ElevatorConstants.ELEVATOR_AT_TARGET_DEADBAND || ElevatorConstants.KILL_IT_ALL);
 	}
 }

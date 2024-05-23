@@ -40,7 +40,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.5
+                        "waitTime": 0.1
                       }
                     },
                     {
@@ -76,6 +76,12 @@
         {
           "type": "named",
           "data": {
+            "name": "turnTo0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Stow"
           }
         },
@@ -86,7 +92,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -132,19 +138,19 @@
         {
           "type": "named",
           "data": {
-            "name": "turnToSpeaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootSpeaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "turnTo0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
           }
         }
       ]
