@@ -2,7 +2,7 @@
 	"editor.insertSpaces": false,
 	"editor.detectIndentation": false,
 	"java.configuration.updateBuildConfiguration": "disabled",
-	"editor.formatOnSave": false,
+	"editor.formatOnSave": true,
 	"java.format.settings.url": "eclipse-formatter.xml",
 	"[java]": {
 		"editor.defaultFormatter": "redhat.java"
