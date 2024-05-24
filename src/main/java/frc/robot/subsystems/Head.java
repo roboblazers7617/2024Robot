@@ -14,7 +14,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.AsynchronousInterrupt;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -26,6 +25,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShootingConstants;
 import frc.robot.Constants.ShootingConstants.ShootingPosition;
+import frc.robot.util.WaitUntilInterrupt;
 
 public class Head extends SubsystemBase {
 	// Shooter
@@ -40,10 +40,6 @@ public class Head extends SubsystemBase {
 	// TODO: Please rename isNoteInSensor as is very ambigious and doesn't say which sensor. If I understand this correctly should be something like isNoteInShootPosition
 	private final DigitalInput isNoteInShootPosition = new DigitalInput(IntakeConstants.NOTE_SENSOR_DIO);
 	private final DigitalInput isNoteInIntake = new DigitalInput(IntakeConstants.NOTE_ALIGNMENT_SENSOR_DIO);
-	
-	private final AsynchronousInterrupt intakeInterrupt = new AsynchronousInterrupt(isNoteInShootPosition, (rising, falling) -> {
-		setIntakeSpeed(0);
-	});
 	
 	private double shooterSetPoint = 0; // What speed should the shooter be spinning?
 	
@@ -85,8 +81,6 @@ public class Head extends SubsystemBase {
 		shooterMotorBottom.burnFlash();
 		Timer.delay(0.005);
 		shooterMotorTop.burnFlash();
-		
-		intakeInterrupt.setInterruptEdges(false, true);
 	}
 	
 	@Override
@@ -119,12 +113,10 @@ public class Head extends SubsystemBase {
 	public Command IntakePiece() {
 		return Commands.runOnce(() -> {
 			setIntakeSpeed(IntakeConstants.INTAKE_SPEED);
-			intakeInterrupt.enable();
 		}, this)
-				.andThen(Commands.waitUntil(() -> isNoteWithinSensor()))
-				.finallyDo(() -> {
-					intakeInterrupt.disable();
-				});
+				.andThen(new WaitUntilInterrupt(isNoteInShootPosition, (rising, falling) -> {
+					setIntakeSpeed(0);
+				}, false, true));
 	}
 	
 	public Command OutakePiece() {
