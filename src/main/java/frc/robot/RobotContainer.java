@@ -23,27 +23,36 @@ import frc.robot.shuffleboard.SwerveTab;
 import frc.robot.shuffleboard.HeadTab;
 import frc.robot.subsystems.Arm;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.MechanismCommands;
+import frc.robot.commands.drivetrain.AimAtTag;
 import frc.robot.commands.drivetrain.LockWheelsState;
 import frc.robot.commands.drivetrain.TurnToTag;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -89,6 +98,8 @@ public class RobotContainer {
 	
 	private final DigitalInput brakeToggleButton = new DigitalInput(Constants.BRAKE_TOGGLE_BUTTON_DIO);
 	private boolean isClimbMode = false;
+
+	private AprilTagFieldLayout fieldLayout;
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -133,6 +144,12 @@ public class RobotContainer {
 		// STOP HERE
 		shuffleboard.addTabs(tabs);
 
+		try {
+			fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+		} catch (IOException e) {
+			fieldLayout = null;
+		}
+
 		Trigger brakeToggleTrigger = new Trigger(() -> brakeToggleButton.get());
 		brakeToggleTrigger.onTrue(arm.ToggleBrakeModes());
 		brakeToggleTrigger.onTrue(head.ToggleBreakModes());
@@ -141,6 +158,12 @@ public class RobotContainer {
 			arm.EnableBrakeMode();
 			head.EnableBrakeMode();
 		}));
+
+		Pose2d newPose = fieldLayout.getTagPose(7).get().toPose2d();
+		Pose2d robotPose = new Pose2d(newPose.getX() + Units.inchesToMeters(36), newPose.getY() + Units.inchesToMeters(36),
+				newPose.getRotation());
+		SmartDashboard.putData("reset pose", drivetrain.resetPose(robotPose));
+
 	}
 
 	private void configureDefaultCommands(){
@@ -150,7 +173,7 @@ public class RobotContainer {
 	}
 
 	private void configureDriverBindings(){
-		driverControllerCommands.povRight().whileTrue(turnToSpeaker(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX())));
+		driverControllerCommands.povRight().whileTrue(aimAtSpeaker(() -> processJoystickVelocity(driverController.getLeftY()), () -> processJoystickVelocity(driverController.getLeftX())));
 		
 		driverControllerCommands.leftBumper()
 				.onTrue(new ScheduleCommand(rotationDrive))
@@ -291,6 +314,13 @@ public class RobotContainer {
 			return new TurnToTag(drivetrain, 4, true, yMovement, xMovement);
 		}
 		return new TurnToTag(drivetrain, 7, true, yMovement, xMovement);
+	}
+
+	public Command aimAtSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
+		if (checkAllianceColors(Alliance.Red)) {
+			return new AimAtTag(drivetrain, 4, true, yMovement, xMovement);
+		}
+		return new AimAtTag(drivetrain, 7, true, yMovement, xMovement);
 	}
 	
 	public void teleopInit() {

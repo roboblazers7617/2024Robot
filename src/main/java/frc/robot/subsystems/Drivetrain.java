@@ -372,6 +372,13 @@ public class Drivetrain extends SubsystemBase {
 	public void zeroGyro() {
 		swerveDrive.zeroGyro();
 	}
+
+	public Command resetPose(Pose2d resetPose){
+		return Commands.runOnce(() -> {
+			resetOdometry(resetPose);
+			resetLastAngeScalar();
+		}).ignoringDisable(true);
+	}
 	
 	public void doVisionUpdates(boolean doVisionUpdates) {
 		this.doVisionUpdates = doVisionUpdates;
