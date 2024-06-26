@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.RobotStatus;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.FieldHelpers.TagLocation;
 
@@ -25,6 +26,7 @@ public class DriverStationTab extends ShuffleboardTabBase {
 	private final BooleanPublisher isDriverStationConnected;
 	private final BooleanPublisher isBrownedOut;
 	private final BooleanPublisher isButtonPushed;
+	private final BooleanPublisher areAutosLoaded;
 	private final Field2d field = new Field2d();
 	private final SendableChooser<TagLocation> locationChooser = new SendableChooser<>();
 	private NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -46,7 +48,8 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		voltagePublisher = networkTable.getDoubleTopic("Battery Voltage").publish();
 		isDriverStationConnected = networkTable.getBooleanTopic("Is Driver Station Connected").publish();
 		isBrownedOut = networkTable.getBooleanTopic("Is Browned Out").publish();
-		isButtonPushed = networkTable.getBooleanTopic("is brake button pushed").publish();
+		isButtonPushed = networkTable.getBooleanTopic("Arm Braked?").publish();
+		areAutosLoaded = networkTable.getBooleanTopic("Autos Loaded?").publish();
 		
 		// camera = CameraServer.startAutomaticCapture();
 		/*
@@ -64,6 +67,7 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		isBrownedOut.set(robotStatus.isBrownedOut());
 		isButtonPushed.set(robotStatus.isMechanismBraked());
 		field.setRobotPose(drivetrain.getPose());
+		areAutosLoaded.set(AutoConstants.AUTOS_LOADED);
 	}
 	
 	@Override
@@ -77,6 +81,7 @@ public class DriverStationTab extends ShuffleboardTabBase {
 			.withPosition(0, 1)
 			.withSize(5,3);
 		tab.add("DS Connected?", DriverStation.isDSAttached()).withPosition(5, 0).withWidget(BuiltInWidgets.kBooleanBox);
+		tab.add("Autos Loaded?", AutoConstants.AUTOS_LOADED).withPosition(6, 0).withWidget(BuiltInWidgets.kBooleanBox);
 		tab.add("Arm Braked?", robotStatus.isMechanismBraked()).withPosition(5, 1).withWidget(BuiltInWidgets.kBooleanBox);
 		tab.add("Battery Volts", robotStatus.batteryVoltage()).withPosition(5, 2);
 		tab.add("CAN Errors ", robotStatus.numberCANErrors()).withPosition(5, 3).withWidget(BuiltInWidgets.kTextView);

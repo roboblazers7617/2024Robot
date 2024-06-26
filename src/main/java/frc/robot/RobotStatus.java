@@ -36,6 +36,7 @@ public class RobotStatus  {
   public boolean isMechanismBraked()
   {
 	return brakeToggleButton.get();
+
   }
 
   public int numberCANErrors()

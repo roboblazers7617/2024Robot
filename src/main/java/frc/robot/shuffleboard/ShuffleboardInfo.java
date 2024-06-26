@@ -31,7 +31,7 @@ public class ShuffleboardInfo extends SubsystemBase {
 		this.tabs = tabs;
 
 		tabs.get(0).activateShuffleboard();
-		copyTables = new String[tabs.size() - 1]; // subtract one because driverstation doesn't need to be copied
+		copyTables = new String[tabs.size()]; // subtract one because driverstation doesn't need to be copied
 	}
 
 	public void activateTabs() {

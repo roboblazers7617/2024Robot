@@ -42,7 +42,7 @@ public class ArmTab extends ShuffleboardTabBase {
 		// tab.add("generate new arm feed foward values", arm.generateNewArmFeedFoward());
 		// tab.add("generate new elevator feed foward values", arm.generateNewElevatorFeedFoward());
 		tab.add("arm subsystem", arm).withPosition(0, 0);
-		tab.add("toggle brake modes", arm.ToggleBrakeModes()).withPosition(2, 0);
+		tab.add("toggle brake modes", arm.ToggleBrakeModes().ignoringDisable(true)).withPosition(2, 0);
 		tab.add("extend elevator", arm.RaiseElevator()).withPosition(2, 1);
 		tab.add("retract elevator", arm.lowerElevator()).withPosition(2,2);
 		tab.add("stow", arm.Stow()).withPosition(2, 3);
