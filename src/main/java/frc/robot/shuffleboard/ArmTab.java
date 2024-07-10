@@ -18,7 +18,7 @@ public class ArmTab extends ShuffleboardTabBase {
 		
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 		
-		NetworkTable networkTable = inst.getTable("logging/arm");
+		NetworkTable networkTable = inst.getTable("Shuffleboard/arm");
 		
 		armAbsoluteEncoderPub = networkTable.getDoubleTopic("Arm Absolute Encoder").publish();
 		elevatorPub = networkTable.getDoubleTopic("Elevator").publish();
@@ -39,15 +39,18 @@ public class ArmTab extends ShuffleboardTabBase {
 		// tab.add("add elevator feed foward values", arm.addElevatorFeedFowardValuesCommand());
 		// tab.add("generate new arm feed foward values", arm.generateNewArmFeedFoward());
 		// tab.add("generate new elevator feed foward values", arm.generateNewElevatorFeedFoward());
-		tab.add("arm subsystem", arm);
-		tab.add("toggle brake modes", arm.ToggleBrakeModes());
-		tab.add("extend elevator", arm.RaiseElevator());
-		tab.add("retract elevator", arm.lowerElevator());
-		tab.add("stow", arm.Stow());
+		tab.add("arm subsystem", arm).withPosition(0, 0);
+		tab.add("toggle brake modes", arm.ToggleBrakeModes()).withPosition(2, 0);
+		tab.add("extend elevator", arm.RaiseElevator()).withPosition(2, 1);
+		tab.add("retract elevator", arm.lowerElevator()).withPosition(2, 2);
+		tab.add("stow", arm.Stow()).withPosition(2, 3);
+
+		tab.add("Arm Absolute Encoder", 0.0).withPosition(0, 1);
+		tab.add("Elevator", 0.0).withPosition(1, 1);
 		// tab.add("stop arm", new InstantCommand(() -> arm.stopArm()).ignoringDisable(true));
 		// tab.add("foward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kForward));
 		// tab.add("backward run SysidQuasistatic", arm.SysidQuasistatic(Direction.kReverse));
-		arm.getMotorTab().activateShuffleboard();
+		//arm.getMotorTab().activateShuffleboard();
 	}
 	
 	@Override

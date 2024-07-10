@@ -4,6 +4,8 @@ package frc.robot.shuffleboard;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.Climber;
 
 public class ClimberTab extends ShuffleboardTabBase {
@@ -19,7 +21,7 @@ public class ClimberTab extends ShuffleboardTabBase {
 
 		NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-		NetworkTable networkTable = inst.getTable("logging/climber");
+		NetworkTable networkTable = inst.getTable("Shuffleboard/climber");
 
 		 leftMotorPosition = networkTable.getDoubleTopic("Left Motor Position").publish();
 
@@ -29,7 +31,7 @@ public class ClimberTab extends ShuffleboardTabBase {
 
 		rightMotorSpeed = networkTable.getDoubleTopic("Right Motor Speed").publish();
 
-		motorTab.addMotor(climber.getMotors());
+		//motorTab.addMotor(climber.getMotors());
 
 
 	}
@@ -45,6 +47,11 @@ public class ClimberTab extends ShuffleboardTabBase {
 
 	@Override
 	public void activateShuffleboard() {
+		ShuffleboardTab tab = Shuffleboard.getTab("climber");
+		tab.add("Left Motor Position", 0.0).withPosition(0, 0);
+		tab.add("Left Motor Speed", 0.0).withPosition(0, 1);
+		tab.add("Right Motor Position", 0.0).withPosition(1, 0);
+		tab.add("Right Motor Speed", 0.0).withPosition(1, 1);
 	}
 
 	@Override

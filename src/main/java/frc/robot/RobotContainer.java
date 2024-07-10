@@ -11,6 +11,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShootingConstants.ShootingPosition;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LED;
+import frc.robot.util.FieldHelper;
 import frc.robot.subsystems.Head;
 import frc.robot.shuffleboard.ArmTab;
 
@@ -168,11 +169,11 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(() -> speedMultiplier -= SwerveConstants.FAST_SPEED_INCREMENT));
 		
 		driverControllerCommands.povLeft()
-				.and(() -> checkAllianceColors(Alliance.Red))
+				.and(() -> FieldHelper.checkAllianceColors(Alliance.Red))
 				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(-150)), () -> Math.sin(Units.degreesToRadians(-150))));
 		
 		driverControllerCommands.povLeft()
-				.and(() -> checkAllianceColors(Alliance.Blue))
+				.and(() -> FieldHelper.checkAllianceColors(Alliance.Blue))
 				.whileTrue(drivetrain.driveCommand(() -> processJoystickVelocity(driverControllerCommands.getLeftY()), () -> processJoystickVelocity(driverControllerCommands.getLeftX()), () -> Math.cos(Units.degreesToRadians(150)), () -> Math.sin(Units.degreesToRadians(150))));
 		
 		driverControllerCommands.povUp().onTrue(Commands.runOnce(() -> speedMultiplier = Math.min(1, speedMultiplier + SwerveConstants.PRECISE_INCREMENT)));
@@ -241,23 +242,16 @@ public class RobotContainer {
 		return "distance: " + distance.get() + "\n arm angle: " + armAngle.get();
 	}
 	
-	private boolean checkAllianceColors(Alliance checkAgainst) {
-		if (DriverStation.getAlliance().isPresent()) {
-			return DriverStation.getAlliance().get() == checkAgainst;
-		}
-		return false;
-	}
-	
 	private double processJoystickVelocity(double joystickInput) {
-		return checkAllianceColors(Alliance.Blue) ? (-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND)) * speedMultiplier : MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND) * speedMultiplier;
+		return FieldHelper.checkAllianceColors(Alliance.Blue) ? (-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND)) * speedMultiplier : MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND) * speedMultiplier;
 	}
 	
 	private double processJoystickAngular(double joystickInput) {
-		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
+		return FieldHelper.checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
 	}
 	
 	private double processJoystickAngularButFree(double joystickInput) {
-		return checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
+		return FieldHelper.checkAllianceColors(Alliance.Blue) ? Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3) : Math.pow(-MathUtil.applyDeadband(joystickInput, OperatorConstants.DRIVER_JOYSTICK_DEADBAND), 3);
 	}
 
 		public void doVisionUpdates(boolean doVisionUpdates){
@@ -280,14 +274,14 @@ public class RobotContainer {
 	}
 	
 	public Command turnToSpeaker() {
-		if (checkAllianceColors(Alliance.Red)) {
+		if (FieldHelper.checkAllianceColors(Alliance.Red)) {
 			return new ParallelRaceGroup(new TurnToTag(drivetrain, 4, true), Commands.waitSeconds(1));
 		}
 		return new ParallelRaceGroup(new TurnToTag(drivetrain, 7, true), Commands.waitSeconds(1));
 	}
 	
 	public Command turnToSpeaker(Supplier<Double> yMovement, Supplier<Double> xMovement) {
-		if (checkAllianceColors(Alliance.Red)) {
+		if (FieldHelper.checkAllianceColors(Alliance.Red)) {
 			return new TurnToTag(drivetrain, 4, true, yMovement, xMovement);
 		}
 		return new TurnToTag(drivetrain, 7, true, yMovement, xMovement);
@@ -301,21 +295,21 @@ public class RobotContainer {
 	 * DOES NOT ACTAULLY TURN TO ZERO BE AWARE
 	 */
 	public Command pointAwayFromSpeaker() {
-		if (checkAllianceColors(Alliance.Red)) {
+		if (FieldHelper.checkAllianceColors(Alliance.Red)) {
 			return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(180)),Commands.waitSeconds(0.5));
 		}
 		return new ParallelRaceGroup(drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(0)),Commands.waitSeconds(1));
 	}
 
 	public Command turnSideways(){
-		if (checkAllianceColors(Alliance.Red)) {
+		if (FieldHelper.checkAllianceColors(Alliance.Red)) {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));
 		}
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
 	}
 
 	public Command turnAwayFromAmp(){
-		if (checkAllianceColors(Alliance.Red)) {
+		if (FieldHelper.checkAllianceColors(Alliance.Red)) {
 			return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(90));
 		}
 		return drivetrain.turnToAngleCommand(Rotation2d.fromDegrees(-90));

@@ -50,14 +50,6 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		isBrownedOut = networkTable.getBooleanTopic("Is Browned Out").publish();
 		this.button = button;
 		isButtonPushed = networkTable.getBooleanTopic("is brake button pushed").publish();
-		
-		// camera = CameraServer.startAutomaticCapture();
-		/*
-		 * if (camera.isConnected()) {
-		 * camera.setResolution(480, 320);
-		 * camera.setFPS(10);
-		 * }
-		 */
 	}
 	
 	@Override
@@ -73,6 +65,10 @@ public class DriverStationTab extends ShuffleboardTabBase {
 		// this should be called immediately
 		ShuffleboardTab tab = Shuffleboard.getTab("Driver Station");
 		tab.add("Auto Path", autoChooser);
+		tab.add("Battery Voltage", 0.0).withPosition(4, 1);
+		tab.add("Is Driver Station Connected", false).withPosition(4, 0);
+		tab.add("Is Browned Out", false).withPosition(4, 2);
+		tab.add("is brake button pushed", false).withPosition(4, 3);
 	}
 	
 	@Override

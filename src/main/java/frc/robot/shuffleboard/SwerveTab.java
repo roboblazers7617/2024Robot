@@ -5,6 +5,8 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.Drivetrain;
 
 public class SwerveTab extends ShuffleboardTabBase {
@@ -13,8 +15,6 @@ public class SwerveTab extends ShuffleboardTabBase {
 	private final DoublePublisher odometryXPub;
 	private final DoublePublisher odometryAnglePub;
 	private final DoubleArrayPublisher posePublisher;
-	private int number = 0;
-	private final IntegerPublisher numPublisher;
 	
 	public SwerveTab(Drivetrain swerveDrive) {
 		this.swerveDrive = swerveDrive;
@@ -29,19 +29,14 @@ public class SwerveTab extends ShuffleboardTabBase {
 		
 		odometryAnglePub = networkTable.getDoubleTopic("Angle Odometry").publish();
 		
-		numPublisher = networkTable.getIntegerTopic("number").publish();
-		
 		posePublisher = networkTable.getDoubleArrayTopic("Pose").publish();
 	}
 	
 	@Override
 	public void update() {
-		// these functions have not been defined
 		odometryAnglePub.set(swerveDrive.getPose().getRotation().getDegrees());
 		odometryXPub.set(swerveDrive.getPose().getX());
 		odometryYPub.set(swerveDrive.getPose().getY());
-		number += 1;
-		numPublisher.set(number);
 		double[] pose = new double[3];
 		pose[0] = swerveDrive.getPose().getX();
 		pose[1] = swerveDrive.getPose().getY();
@@ -51,7 +46,13 @@ public class SwerveTab extends ShuffleboardTabBase {
 	
 	@Override
 	public void activateShuffleboard() {
-		// shuffleboardTab.add(this.swerveDrive);
+		ShuffleboardTab tab = Shuffleboard.getTab("swerveDrive");
+		tab.add("X Odometry", 0.0).withPosition(0, 0);
+		tab.add("Y Odometry", 0.0).withPosition(1, 0);
+		tab.add("Angle Odometry", 0.0).withPosition(0, 1);
+		tab.add("pose", new double[3]).withPosition(0, 3);
+
+
 	}
 	
 	@Override
