@@ -95,7 +95,7 @@ public class TurnToTag extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		drivetrain.drive(new ChassisSpeeds());
-		drivetrain.resetLastAngeScalar();
+		drivetrain.resetLastAngleScalar();
 
 	}
 	

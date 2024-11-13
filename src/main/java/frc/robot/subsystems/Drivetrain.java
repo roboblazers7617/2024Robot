@@ -211,7 +211,7 @@ public class Drivetrain extends SubsystemBase {
 		return run(() -> {
 			swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(), translationY.getAsDouble() * swerveDrive.getMaximumVelocity()), angularRotationX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(), true, false);
 		}).finallyDo(() -> {
-			swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
+			resetLastAngleScalar();
 		});
 	}
 	
@@ -492,7 +492,7 @@ public class Drivetrain extends SubsystemBase {
 		return swerveDrive.getPitch();
 	}
 
-	public void resetLastAngeScalar(){
+	public void resetLastAngleScalar(){
 		swerveDrive.swerveController.lastAngleScalar = getHeading().getRadians();
 	}
 	
